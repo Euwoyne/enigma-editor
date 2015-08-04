@@ -208,5 +208,9 @@ public class MMTable extends MM<Table> implements Indexed
 	@Override public boolean hasNormalI(    String key) {return this.hasNormal() && easy.hasNormalI(key);} 
 	@Override public boolean hasNormal(     String key) {return this.hasNormal() && easy.hasNormal (key);}
 	@Override public boolean hasNormal(     int    idx) {return this.hasNormal() && easy.hasNormal (idx);}
+	
+	@Override public boolean existI(String key, Mode2 mode) {return this.isDefined(mode) && this.get(mode).existI(key, mode);}
+	@Override public boolean exist( String key, Mode2 mode) {return this.isDefined(mode) && this.get(mode).exist( key, mode);}
+	@Override public boolean exist( int    idx, Mode2 mode) {return this.isDefined(mode) && this.get(mode).exist( idx, mode);}
 }
 

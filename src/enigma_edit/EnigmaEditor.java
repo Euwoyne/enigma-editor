@@ -54,11 +54,11 @@ class EnigmaEditor
 			SpriteSet spriteset = new SpriteSet(options.enigmaPath, new Font("normal", Font.PLAIN, 10));
 			
 			// setup tileset
-			Tileset       tileset = new Tileset();
-			TilesetReader reader  = new TilesetReader();
-			reader.setTarget(tileset);
-			reader.parse("data/tileset.xml");
-			tileset.loadImages(spriteset);
+			TilesetReader reader = new TilesetReader();
+			Tileset tileset = reader.parse("data/tileset.xml");
+			reader.addI18n("data/tileset_de.xml", tileset);
+			tileset.loadSprites(spriteset);
+			tileset.dump();
 			
 			// setup user interface
 			EnigmaSyntaxKit.initKit();

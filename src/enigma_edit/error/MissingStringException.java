@@ -33,6 +33,11 @@ public class MissingStringException extends TilesetXMLException
 {
 	private static final long serialVersionUID = 1L;
 	
+	public MissingStringException(String string, String type)
+	{
+		super("MissingString_" + type, string, null);
+	}
+	
 	public MissingStringException(String string, String name, String type)
 	{
 		super("MissingString_" + type, string, name, null);

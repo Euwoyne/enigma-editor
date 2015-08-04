@@ -39,6 +39,7 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	
 	/**
 	 * Copy constructor.
+	 * 
 	 * @param tile  tile declaration to copy.
 	 */
 	private TileDecl(TileDecl tile)
@@ -52,7 +53,6 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	/**
 	 * Constructor.
 	 * Creates a new tile declaration.
-	 * @param part  Basic code snippet.
 	 */
 	public TileDecl()
 	{
@@ -63,6 +63,7 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	/**
 	 * Construct with initial part.
 	 * Creates a new tile declaration.
+	 * 
 	 * @param part  Basic code snippet.
 	 */
 	public TileDecl(TilePart part)

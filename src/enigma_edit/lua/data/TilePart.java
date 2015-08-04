@@ -77,6 +77,8 @@ public interface TilePart extends Source
 		
 		/** wrapped table */
 		private final MMTable table;
+		private final String  easyKind;
+		private final String  diffKind;
 		
 		/**
 		 * Construct an instance with exactly the same source as a given tile part.
@@ -90,12 +92,14 @@ public interface TilePart extends Source
 			super(parent.code);
 			this.source = parent.source;
 			this.table = parent.table;
+			this.easyKind = parent.easyKind;
+			this.diffKind = parent.diffKind;
 		}
 		
 		/**
 		 * Construct a miscellaneous tile part from a {@link Source} object.
 		 * On construction the given source is checked, if it really references
-		 * a table. Then {@link Constants.checkTable} is applied to the table,
+		 * a table. Then {@link Constants#checkTable} is applied to the table,
 		 * to convert any integers, that can be represented by constants.
 		 * 
 		 * @param source  source to be referenced by a tile declaration via this object.
@@ -106,16 +110,23 @@ public interface TilePart extends Source
 			super(source.getCode());
 			this.source = source;
 			this.table = source.checkTable();
-			if (!table.hasEasy())
-				throw new LevelLuaException.Runtime("IllegalTilePart", table.isNormal() ? Mode.NORMAL : Mode.EASY,      source.typename(Mode2.EASY), code);
+			if (!table.hasEasy() || !table.easy.hasEasy(1))
+				throw new LevelLuaException.Runtime("IllegalTilePart", table.isNormal() ? Mode.NORMAL : Mode.EASY, source.typename(Mode2.EASY), code);
 			else
 				Constants.checkTable(table.easy);
-			if (!table.hasDifficult())
+			if (!table.hasDifficult() || !table.difficult.hasDifficult(1))
 				throw new LevelLuaException.Runtime("IllegalTilePart", table.isNormal() ? Mode.NORMAL : Mode.DIFFICULT, source.typename(Mode2.DIFFICULT), code);
 			else
 				Constants.checkTable(table.difficult);
+			final SimpleValue easy = table.easy.get(1).checkSimple(Mode2.EASY);
+			final SimpleValue diff = table.easy.get(1).checkSimple(Mode2.DIFFICULT);
+			if (easy == null) throw new LevelLuaException.Runtime("IllegalTilePart", table.isNormal() ? Mode.NORMAL : Mode.EASY, source.typename(Mode2.EASY), code);
+			if (diff == null) throw new LevelLuaException.Runtime("IllegalTilePart", table.isNormal() ? Mode.NORMAL : Mode.DIFFICULT, source.typename(Mode2.DIFFICULT), code);
+			this.easyKind = easy.toString();
+			this.diffKind = diff.toString();
 		}
 		
+		          public String          getKind(Mode2 mode)            {return mode == Mode2.EASY ? easyKind : diffKind;}
 		@Override public Construct       getObject(int idx, Mode2 mode) {return this;}
 		@Override public MMTileConstruct getObject(int idx)             {return new MMTileConstruct(this);}
 		@Override public int             objectCount(Mode2 mode)        {return 1;}

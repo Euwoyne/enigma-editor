@@ -6,14 +6,18 @@ public class Tile
 {
 	public interface Part
 	{
-		String    getKey(Mode mode);
-		Construct get(Mode mode);
+		String    getKey(Mode  mode);
+		String    getKey(Mode2 mode);
+		Construct get(Mode  mode);
+		Construct get(Mode2 mode);
 		
 		boolean   isNull();
 		boolean   isNormal();
 		boolean   hasNormal();
 		boolean   hasEasy();
 		boolean   hasDifficult();
+		boolean   has(Mode mode);
+		boolean   has(Mode2 mode);
 	}
 	
 	protected class Part_private implements Part
@@ -42,6 +46,8 @@ public class Tile
 			}
 		}
 		
+		public String getKey(Mode2 mode) {return mode == Mode2.EASY ? easyKey : difficultKey;}
+		
 		public Construct get(Mode mode)
 		{
 			switch (mode)
@@ -53,11 +59,26 @@ public class Tile
 			}
 		}
 		
+		public Construct get(Mode2 mode) {return mode == Mode2.EASY ? easy : difficult;}
+		
 		public boolean isNull()       {return easy == null && difficult == null;}
 		public boolean isNormal()     {return easy == difficult;}
 		public boolean hasNormal()    {return easy == difficult && easy != null;}
 		public boolean hasEasy()      {return easy != null;}
 		public boolean hasDifficult() {return difficult != null;}
+		
+		public boolean has(Mode mode)
+		{
+			switch (mode)
+			{
+			case EASY:      return easy != null;
+			case DIFFICULT: return difficult != null;
+			case NORMAL:    return easy != null && difficult != null;
+			default:        return false;
+			}
+		}
+		
+		public boolean has(Mode2 mode) {return mode == Mode2.EASY ? easy != null : difficult != null;}
 	}
 	
 	protected Part_private floor;
@@ -80,10 +101,47 @@ public class Tile
 	public boolean has_ac() {return !actor.isNull();}
 	public boolean has_st() {return !stone.isNull();}
 	
+	public boolean has_fl(Mode mode) {return floor.has(mode);}
+	public boolean has_it(Mode mode) {return item.has(mode);}
+	public boolean has_ac(Mode mode) {return actor.has(mode);}
+	public boolean has_st(Mode mode) {return stone.has(mode);}
+	
 	public Part fl() {return floor;}
 	public Part it() {return item;}
 	public Part ac() {return actor;}
 	public Part st() {return stone;}
+	
+	public void set_fl(Tile tile)
+	{
+		this.floor.easy         = tile.floor.easy;
+		this.floor.easyKey      = tile.floor.easyKey;
+		this.floor.difficult    = tile.floor.difficult;
+		this.floor.difficultKey = tile.floor.difficultKey;
+	}
+	
+	public void set_it(Tile tile)
+	{
+		this.item.easy         = tile.item.easy;
+		this.item.easyKey      = tile.item.easyKey;
+		this.item.difficult    = tile.item.difficult;
+		this.item.difficultKey = tile.item.difficultKey;
+	}
+	
+	public void set_ac(Tile tile)
+	{
+		this.actor.easy         = tile.actor.easy;
+		this.actor.easyKey      = tile.actor.easyKey;
+		this.actor.difficult    = tile.actor.difficult;
+		this.actor.difficultKey = tile.actor.difficultKey;
+	}
+	
+	public void set_st(Tile tile)
+	{
+		this.stone.easy         = tile.stone.easy;
+		this.stone.easyKey      = tile.stone.easyKey;
+		this.stone.difficult    = tile.stone.difficult;
+		this.stone.difficultKey = tile.stone.difficultKey;
+	}
 	
 	private void add(String key, Construct part, String kind, Mode mode)
 	{
@@ -169,10 +227,10 @@ public class Tile
 	
 	public void add(Tile tile, Mode mode)
 	{
-		if (tile.has_fl()) add(this.floor, tile.floor, mode);
-		if (tile.has_it()) add(this.item,  tile.item,  mode);
-		if (tile.has_ac()) add(this.actor, tile.actor, mode);
-		if (tile.has_st()) add(this.stone, tile.stone, mode);
+		if (tile.has_fl(mode)) add(this.floor, tile.floor, mode);
+		if (tile.has_it(mode)) add(this.item,  tile.item,  mode);
+		if (tile.has_ac(mode)) add(this.actor, tile.actor, mode);
+		if (tile.has_st(mode)) add(this.stone, tile.stone, mode);
 	}
 	
 	public void substitute(Table table, Mode mode)

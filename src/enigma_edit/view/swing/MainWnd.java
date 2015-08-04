@@ -143,9 +143,9 @@ public class MainWnd extends JFrame implements WindowListener
 			public void actionPerformed(ActionEvent e) {MainWnd.this.dispose();}};
 		final Action easyAction   = new NullAction("easy", loadIcon(options.enigmaPath.resolve("gfx/completed-easy.png").toString(), "easy", 19));
 		final Action diffAction   = new NullAction("diff", loadIcon(options.enigmaPath.resolve("gfx/completed.png").toString(), "difficult", 19));
-		final Action itemsAction  = new VisibilityAction(VisibilityAction.ITEMS,  new ImageIcon(((Sprite)tileset.getGroup("items").getIconImage().getSprite()).getImage(16)));
-		final Action actorsAction = new VisibilityAction(VisibilityAction.ACTORS, new ImageIcon(((Sprite)tileset.getGroup("actors").getIconImage().getSprite()).getImage(16)));
-		final Action stonesAction = new VisibilityAction(VisibilityAction.STONES, new ImageIcon(((Sprite)tileset.getGroup("stones").getIconImage().getSprite()).getImage(16)));
+		final Action itemsAction  = new VisibilityAction(VisibilityAction.ITEMS,  new ImageIcon());
+		final Action actorsAction = new VisibilityAction(VisibilityAction.ACTORS, new ImageIcon());
+		final Action stonesAction = new VisibilityAction(VisibilityAction.STONES, new ImageIcon());
 		
 		// setup default level
 		try
@@ -188,10 +188,10 @@ public class MainWnd extends JFrame implements WindowListener
 		
 		// setup tabs
 		editTabs.addTab(Resources.uiText.getString("MainWnd.levelTab"),
-		                new ImageIcon(((Sprite)tileset.getKind("fl_lawn").getDefaultImage().getSprite()).getImage(16)),
+		                new ImageIcon(((Sprite)tileset.get("fl_lawn").getImage().get(0).getSprite()).getImage(16)),
 		                levelScroll);
 		editTabs.addTab(Resources.uiText.getString("MainWnd.codeTab"),
-		                new ImageIcon(((Sprite)tileset.getKind("it_document").getDefaultImage().getSprite()).getImage(32).getScaledInstance(16, 16, Image.SCALE_SMOOTH)),
+		                new ImageIcon(((Sprite)tileset.get("it_document").getImage().get(0).getSprite()).getImage(32).getScaledInstance(16, 16, Image.SCALE_SMOOTH)),
 		                codeScroll);
 		editTabs.setTabPlacement(JTabbedPane.TOP);
 		editTabs.addChangeListener(new TabChangeAction());
@@ -249,6 +249,7 @@ public class MainWnd extends JFrame implements WindowListener
 		}
 		catch (LevelLuaException e)
 		{
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(
 					MainWnd.this,
 					(e.code.isNone() ? "" : e.code.startString() + ": ")+ "ERROR: " + e.getLocalizedMessage(),
@@ -346,6 +347,7 @@ public class MainWnd extends JFrame implements WindowListener
 				}
 				catch (LevelXMLException e)
 				{
+					e.printStackTrace();
 					JOptionPane.showMessageDialog(
 							MainWnd.this,
 							e.getLineNumber() + ":" + e.getColumnNumber() + ": ERROR: " + e.getLocalizedMessage(),
@@ -354,6 +356,7 @@ public class MainWnd extends JFrame implements WindowListener
 				}
 				catch (ParserConfigurationException | SAXException e)
 				{
+					e.printStackTrace();
 					JOptionPane.showMessageDialog(
 							MainWnd.this,
 							dialog.getSelectedFile().getName() + ": ERROR: " + e.getLocalizedMessage(),
@@ -362,6 +365,7 @@ public class MainWnd extends JFrame implements WindowListener
 				}
 				catch (IOException e)
 				{
+					e.printStackTrace();
 					JOptionPane.showMessageDialog(
 							MainWnd.this,
 							dialog.getSelectedFile().getName() + ": ERROR: " + e.getLocalizedMessage(),

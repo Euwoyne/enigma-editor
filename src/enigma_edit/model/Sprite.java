@@ -25,12 +25,11 @@ package enigma_edit.model;
 
 import enigma_edit.error.MissingImageException;
 
-public interface Sprite
+public interface Sprite extends Renderable
 {
 	public interface Image
 	{
-		public int     getSize();
-		public boolean isReady();
+		public int getSize();
 	}
 	
 	public boolean hasImage(int size);

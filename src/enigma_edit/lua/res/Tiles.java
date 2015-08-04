@@ -100,7 +100,7 @@ public class Tiles extends Table implements Resolver
 	
 	/**
 	 * Assigns a tile to the given field.
-	 * This overrides {@link Table#assign(String, SourceData, CodeSnippet, Mode)}
+	 * This overrides {@link Table#assign(String, Source, CodeSnippet, Mode)}
 	 * to add conversion of the {@code value} to {@link TilePart}. 
 	 * 
 	 * @param key     Name of the field.

@@ -86,5 +86,11 @@ public abstract class Data implements Typed
 		default:        return false;
 		}
 	}
+	
+	@Override
+	public boolean isDefined(Mode2 mode)
+	{
+		return mode == Mode2.EASY ? hasEasy() : hasDifficult();
+	}
 }
 

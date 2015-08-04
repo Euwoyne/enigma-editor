@@ -31,7 +31,6 @@ import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +38,7 @@ import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 
 import enigma_edit.error.MissingImageException;
+import enigma_edit.model.RenderingAgent;
 import enigma_edit.model.Tileset;
 
 public class Sprite implements enigma_edit.model.Sprite
@@ -46,27 +46,24 @@ public class Sprite implements enigma_edit.model.Sprite
 	public class Image extends BufferedImage implements enigma_edit.model.Sprite.Image
 	{
 		final int size;
-		      int layers, loaded;
 		
 		Image(int size)
 		{
 			super(size, size, Image.TYPE_INT_ARGB);
-			
 			this.size   = size;
-			this.layers = 0;
-			this.loaded = 0;
 		}
 		
-		void stack(Tileset.Image data) throws MissingImageException
+		void draw(Tileset.NamedImage image) throws MissingImageException
 		{
 			Graphics2D     g;
 			java.awt.Image file;
+			TextLayout     layout;
 			
-			try
+			g = this.createGraphics();
+			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			for (Tileset.Image data : image)
 			{
-				g = this.createGraphics();
-				g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-				while (data != null)
+				try
 				{
 					file = ImageIO.read(new File(gfxPath.resolve("gfx" + size).resolve(data.getFile()).toString() + ".png"));
 					if (data.getFile().startsWith("ac"))
@@ -82,24 +79,20 @@ public class Sprite implements enigma_edit.model.Sprite
 						else
 							g.setFont(font);
 						int textheight = g.getFontMetrics().getHeight();
-						TextLayout layout = new TextLayout(data.getText(), g.getFont(), g.getFontRenderContext());
+						layout = new TextLayout(data.getText(), g.getFont(), g.getFontRenderContext());
 						g.setPaint(Color.WHITE);
 						layout.draw(g, 3, textheight);
 						g.setPaint(Color.RED);
 						layout.draw(g, 2, textheight);
 					}
-					data = data.getStack();
 				}
-				g.dispose();
+				catch (java.io.IOException e)
+				{
+					throw new MissingImageException(data.getFile());
+				}
 			}
-			catch (java.io.IOException e)
-			{
-				throw new MissingImageException(data.getFile());
-			}
+			g.dispose();
 		}
-		
-		@Override
-		public boolean isReady() {return layers == loaded;}
 		
 		@Override
 		public int getSize() {return size;}
@@ -107,24 +100,15 @@ public class Sprite implements enigma_edit.model.Sprite
 	
 	private Path                     gfxPath;
 	private Font                     font;
+	private Tileset.NamedImage       data;
 	private Map<Integer, Image>      sizes;
-	private ArrayList<Tileset.Image> data;
 	
-	public Sprite(Tileset.Image image, Path gfxPath, Font font)
+	public Sprite(Tileset.NamedImage image, Path gfxPath, Font font)
 	{
 		this.gfxPath = gfxPath;
 		this.font    = font;
+		this.data    = image;
 		this.sizes   = new HashMap<Integer, Image>();
-		this.data    = new ArrayList<Tileset.Image>();
-		
-		data.add(image);
-	}
-
-	public void stack(Tileset.Image image) throws MissingImageException
-	{
-		data.add(image);
-		for (Map.Entry<Integer, Image> i : sizes.entrySet())
-			i.getValue().stack(image);
 	}
 	
 	public Path getGfxPath()          {return gfxPath;} 
@@ -146,10 +130,7 @@ public class Sprite implements enigma_edit.model.Sprite
 		if (image == null)
 		{
 			image = new Image(size);
-			for (Tileset.Image source : data)
-			{
-				image.stack(source);
-			}
+			image.draw(data);
 			sizes.put(size,  image);
 		}
 		return image;
@@ -166,12 +147,10 @@ public class Sprite implements enigma_edit.model.Sprite
 		sizes.clear();
 	}
 	
-	public static void draw(Graphics2D g, int x, int y, enigma_edit.model.Sprite sprite, int size) throws MissingImageException, IIOException
+	@Override
+	public void draw(RenderingAgent renderer, int x, int y) throws MissingImageException, IIOException
 	{
-		if (sprite.getImage(size) instanceof Sprite.Image)
-			g.drawImage((Sprite.Image)sprite.getImage(size), x, y, null);
-		else
-			throw new IIOException("Unsupported Image Class.");
+		renderer.draw(this, x, y);
 	}
 }
 

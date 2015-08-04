@@ -68,7 +68,7 @@ public interface Resolver extends Source
 	
 	/**
 	 * Resolver constructor interface.
-	 * This interface re-declares the {@link #call(CodeSnippet, List, Mode) call}
+	 * This interface re-declares the {@link ApiFunction#call(List, Mode, CodeSnippet) call}
 	 * method to return a resolver. Every class implementing the Resolver interface
 	 * should have a static method {@code Constructor constructor()}, that returns an
 	 * implementation of this interface.

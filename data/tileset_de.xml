@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<i18n>
+    <!-- GENERAL ATTRIBUTES -->
+    <!--____________________-->
+    <string id="min">                  <translation lang="de">Min.</translation>              </string>
+    <string id="max">                  <translation lang="de">Max.</translation>              </string>
+    <string id="attr_color">           <translation lang="de">Farbe</translation>             </string>
+    <string id="attr_color_BLACK">     <translation lang="de">schwarz</translation>           </string>
+    <string id="attr_color_WHITE">     <translation lang="de">weiß</translation>              </string>
+    <string id="attr_direction">       <translation lang="de">Richtung</translation>          </string>
+    <string id="attr_direction_NORTH"> <translation lang="de">Nord</translation>              </string>
+    <string id="attr_direction_EAST">  <translation lang="de">Ost</translation>               </string>
+    <string id="attr_direction_SOUTH"> <translation lang="de">Süd</translation>               </string>
+    <string id="attr_direction_WEST">  <translation lang="de">West</translation>              </string>
+    
+    <!-- ACTORS -->
+    <!--________-->
+    <string id="grp_actors">           <translation lang="de">Akteure</translation>           </string>
+    <string id="ac_bug">               <translation lang="de">Käfer</translation>             </string>
+    <string id="ac_horse">             <translation lang="de">Pferd</translation>             </string>
+    <string id="ac_killer">            <translation lang="de">Killer</translation>            </string>
+    <string id="ac_marble_black">      <translation lang="de">Murmel (schwarz)</translation>  </string>
+    <string id="ac_marble_white">      <translation lang="de">Murmel (weiß)</translation>     </string>
+    <string id="ac_pearl_black">       <translation lang="de">Perle (schwarz)</translation>   </string>
+    <string id="ac_pearl_white">       <translation lang="de">Perle (weiß)</translation>      </string>
+    <string id="ac_rotor">             <translation lang="de">Rotor</translation>             </string>
+    <string id="ac_top">               <translation lang="de">Top</translation>               </string>
+    
+    <!-- FLOORS -->
+    <!--________-->
+    <string id="grp_floors">           <translation lang="de">Böden</translation>             </string>
+    
+        <!-- global attributes -->
+    <string id="attrgrp_physics">      <translation lang="de">Physik</translation>            </string>
+    <string id="attr_adhesion">        <translation lang="de">Adhäsion</translation>          </string>
+    <string id="attr_fragility">       <translation lang="de">Fragilität</translation>        </string>
+    <string id="attr_friction">        <translation lang="de">Reibung</translation>           </string>
+    <string id="attr_force_x">         <translation lang="de">x-Kraft</translation>           </string>
+    <string id="attr_force_y">         <translation lang="de">y-Kraft</translation>           </string>
+    <string id="attr_eternal">         <translation lang="de">beständig</translation>         </string>
+    <string id="attr_floodable">       <translation lang="de">überflutbar</translation>       </string>
+    <string id="attr_freeze">          <translation lang="de">gefrierbar</translation>        </string>
+    <string id="attr_burnable">        <translation lang="de">brennbar</translation>          </string>
+    
+    <string id="attrgrp_fire">         <translation lang="de">Feuer</translation>             </string>
+    <string id="attr_fastfire">        <translation lang="de">schnelles Feuer</translation>   </string>
+    <string id="attr_ignitable">       <translation lang="de">leicht entzündlich</translation></string>
+    <string id="attr_initfire">        <translation lang="de">brennt zu Beginn</translation>  </string>
+    <string id="attr_noash">           <translation lang="de">keine Asche</translation>       </string>
+    <string id="attr_secure">          <translation lang="de">brennt sicherlich</translation> </string>
+    
+    <string id="attr_slope">           <translation lang="de">Richtung</translation>          </string>
+    <string id="attr_strength">        <translation lang="de">Stärke</translation>            </string>
+    <string id="attr_range">           <translation lang="de">Reichweite</translation>        </string>
+    
+        <!-- normal floors -->
+    <string id="page_normal">          <translation lang="de">normal</translation>            </string>
+    <string id="fl_dummy">             <translation lang="de">Dummy</translation>             </string>
+    <string id="fl_adhesionless">      <translation lang="de">Adhäsionslos</translation>      </string>
+    <string id="fl_aquamarine">        <translation lang="de">Aquamarin</translation>         </string>
+    <string id="fl_bast">              <translation lang="de">Bast</translation>              </string>
+    <string id="fl_bluegray">          <translation lang="de">Blau-Grau</translation>         </string>
+    <string id="fl_bluegreen">         <translation lang="de">Blau-Grün</translation>         </string>
+    <string id="fl_blueslab">          <translation lang="de">Blaue Fliese</translation>      </string>
+    <string id="fl_brick">             <translation lang="de">Mauer</translation>             </string>
+    <string id="fl_bright">            <translation lang="de">Hell</translation>              </string>
+    <string id="fl_concrete">          <translation lang="de">Beton</translation>             </string>
+    <string id="fl_dark">              <translation lang="de">Dunkel</translation>            </string>
+    <string id="fl_darkgray">          <translation lang="de">Dunkel Grau</translation>       </string>
+    <string id="fl_dunes">             <translation lang="de">Dünen</translation>             </string>
+    <string id="fl_gravel">            <translation lang="de">Kies</translation>              </string>
+    <string id="fl_gray">              <translation lang="de">Grau</translation>              </string>
+    <string id="fl_himalaya">          <translation lang="de">Himalaya</translation>          </string>
+    <string id="fl_ivory">             <translation lang="de">Elfenbein</translation>         </string>
+    <string id="fl_marble">            <translation lang="de">Marmor</translation>            </string>
+    <string id="fl_mortar">            <translation lang="de">Mörtel</translation>            </string>
+    <string id="fl_pinkbumps">         <translation lang="de">Pink Bumps</translation>        </string>
+    <string id="fl_plank">             <translation lang="de">Planken</translation>           </string>
+    <string id="fl_platinum">          <translation lang="de">Platin</translation>            </string>
+    <string id="fl_red">               <translation lang="de">Rot</translation>               </string>
+    <string id="fl_redslab">           <translation lang="de">Rote Fliese</translation>       </string>
+    <string id="fl_rough">             <translation lang="de">Rau</translation>               </string>
+    <string id="fl_sahara">            <translation lang="de">Sahara</translation>            </string>
+    <string id="fl_sand">              <translation lang="de">Sand</translation>              </string>
+    <string id="fl_space">             <translation lang="de">Space</translation>             </string>
+    <string id="fl_stone">             <translation lang="de">Stein</translation>             </string>
+    <string id="fl_tigris">            <translation lang="de">Tigris</translation>            </string>
+    <string id="fl_white">             <translation lang="de">Weiß</translation>              </string>
+    <string id="fl_woven">             <translation lang="de">Gewebe</translation>            </string>
+    <string id="fl_lawn">              <translation lang="de">Rasen</translation>             </string>
+    <string id="fl_metal">             <translation lang="de">Metall</translation>            </string>
+    <string id="fl_samba">             <translation lang="de">Samba</translation>             </string>
+    
+        <!-- special floors -->
+    <string id="page_special">         <translation lang="de">spezial</translation>           </string>
+    <string id="fl_abyss">             <translation lang="de">Abgrund</translation>           </string>
+    <string id="fl_hay">               <translation lang="de">Heu</translation>               </string>
+    <string id="fl_ice">               <translation lang="de">Eis</translation>               </string>
+    <string id="fl_rock">              <translation lang="de">Fels</translation>              </string>
+    <string id="fl_swamp">             <translation lang="de">Sumpf</translation>             </string>
+    <string id="fl_bridge">            <translation lang="de">Brücke</translation>            </string>
+    <string id="fl_fake">              <translation lang="de">Fake</translation>              </string>
+    <string id="fl_fake_abyss">        <translation lang="de">Abgrund (fake)</translation>    </string>
+    <string id="fl_fake_trigger">      <translation lang="de">Trigger (fake)</translation>    </string>
+    <string id="fl_inverse">           <translation lang="de">Invers</translation>            </string>
+    <string id="fl_inverse_white">     <translation lang="de">Invers (weiß)</translation>     </string>
+    <string id="fl_inverse_gray">      <translation lang="de">Invers (grau)</translation>     </string>
+    <string id="fl_scales">            <translation lang="de">Waage</translation>             </string>
+    <string id="fl_slope">             <translation lang="de">Gefälle</translation>           </string>
+    <string id="fl_thief">             <translation lang="de">Dieb</translation>              </string>
+    <string id="fl_water">             <translation lang="de">Wasser</translation>            </string>
+    <string id="fl_wood">              <translation lang="de">Holz</translation>              </string>
+    <string id="fl_yinyang">           <translation lang="de">Yin-Yang</translation>          </string>
+    
+        <!-- floor attributes -->
+    <string id="bridge_state">         <translation lang="de">Status</translation>            </string>
+    <string id="bridge_state_CLOSED">  <translation lang="de">geschlossen</translation>       </string>
+    <string id="bridge_state_OPEN">    <translation lang="de">offen</translation>             </string>
+    <string id="bridge_flavor">        <translation lang="de">Sorte</translation>             </string>
+    <string id="bridge_flavor_gc">     <translation lang="de">Grau</translation>              </string>
+    <string id="bridge_flavor_bw">     <translation lang="de">Holz (W)</translation>          </string>
+    <string id="bridge_flavor_bs">     <translation lang="de">Holz (S)</translation>          </string>
+    <string id="bridge_flavor_be">     <translation lang="de">Holz (O)</translation>          </string>
+    <string id="bridge_flavor_bn">     <translation lang="de">Holz (N)</translation>          </string>
+    
+    <string id="attr_inverse">         <translation lang="de">Farbe</translation>             </string>
+    <string id="attr_inverse_white">   <translation lang="de">weiß</translation>              </string>
+    <string id="attr_inverse_gray">    <translation lang="de">grau</translation>              </string>
+    
+    <string id="attr_water">           <translation lang="de">Verhalten</translation>         </string>
+    <string id="attr_water_IDLE">      <translation lang="de">stehend</translation>           </string>
+    <string id="attr_water_FLOODING">  <translation lang="de">fließend</translation>          </string>
+    <string id="water_interval">       <translation lang="de">Flut Intervall</translation>    </string>
+    
+    <!-- ITEMS -->
+    <!--_______-->
+    <string id="grp_items">            <translation lang="de">Objekte</translation>           </string>
+    
+        <!-- global attributes -->
+    <string id="attr_fireproof">       <translation lang="de">feuerfest</translation>         </string>
+    
+        <!-- liftable items -->
+    <string id="page_liftable">    <translation lang="de">aufhebbar</translation>            </string>
+    <string id="it_bag">           <translation lang="de">Sack</translation>                 </string>
+    <string id="it_banana">        <translation lang="de">Banane</translation>               </string>
+    <string id="it_brush">         <translation lang="de">Pinsel</translation>               </string>
+    <string id="it_cherry">        <translation lang="de">Kirsche</translation>              </string>
+    <string id="it_coffee">        <translation lang="de">Kaffee</translation>               </string>
+    <string id="it_drop">          <translation lang="de">Tropfen</translation>              </string>
+    <string id="it_extralife">     <translation lang="de">Extra-Leben</translation>          </string>
+    <string id="it_floppy">        <translation lang="de">Diskette</translation>             </string>
+    <string id="it_bottle">        <translation lang="de">Flasche</translation>              </string>
+    <string id="it_bottle_idle">   <translation lang="de">Flasche (ganz)</translation>       </string>
+    <string id="it_bottle_broken"> <translation lang="de">Flasche (zerbrochen)</translation> </string>
+    <string id="it_coin">          <translation lang="de">Münze</translation>                </string>
+    <string id="it_coin_s">        <translation lang="de">Münze (2ct)</translation>          </string>
+    <string id="it_coin_m">        <translation lang="de">Münze (5ct)</translation>          </string>
+    <string id="it_coin_l">        <translation lang="de">Münze (10ct)</translation>         </string>
+    <string id="it_document">      <translation lang="de">Dokument</translation>             </string>
+    <string id="it_dynamite">      <translation lang="de">Dynamit</translation>              </string>
+    <string id="it_extinguisher">  <translation lang="de">Feuerlöscher</translation>         </string>
+    <string id="it_extralife">     <translation lang="de">Extra-Leben</translation>          </string>
+    <string id="it_flag">          <translation lang="de">Flagge</translation>               </string>
+    <string id="it_glasses">       <translation lang="de">Brille</translation>               </string>
+    <string id="it_glasses_broken"><translation lang="de">Brille (zerbrochen)</translation>  </string>
+    <string id="it_hammer">        <translation lang="de">Hammer</translation>               </string>
+    <string id="it_key">           <translation lang="de">Schlüssel</translation>            </string>
+    <string id="it_magicwand">     <translation lang="de">Zauberstab</translation>           </string>
+    <string id="it_odometer">      <translation lang="de">Hodometer</translation>            </string>
+    <string id="it_pencil">        <translation lang="de">Stift</translation>                </string>
+    <string id="it_pin">           <translation lang="de">Pin</translation>                  </string>
+    <string id="it_pipe">          <translation lang="de">Röhre</translation>                </string>
+    <string id="it_puller">        <translation lang="de">Puller</translation>               </string>
+    <string id="it_ring">          <translation lang="de">Ring</translation>                 </string>
+    <string id="it_rubberband">    <translation lang="de">Gummiband</translation>            </string>
+    <string id="it_seed">          <translation lang="de">Saat</translation>                 </string>
+    <string id="it_spade">         <translation lang="de">Schaufel</translation>             </string>
+    <string id="it_spoon">         <translation lang="de">Löffel</translation>               </string>
+    <string id="it_spring">        <translation lang="de">Sprungfeder</translation>          </string>
+    <string id="it_spring_keep">   <translation lang="de">Sprungfeder (ständig)</translation></string>
+    <string id="it_spring_drop">   <translation lang="de">Sprungfeder (einmal)</translation> </string>
+    <string id="it_sword">         <translation lang="de">Schwert</translation>              </string>
+    <string id="it_surprise">      <translation lang="de">Überraschung</translation>         </string>
+    <string id="it_umbrella">      <translation lang="de">Schirm</translation>               </string>
+    <string id="it_weight">        <translation lang="de">Gewicht</translation>              </string>
+    <string id="it_wrench">        <translation lang="de">Maulschlüssel</translation>        </string>
+    <string id="it_yinyang">       <translation lang="de">Yin-Yang</translation>             </string>
+    
+        <!-- static items -->
+    <string id="page_static">          <translation lang="de">statisch</translation>            </string>
+    <string id="it_blocker">           <translation lang="de">Blocker</translation>             </string>
+    <string id="it_bomb">              <translation lang="de">Bombe</translation>               </string>
+    <string id="it_burnable">          <translation lang="de">Brennbar</translation>            </string>
+    <string id="it_burnable_oil">      <translation lang="de">Öl</translation>                  </string>
+    <string id="it_burnable_ignited">  <translation lang="de">Entzündet</translation>           </string>
+    <string id="it_burnable_burning">  <translation lang="de">Brennend</translation>            </string>
+    <string id="it_burnable_ash">      <translation lang="de">Asche</translation>               </string>
+    <string id="it_burnable_fireproof"><translation lang="de">Feuerfest</translation>           </string>
+    <string id="it_crack">             <translation lang="de">Riss</translation>                </string>
+    <string id="it_cross">             <translation lang="de">Kreuz</translation>               </string>
+    <string id="it_death">             <translation lang="de">Tod</translation>                 </string>
+    <string id="it_explosion">         <translation lang="de">Explosion</translation>           </string>
+    <string id="it_explosion_nil">     <translation lang="de">Explosion (nichts)</translation>  </string>
+    <string id="it_explosion_hollow">  <translation lang="de">Explosion (Mulde)</translation>   </string>
+    <string id="it_explosion_crack">   <translation lang="de">Explosion (Riss)</translation>    </string>
+    <string id="it_explosion_debris">  <translation lang="de">Explosion (Schutt)</translation>  </string>
+    <string id="it_landmine">          <translation lang="de">Landmine</translation>            </string>
+    <string id="it_magnet">            <translation lang="de">Magnet</translation>              </string>
+    <string id="it_meditation">        <translation lang="de">Meditation</translation>          </string>
+    <string id="it_meditation_caldera"><translation lang="de">Meditation (Caldera)</translation></string>
+    <string id="it_meditation_hollow"> <translation lang="de">Meditation (Mulde)</translation>  </string>
+    <string id="it_meditation_dent">   <translation lang="de">Meditation (Delle)</translation>  </string>
+    <string id="it_meditation_bump">   <translation lang="de">Meditation (Beule)</translation>  </string>
+    <string id="it_meditation_hill">   <translation lang="de">Meditation (Hügel)</translation>  </string>
+    <string id="it_meditation_volcano"><translation lang="de">Meditation (Vulkan)</translation> </string>
+    <string id="it_sensor">            <translation lang="de">Sensor</translation>              </string>
+    <string id="it_sensor_exit">       <translation lang="de">Sensor (exit)</translation>       </string>
+    <string id="it_shogun">            <translation lang="de">Shogun</translation>              </string>
+    <string id="it_shogun_s">          <translation lang="de">Shogun (klein)</translation>      </string>
+    <string id="it_shogun_m">          <translation lang="de">Shogun (mittel)</translation>     </string>
+    <string id="it_shogun_l">          <translation lang="de">Shogun (groß)</translation>       </string>
+    <string id="it_springboard">       <translation lang="de">Sprungbrett</translation>         </string>
+    <string id="it_squashed">          <translation lang="de">Zerquetscht</translation>         </string>
+    <string id="it_strip">             <translation lang="de">Schmaler Pfad</translation>       </string>
+    <string id="it_trap">              <translation lang="de">Falle</translation>               </string>
+    <string id="it_trigger">           <translation lang="de">Bodenschalter</translation>       </string>
+    <string id="it_vortex">            <translation lang="de">Strudel</translation>             </string>
+    <string id="it_wormhole">          <translation lang="de">Wurmloch</translation>            </string>
+    
+        <!-- item attributes -->
+    <string id="bottle_interval">            <translation lang="de">Dauer der Trunkenheit</translation></string>
+    <string id="bottle_text">                <translation lang="de">Nachricht</translation>            </string>
+    <string id="bottle_state">               <translation lang="de">Status</translation>               </string>
+    <string id="bottle_state_IDLE">          <translation lang="de">ganz</translation>                 </string>
+    <string id="bottle_state_BROKEN">        <translation lang="de">zerbrochen</translation>           </string>
+    
+    <string id="attr_coin">                       <translation lang="de">Wert</translation>                 </string>
+    <string id="attr_coin_SMALL">                 <translation lang="de">klein</translation>                </string>
+    <string id="attr_coin_MEDIUM">                <translation lang="de">mittel</translation>               </string>
+    <string id="attr_coin_LARGE">                 <translation lang="de">groß</translation>                 </string>
+    
+    <string id="attr_document">                   <translation lang="de">Text</translation>                 </string>
+    
+    <string id="explosive_state">                 <translation lang="de">Status</translation>               </string>
+    <string id="explosive_state_IDLE">            <translation lang="de">nicht gezündet</translation>       </string>
+    <string id="explosive_state_ACTIVE">          <translation lang="de">gezündet</translation>             </string>
+    
+    <string id="attr_extinguisher">               <translation lang="de">Status</translation>               </string>
+    <string id="attr_extinguisher_FULL">          <translation lang="de">voll</translation>                 </string>
+    <string id="attr_extinguisher_MEDIUM">        <translation lang="de">halbvoll</translation>             </string>
+    <string id="attr_extinguisher_EMPTY">         <translation lang="de">leer</translation>                 </string>
+    
+    <string id="attr_glasses">                    <translation lang="de">entdeckt</translation>             </string>
+    <string id="attr_glasses_SPOT_DEATH">         <translation lang="de">Tod</translation>                  </string>
+    <string id="attr_glasses_SPOT_HOLLOW">        <translation lang="de">Durchgänge</translation>           </string>
+    <string id="attr_glasses_SPOT_LIGHTPASSENGER"><translation lang="de">Light Passenger</translation>      </string>
+    <string id="attr_glasses_SPOT_SENSOR">        <translation lang="de">Sensoren</translation>             </string>
+    <string id="attr_glasses_SPOT_ACTORIMPULSE">  <translation lang="de">Actor-Impulse</translation>        </string>
+    <string id="attr_glasses_SPOT_TRAP">          <translation lang="de">Fallen</translation>               </string>
+    <string id="attr_glasses_SPOT_NOTHING">       <translation lang="de">(nichts)</translation>             </string>
+    
+    <string id="attr_anchor2">                    <translation lang="de">Verankerung</translation>          </string>
+    <string id="attr_length">                     <translation lang="de">Länge</translation>                </string>
+    <string id="attr_threshold">                  <translation lang="de">min. Länge</translation>           </string>
+    <string id="attr_scissor">                    <translation lang="de">Schere</translation>               </string>
+    
+    <string id="attr_seed">                       <translation lang="de">Sorte</translation>                </string>
+    <string id="attr_seed_wood">                  <translation lang="de">Kiste</translation>                </string>
+    <string id="attr_seed_hay">                   <translation lang="de">Heu</translation>                  </string>
+    <string id="attr_seed_greenbrown">            <translation lang="de">Grün-Braun</translation>           </string>
+    <string id="attr_seed_volcano">               <translation lang="de">Vulkan</translation>               </string>
+    
+    <string id="attr_mass">                       <translation lang="de">Masse</translation>                </string>
+    
+    <string id="crack_flavor">                    <translation lang="de">Sorte</translation>                </string>
+    <string id="crack_flavor_abyss">              <translation lang="de">Abgrund</translation>              </string>
+    <string id="crack_flavor_water">              <translation lang="de">Wasser</translation>               </string>
+    <string id="crack_state">                     <translation lang="de">Größe</translation>                </string>
+    <string id="crack_state_INVISIBLE">           <translation lang="de">unsichtbar</translation>           </string>
+    <string id="crack_state_SMALL">               <translation lang="de">klein</translation>                </string>
+    <string id="crack_state_MEDIUM">              <translation lang="de">medium</translation>               </string>
+    <string id="crack_state_LARGE">               <translation lang="de">groß</translation>                 </string>
+    <string id="crack_spreading">                 <translation lang="de">Streuung</translation>             </string>
+    <string id="crack_fragility">                 <translation lang="de">Brüchigkeit</translation>          </string>
+    
+    <string id="cross_interval">                  <translation lang="de">Wartezeit</translation>           </string>
+    <string id="attr_magnet">                     <translation lang="de">Status</translation>              </string>
+    <string id="attr_meditation">                 <translation lang="de">notwendig</translation>           </string>
+    
+    <string id="attr_sensor">                     <translation lang="de">unsichtbar</translation>           </string>
+    <string id="sensor_exit">                     <translation lang="de">Aktion bei Verlassen</translation> </string>
+    
+    <string id="attr_shogun">                     <translation lang="de">Größe</translation>                </string>
+    <string id="attr_shogun_s">                   <translation lang="de">klein</translation>                </string>
+    <string id="attr_shogun_m">                   <translation lang="de">mittel</translation>               </string>
+    <string id="attr_shogun_l">                   <translation lang="de">groß</translation>                 </string>
+
+    <string id="attr_trap">                       <translation lang="de">Status</translation>               </string>
+    <string id="attr_trap_CLOSED">                <translation lang="de">versteckt</translation>            </string>
+    <string id="attr_trap_OPEN">                  <translation lang="de">offen</translation>                </string>
+    
+    <string id="attr_trigger">                    <translation lang="de">Status</translation>               </string>
+    
+    <string id="attr_openclose">                  <translation lang="de">Status</translation>               </string>
+    <string id="attr_openclose_CLOSED">           <translation lang="de">geschlossen</translation>          </string>
+    <string id="attr_openclose_OPEN">             <translation lang="de">offen</translation>                </string>
+    <string id="attr_autoopen">                   <translation lang="de">auto öffnen</translation>          </string>
+    <string id="attr_autoclose">                  <translation lang="de">auto schließen</translation>       </string>
+    
+    <string id="attr_onoff">                      <translation lang="de">Status</translation>               </string>
+    <string id="attr_onoff_OFF">                  <translation lang="de">an</translation>                   </string>
+    <string id="attr_onoff_ON">                   <translation lang="de">aus</translation>                  </string>
+    
+    <string id="attr_destination">                <translation lang="de">Ziel</translation>                 </string>
+    
+    
+    <!-- STONES -->
+    <!--________-->
+    <string id="grp_stones">            <translation lang="de">Steine</translation>                    </string>
+    
+        <!-- variants -->
+    <string id="var_normal">            <translation lang="de">normal</translation>                    </string>
+    <string id="var_hollow">            <translation lang="de">hohl</translation>                      </string>
+    <string id="var_movable">           <translation lang="de">beweglich</translation>                 </string>
+    <string id="var_growing">           <translation lang="de">wachsend</translation>                  </string>
+    
+        <!-- global attributes -->
+    <string id="attr_breakable">        <translation lang="de">zerstörbar</translation>                </string>
+    <string id="attr_hit_strength">     <translation lang="de">Prall Stärke</translation>              </string>
+    <string id="attr_hit_distortion">   <translation lang="de">Prall Transformation</translation>      </string>
+    <string id="attr_hit_distortion_xx"><translation lang="de">Prall Transformation (0,0)</translation></string>
+    <string id="attr_hit_distortion_xy"><translation lang="de">Prall Transformation (0,1)</translation></string>
+    <string id="attr_hit_distortion_yx"><translation lang="de">Prall Transformation (1,0)</translation></string>
+    <string id="attr_hit_distortion_yy"><translation lang="de">Prall Transformation (1,1)</translation></string>
+    <string id="attr_hovering">         <translation lang="de">schwebend</translation>                 </string>
+    <string id="attr_transparent">      <translation lang="de">Transparent</translation>               </string>
+    
+        <!-- normal stones -->
+    <string id="st_ancient">            <translation lang="de">Ur-Alt</translation>              </string>
+    <string id="st_bluegray">           <translation lang="de">Blau-Grau</translation>           </string>
+    <string id="st_bluesand">           <translation lang="de">Blauer Sandstein</translation>    </string>
+    <string id="st_brick">              <translation lang="de">Ziegel</translation>              </string>
+    <string id="st_brownie">            <translation lang="de">Brownie</translation>             </string>
+    <string id="st_brownmarble">        <translation lang="de">Brauner Marmor</translation>      </string>
+    <string id="st_camouflage">         <translation lang="de">Camouflage</translation>          </string>
+    <string id="st_concrete">           <translation lang="de">Beton</translation>               </string>
+    <string id="st_darkgray">           <translation lang="de">Dunkel Grau</translation>         </string>
+    <string id="st_granite">            <translation lang="de">Granit</translation>              </string>
+    <string id="st_greengray">          <translation lang="de">Grün-Grau</translation>           </string>
+    <string id="st_invisible">          <translation lang="de">Unsichtbar</translation>          </string>
+    <string id="st_metal">              <translation lang="de">Metall</translation>              </string>
+    <string id="st_panel">              <translation lang="de">Täfelung</translation>            </string>
+    <string id="st_pinkbumps">          <translation lang="de">Pink Bumps</translation>          </string>
+    <string id="st_purplegray">         <translation lang="de">Grau-Viloett</translation>        </string>
+    <string id="st_purplemarble">       <translation lang="de">Violetter Marmor</translation>    </string>
+    <string id="st_redbrown">           <translation lang="de">Rot-Braun</translation>           </string>
+    <string id="st_redmarble">          <translation lang="de">Roter Marmor</translation>        </string>
+    <string id="st_redrock">            <translation lang="de">Roter Fels</translation>          </string>
+    <string id="st_tigris">             <translation lang="de">Tigris</translation>              </string>
+    <string id="st_woven">              <translation lang="de">Gewebe</translation>              </string>
+    <string id="st_yellow">             <translation lang="de">Gelb</translation>                </string>
+    
+        <!-- special stones -->
+    <string id="st_actorimpulse">       <translation lang="de">Akteur-Impuls</translation>           </string>
+    <string id="st_barrier">            <translation lang="de">Absperrung</translation>              </string>
+    <string id="st_beads">              <translation lang="de">Perlenschnur</translation>            </string>
+    <string id="st_blocker">            <translation lang="de">Blocker</translation>                 </string>
+    <string id="st_blur">               <translation lang="de">Farbstein</translation>               </string>
+    <string id="st_blur_cross">         <translation lang="de">Farbstein (schlecht)</translation>    </string>
+    <string id="st_blur_straight">      <translation lang="de">Farbstein (gut)</translation>         </string>
+    <string id="st_blur_magic">         <translation lang="de">Farbstein (Zufall)</translation>      </string>
+    <string id="st_boulder">            <translation lang="de">Felsbrocken</translation>             </string>
+    <string id="st_boulder_n">          <translation lang="de">Felsbrocken (N)</translation>         </string>
+    <string id="st_boulder_e">          <translation lang="de">Felsbrocken (O)</translation>         </string>
+    <string id="st_boulder_s">          <translation lang="de">Felsbrocken (S)</translation>         </string>
+    <string id="st_boulder_w">          <translation lang="de">Felsbrocken (W)</translation>         </string>
+    <string id="st_box">                <translation lang="de">Kiste</translation>                   </string>
+    <string id="st_box_wood">           <translation lang="de">Kiste (Holz)</translation>            </string>
+    <string id="st_box_wood_h">         <translation lang="de">Kiste (Holz; horizontal)</translation></string>
+    <string id="st_box_wood_v">         <translation lang="de">Kiste (Holz; vertikal)</translation>  </string>
+    <string id="st_box_wood_growing">   <translation lang="de">Kiste (Holz; wachsend)</translation>  </string>
+    <string id="st_box_hay">            <translation lang="de">Kiste (Heu)</translation>             </string>
+    <string id="st_box_hay_growing">    <translation lang="de">Kiste (Heu; wachsend)</translation>   </string>
+    <string id="st_box_rock">           <translation lang="de">Kiste (Stein)</translation>           </string>
+    <string id="st_brake">              <translation lang="de">Bremse</translation>                  </string>
+    <string id="st_break">              <translation lang="de">Zerstörbar</translation>              </string>
+    <string id="st_break_plain">        <translation lang="de">Zerstörbar (normal)</translation>     </string>
+    <string id="st_break_black">        <translation lang="de">Zerstörbar (schwarz)</translation>    </string>
+    <string id="st_break_white">        <translation lang="de">Zerstörbar (weiß)</translation>       </string>
+    <string id="st_break_oxydc">        <translation lang="de">Zerstörbar (both)</translation>       </string>
+    <string id="st_break_boulder">      <translation lang="de">Zerstörbar (boulder)</translation>    </string>
+    <string id="st_break_bug">          <translation lang="de">Zerstörbar (bug)</translation>        </string>
+    <string id="st_break_laser">        <translation lang="de">Zerstörbar (laser)</translation>      </string>
+    <string id="st_brownpyramid">       <translation lang="de">Braune Pyramide</translation>         </string>
+    <string id="st_chameleon">          <translation lang="de">Chamäleon</translation>               </string>
+    <string id="st_charge">             <translation lang="de">Ladung</translation>                  </string>
+    <string id="st_charge_zero">        <translation lang="de">Ladung (0)</translation>              </string>
+    <string id="st_charge_minus">       <translation lang="de">Ladung (-)</translation>              </string>
+    <string id="st_charge_plus">        <translation lang="de">Ladung (+)</translation>              </string>
+    <string id="st_chess">              <translation lang="de">Schachfigur</translation>             </string>
+    <string id="st_coinslot">           <translation lang="de">Münzeinwurf</translation>             </string>
+    <string id="st_darkglass">          <translation lang="de">Getöntes Glas</translation>           </string>
+    <string id="st_death">              <translation lang="de">Tod</translation>                     </string>
+    <string id="st_disco">              <translation lang="de">Disco</translation>                   </string>
+    <string id="st_dispenser">          <translation lang="de">Spender</translation>                 </string>
+    <string id="st_dispenser_bombblack"><translation lang="de">Spender (Bombe)</translation>         </string>
+    <string id="st_dispenser_bombwhite"><translation lang="de">Spender (weiße Bombe)</translation>   </string>
+    <string id="st_dispenser_dynamite"> <translation lang="de">Spender (Dynamit)</translation>       </string>
+    <string id="st_dispenser_extralife"><translation lang="de">Spender (Extra Leben)</translation>   </string>
+    <string id="st_dongle">             <translation lang="de">Dongle</translation>                  </string>
+    <string id="st_door">               <translation lang="de">Tür</translation>                     </string>
+    <string id="st_fake">               <translation lang="de">Imitation</translation>               </string>
+    <string id="st_flash">              <translation lang="de">Blitz</translation>                   </string>
+    <string id="st_flat">               <translation lang="de">Flach</translation>                   </string>
+    <string id="st_flat_breakable">     <translation lang="de">Flach (zerbrechlich)</translation>    </string>
+    <string id="st_flat_hollow">        <translation lang="de">Flach (hohl)</translation>            </string>
+    <string id="st_flat_movable">       <translation lang="de">Flach (beweglich)</translation>       </string>
+    <string id="st_flat_cracked">       <translation lang="de">Flach (rissig)</translation>          </string>
+    <string id="st_flat_burnable">      <translation lang="de">Flach (brennbar)</translation>        </string>
+    <string id="st_flat_moveburnable">  <translation lang="de">Flach (brenn-/schiebbar)</translation></string>
+    <string id="st_flat_breaking">      <translation lang="de">Flach (zerbrechend)</translation>     </string>
+    <string id="st_floppy">             <translation lang="de">Disketten Schalter</translation>      </string>
+    <string id="st_fourswitch">         <translation lang="de">4-fach Schalter</translation>         </string>
+    <string id="st_ghost">              <translation lang="de">Geist</translation>                   </string>
+    <string id="st_grate">              <translation lang="de">Gitter</translation>                  </string>
+    <string id="st_grate_cross">        <translation lang="de">Gitter (Kreuz)</translation>          </string>
+    <string id="st_grate_framed">       <translation lang="de">Gitter (Rahmen)</translation>         </string>
+    <string id="st_greenbrown">         <translation lang="de">Grün-Braun</translation>              </string>
+    <string id="st_ice">                <translation lang="de">Eis</translation>                     </string>
+    <string id="st_jamb">               <translation lang="de">Türpfosten</translation>              </string>
+    <string id="st_jamb_black">         <translation lang="de">Türpfosten (schwarz)</translation>    </string>
+    <string id="st_jamb_white">         <translation lang="de">Türpfosten (weiß)</translation>       </string>
+    <string id="st_key">                <translation lang="de">Schlüsselloch</translation>           </string>
+    <string id="st_knight">             <translation lang="de">Ritter</translation>                  </string>
+    <string id="st_laser">              <translation lang="de">Laser</translation>                   </string>
+    <string id="st_laserflop">          <translation lang="de">Laser-Flop</translation>              </string>
+    <string id="st_laserswitch">        <translation lang="de">Laser-Schalter</translation>          </string>
+    <string id="st_lightglass">         <translation lang="de">Licht-Fenster</translation>           </string>
+    <string id="st_lightpassenger">     <translation lang="de">Licht-Reisender</translation>         </string>
+    <string id="st_magic">              <translation lang="de">Magic</translation>                   </string>
+    <string id="st_mail">               <translation lang="de">Post</translation>                    </string>
+    <string id="st_mirror">             <translation lang="de">Spiegel</translation>                 </string>
+    <string id="st_monoflop">           <translation lang="de">Mono Flop</translation>               </string>
+    <string id="st_oxyd">               <translation lang="de">Oxyd</translation>                    </string>
+    <string id="st_oxyd_a">             <translation lang="de">Oxyd (Typ A)</translation>            </string>
+    <string id="st_oxyd_b">             <translation lang="de">Oxyd (Typ B)</translation>            </string>
+    <string id="st_oxyd_c">             <translation lang="de">Oxyd (Typ C)</translation>            </string>
+    <string id="st_oxyd_d">             <translation lang="de">Oxyd (Typ D)</translation>            </string>
+    <string id="st_oneway">             <translation lang="de">Gerichtet</translation>               </string>
+    <string id="st_passage">            <translation lang="de">Passage</translation>                 </string>
+    <string id="st_plaster">            <translation lang="de">Putz</translation>                    </string>
+    <string id="st_plop">               <translation lang="de">Plopp</translation>                   </string>
+    <string id="st_polarswitch">        <translation lang="de">Polarfilter</translation>             </string>
+    <string id="st_portal">             <translation lang="de">Portal</translation>                  </string>
+    <string id="st_pull">               <translation lang="de">Ziehender Stein</translation>         </string>
+    <string id="st_puzzle">             <translation lang="de">Puzzle</translation>                  </string>
+    <string id="st_quake">              <translation lang="de">Beben</translation>                   </string>
+    <string id="st_rawglass">           <translation lang="de">Glasstein</translation>               </string>
+    <string id="st_redfiber">           <translation lang="de">Rote Fasern</translation>             </string>
+    <string id="st_rotator">            <translation lang="de">Rotator</translation>                 </string>
+    <string id="st_rubberband">         <translation lang="de">Gummiband Stein</translation>         </string>
+    <string id="st_scissors">           <translation lang="de">Schere</translation>                  </string>
+    <string id="st_shogun">             <translation lang="de">Shogun</translation>                  </string>
+    <string id="st_spitter">            <translation lang="de">Kanone</translation>                  </string>
+    <string id="st_stoneimpulse">       <translation lang="de">Impuls</translation>                  </string>
+    <string id="st_surprise">           <translation lang="de">Überraschung</translation>            </string>
+    <string id="st_swap">               <translation lang="de">Tauscher</translation>                </string>
+    <string id="st_switch">             <translation lang="de">Schalter</translation>                </string>
+    <string id="st_thief">              <translation lang="de">Dieb</translation>                    </string>
+    <string id="st_timer">              <translation lang="de">Timer</translation>                   </string>
+    <string id="st_turnstile">          <translation lang="de">Drehkreuz</translation>               </string>
+    <string id="st_turnstilearm">       <translation lang="de">Drehkreuz Arm</translation>           </string>
+    <string id="st_volcano">            <translation lang="de">Vulkan</translation>                  </string>
+    <string id="st_window">             <translation lang="de">Fenster</translation>                 </string>
+    <string id="st_yinyang">            <translation lang="de">Yin-Yang</translation>                </string>
+    
+        <!-- stone attributes -->
+    <string id="attr_invisible">        <translation lang="de">unsichtbar</translation>               </string>
+    <string id="attr_movable">          <translation lang="de">beweglich</translation>                </string>
+    <string id="attr_barrier">          <translation lang="de">unzulässiges Objekt</translation>      </string>
+    <string id="attr_static">           <translation lang="de">statisch</translation>                 </string>
+    
+    <string id="attr_blur">             <translation lang="de">Sorte</translation>                    </string>
+    <string id="attr_blur_straight">    <translation lang="de">normal</translation>                   </string>
+    <string id="attr_blur_cross">       <translation lang="de">vertauscht</translation>               </string>
+    <string id="attr_blur_magic">       <translation lang="de">zufällig</translation>                 </string>
+    
+    <string id="attr_boulder">          <translation lang="de">dreht gegen Uhrzeigersinn</translation></string>
+    
+    <string id="box_secure">            <translation lang="de">feuerfest</translation>                </string>
+    
+    <string id="attr_charge">           <translation lang="de">Ladung</translation>                   </string>
+    
+    <string id="attr_coinslot">         <translation lang="de">Münze sofort annehmen</translation>    </string>
+    <string id="coin_interval_s">       <translation lang="de">Dauer (2ct Münze)</translation>        </string>
+    <string id="coin_interval_m">       <translation lang="de">Dauer (5ct Münze)</translation>        </string>
+    <string id="coin_interval_l">       <translation lang="de">Dauer (10ct Münze)</translation>       </string>
+    
+    <string id="death_animation">       <translation lang="de">Bewegungsanimations Dauer</translation></string>
+    
+    <string id="dispenser_stock">       <translation lang="de">Menge</translation>                    </string>
+    
+    <string id="attr_floppy">           <translation lang="de">Status</translation>                   </string>
+    <string id="attr_floppy_OFF">       <translation lang="de">keine Diskette</translation>           </string>
+    <string id="attr_floppy_ON">        <translation lang="de">Diskette eingelegt</translation>       </string>
+    <string id="floppy_secure">         <translation lang="de">sichere Tür</translation>              </string>
+
+    <string id="attr_fourswitch">       <translation lang="de">Status</translation>                   </string>
+    <string id="fourswitch_ccw">        <translation lang="de">entgegen Uhrzeigersinn</translation>   </string>
+    
+    <string id="attr_key">              <translation lang="de">sichere Tür</translation>              </string>
+    <string id="key_code">              <translation lang="de">Schlüssel-Code</translation>           </string>
+    <string id="key_invisible">         <translation lang="de">Code unsichtbar</translation>          </string>
+    
+    <string id="monoflop_interval">     <translation lang="de">Verzögerung</translation>              </string>
+    <string id="passenger_interval">    <translation lang="de">Grund-Intervall</translation>          </string>
+    <string id="passenger_friction">    <translation lang="de">Reibungs-Koeffizient</translation>     </string>
+    <string id="passenger_gradient">    <translation lang="de">Steigungs-Koeffizient</translation>    </string>
+    
+    <string id="mirror_move">           <translation lang="de">beweglich</translation>                </string>
+    <string id="mirror_ccw">            <translation lang="de">dreht gegen Uhrzeigersinn</translation></string>
+    
+    <string id="attr_oxyd">             <translation lang="de">Status</translation>                   </string>
+    <string id="attr_oxyd_CLOSED">      <translation lang="de">geschlossen</translation>              </string>
+    <string id="attr_oxyd_OPEN">        <translation lang="de">offen</translation>                    </string>
+    <string id="oxyd_noshuffle">        <translation lang="de">kein Mischen</translation>             </string>
+    <string id="oxyd_static">           <translation lang="de">statisch</translation>                 </string>
+    <string id="oxyd_selection">        <translation lang="de">Ersatz Stein</translation>             </string>
+
+    <string id="attr_quake">            <translation lang="de">Status</translation>                  </string>
+    <string id="attr_quake_IDLE">       <translation lang="de">bereit</translation>                  </string>
+    <string id="attr_quake_ACTIVE">     <translation lang="de">aktiv</translation>                   </string>
+    <string id="attr_quake_BREAKING">   <translation lang="de">zerbrechend</translation>             </string>
+    
+    <string id="puzzle_algorithm">      <translation lang="de">Algorithmus Marker</translation>      </string>
+    <string id="puzzle_intensity">      <translation lang="de">Mischungs-Intensität</translation>    </string>
+
+    <string id="rotator_ccw">           <translation lang="de">gegen Uhrzeigersinn</translation>     </string>
+    
+    <string id="rubberband_strength">   <translation lang="de">Kraft</translation>                   </string>
+    <string id="rubberband_length">     <translation lang="de">Länge</translation>                   </string>
+    <string id="rubberband_threshold">  <translation lang="de">Schwellwert (unten)</translation>     </string>
+    <string id="rubberband_min">        <translation lang="de">min. Länge</translation>              </string>
+    <string id="rubberband_max">        <translation lang="de">max. Länge</translation>              </string>
+    <string id="rubberband_scissor">    <translation lang="de">verwende Schere</translation>         </string>
+
+    <string id="attr_shogun_m">         <translation lang="de">Mittlerer Teil-Stein</translation>    </string>
+    <string id="attr_shogun_s">         <translation lang="de">Kleiner Teil-Stein</translation>      </string>
+    
+    <string id="spitter_state">         <translation lang="de">Status</translation>                  </string>
+    <string id="spitter_state_IDLE">    <translation lang="de">untätig</translation>                 </string>
+    <string id="spitter_state_ACTIVE">  <translation lang="de">bereit</translation>                  </string>
+    <string id="spitter_secure">        <translation lang="de">überlebt Kanonenkugel</translation>   </string>
+
+    <string id="switch_instant">        <translation lang="de">sofortige Statusänderung</translation></string>
+    
+    <string id="attr_timer">            <translation lang="de">Intervall</translation>               </string>
+    <string id="timer_loop">            <translation lang="de">Schleife</translation>                </string>
+    
+    <string id="attr_turnstile">        <translation lang="de">Farbe</translation>                   </string>
+    <string id="attr_turnstile_red">    <translation lang="de">Rot</translation>                     </string>
+    <string id="attr_turnstile_green">  <translation lang="de">Grün</translation>                    </string>
+    <string id="turnstile_ccw">         <translation lang="de">gegen Uhrzeigersinn</translation>     </string>
+    
+    <string id="attr_volcano">          <translation lang="de">Status</translation>                  </string>
+    <string id="attr_volcano_IDLE">     <translation lang="de">untätig</translation>                 </string>
+    <string id="attr_volcano_ACTIVE">   <translation lang="de">bereit</translation>                  </string>
+    <string id="volcano_secure">        <translation lang="de">fülle vollständig</translation>       </string>
+    
+    <string id="attr_window">           <translation lang="de">sicher</translation>                  </string>
+    <string id="window_scratches">      <translation lang="de">gebrochen</translation>               </string>
+    
+    <string id="attr_yinyang">          <translation lang="de">Status</translation>                  </string>
+    <string id="attr_yinyang_IDLE">     <translation lang="de">bereit</translation>                  </string>
+    <string id="attr_yinyang_ACTIVE">   <translation lang="de">aktiv</translation>                   </string>
+    <string id="attr_yinyang_INACTIVE"> <translation lang="de">inaktiv</translation>                 </string>
+</i18n>
+

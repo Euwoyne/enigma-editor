@@ -91,6 +91,12 @@ abstract class MM<T extends Source> extends Data implements Dereferencable
 		}
 	}
 	
+	/** Get the value corresponding to the given mode */
+	public T get(Mode2 mode)
+	{
+		return mode == Mode2.EASY ? easy : difficult;
+	}
+	
 	/**
 	 * Create a multi-mode instance.
 	 * @param code  Code snippet this multi-mode value is uniquely constructed by.

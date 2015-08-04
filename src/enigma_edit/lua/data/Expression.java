@@ -33,7 +33,7 @@ import org.luaj.vm2.Lua;
  */
 public class Expression extends SourceData
 {
-	final public int    op;
+	final public int      op;
 	final public Source[] arg;
 	
 	public Expression(int op, Source arg, CodeSnippet code)
@@ -68,24 +68,24 @@ public class Expression extends SourceData
 	{
 		switch (op)
 		{
-		case Lua.OP_ADD:      return parens(arg[0]) + " + " + parens(arg[1]);
+		case Lua.OP_ADD:      return parens(arg[0]) + " + "   + parens(arg[1]);
 		case Lua.OP_AND:      return parens(arg[0]) + " and " + parens(arg[1]);
-		case Lua.OP_CONCAT:   return parens(arg[0]) + " .. " + parens(arg[1]);
-		case Lua.OP_DIV:      return parens(arg[0]) + " / " + parens(arg[1]);
-		case Lua.OP_EQ:       return parens(arg[0]) + " == " + parens(arg[1]);
-		case Lua.OP_GE:       return parens(arg[0]) + " >= " + parens(arg[1]);
-		case Lua.OP_GT:       return parens(arg[0]) + " > " + parens(arg[1]);
-		case Lua.OP_LE:       return parens(arg[0]) + " <= " + parens(arg[1]);
-		case Lua.OP_LEN:      return "#" + parens(arg[0]);
-		case Lua.OP_LT:       return parens(arg[0]) + " < " + parens(arg[1]);
-		case Lua.OP_MOD:      return parens(arg[0]) + " % " + parens(arg[1]);
-		case Lua.OP_MUL:      return parens(arg[0]) + " * " + parens(arg[1]);
-		case Lua.OP_NEQ:      return parens(arg[0]) + " ~= " + parens(arg[1]);
-		case Lua.OP_NOT:      return "!" + parens(arg[0]);
-		case Lua.OP_OR:       return parens(arg[0]) + " or " + parens(arg[1]);
-		case Lua.OP_POW:      return parens(arg[0]) + " ^ " + parens(arg[1]);
-		case Lua.OP_SUB:      return parens(arg[0]) + " - " + parens(arg[1]);
-		case Lua.OP_UNM:      return "-" + parens(arg[0]);
+		case Lua.OP_CONCAT:   return parens(arg[0]) + " .. "  + parens(arg[1]);
+		case Lua.OP_DIV:      return parens(arg[0]) + " / "   + parens(arg[1]);
+		case Lua.OP_EQ:       return parens(arg[0]) + " == "  + parens(arg[1]);
+		case Lua.OP_GE:       return parens(arg[0]) + " >= "  + parens(arg[1]);
+		case Lua.OP_GT:       return parens(arg[0]) + " > "   + parens(arg[1]);
+		case Lua.OP_LE:       return parens(arg[0]) + " <= "  + parens(arg[1]);
+		case Lua.OP_LEN:      return                   "#"    + parens(arg[0]);
+		case Lua.OP_LT:       return parens(arg[0]) + " < "   + parens(arg[1]);
+		case Lua.OP_MOD:      return parens(arg[0]) + " % "   + parens(arg[1]);
+		case Lua.OP_MUL:      return parens(arg[0]) + " * "   + parens(arg[1]);
+		case Lua.OP_NEQ:      return parens(arg[0]) + " ~= "  + parens(arg[1]);
+		case Lua.OP_NOT:      return                   "!"    + parens(arg[0]);
+		case Lua.OP_OR:       return parens(arg[0]) + " or "  + parens(arg[1]);
+		case Lua.OP_POW:      return parens(arg[0]) + " ^ "   + parens(arg[1]);
+		case Lua.OP_SUB:      return parens(arg[0]) + " - "   + parens(arg[1]);
+		case Lua.OP_UNM:      return                   "-"    + parens(arg[0]);
 		default:              return "OP" + Integer.toString(op) + "(" + arg[0].toString() + ", " + ((arg[1] != null) ? arg[1].toString() : "null") + ")";
 		}
 	}

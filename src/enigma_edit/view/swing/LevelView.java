@@ -34,8 +34,8 @@ import enigma_edit.error.MissingImageException;
 import enigma_edit.lua.data.Mode;
 import enigma_edit.lua.data.Mode2;
 import enigma_edit.lua.data.Tile;
-import enigma_edit.model.RenderingAgent;
 import enigma_edit.model.ImageTile;
+import enigma_edit.model.RenderingAgent;
 import enigma_edit.model.Tileset;
 import enigma_edit.model.World;
 
@@ -149,7 +149,7 @@ public class LevelView extends JPanel implements MouseListener
 		final int y = e.getY() / displaySize + 1;
 		if (x > 0 && y > 0 && x <= world.getWidth() && y <= world.getHeight())
 		{
-			final ImageTile tile = world.getTile(x, y);
+			final Tile tile = world.getTile(x, y).tile();
 			if (tile.has_fl()) print(String.format("%d:%d:floor", x, y), tile.fl());
 			if (tile.has_st()) print(String.format("%d:%d:stone", x, y), tile.st());
 			if (tile.has_it()) print(String.format("%d:%d:item",  x, y), tile.it());

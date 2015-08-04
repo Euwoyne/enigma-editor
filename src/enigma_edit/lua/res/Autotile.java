@@ -275,10 +275,10 @@ public class Autotile extends SourceData implements Resolver
 	private static void substitute(Tile template, String sub, Tile target, Mode mode)
 	{
 		target.add(template, mode);
-		if (template.has_fl()) substitute(template.fl().get(mode).checkTable(mode).snapshot(), sub, target, mode);
-		if (template.has_it()) substitute(template.it().get(mode).checkTable(mode).snapshot(), sub, target, mode);
-		if (template.has_ac()) substitute(template.ac().get(mode).checkTable(mode).snapshot(), sub, target, mode);
-		if (template.has_st()) substitute(template.st().get(mode).checkTable(mode).snapshot(), sub, target, mode);
+		if (template.has_fl(mode)) substitute(template.fl().get(mode).checkTable(mode).snapshot(), sub, target, mode);
+		if (template.has_it(mode)) substitute(template.it().get(mode).checkTable(mode).snapshot(), sub, target, mode);
+		if (template.has_ac(mode)) substitute(template.ac().get(mode).checkTable(mode).snapshot(), sub, target, mode);
+		if (template.has_st(mode)) substitute(template.st().get(mode).checkTable(mode).snapshot(), sub, target, mode);
 	}
 	
 	private Tile applyRules(ArrayList<Rule> rules, String key, Mode mode)

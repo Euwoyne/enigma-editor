@@ -348,5 +348,16 @@ public class Table extends Value implements Indexed, Iterable<Entry<String, Vari
 	@Override public boolean hasNormalI(    String key) {return fields.containsKey(key) && fields.get(key).hasNormal();} 
 	@Override public boolean hasNormal(     String key) {return hasNormalI('"' + key + '"');}
 	@Override public boolean hasNormal(     int    idx) {return hasNormalI(Integer.toString(idx));}
+	
+	@Override public boolean existI(String key, Mode2 mode)
+	{
+		return fields.containsKey(key)
+				&& (mode == Mode2.EASY
+					? fields.get(key).hasEasy()
+					: fields.get(key).hasDifficult());
+	}
+	
+	@Override public boolean exist( String key, Mode2 mode) {return existI('"' + key + '"', mode);}
+	@Override public boolean exist( int    idx, Mode2 mode) {return existI(Integer.toString(idx), mode);}
 }
 

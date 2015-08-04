@@ -27,6 +27,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -45,6 +46,8 @@ import enigma_edit.error.MissingAttributeException;
 import enigma_edit.error.MissingImageException;
 import enigma_edit.model.I18N;
 import enigma_edit.model.Tileset;
+import enigma_edit.model.Tileset.NamedImage;
+import enigma_edit.model.Tileset.VarImage;
 
 public class KindList extends JTabbedPane implements MouseListener 
 {
@@ -53,35 +56,19 @@ public class KindList extends JTabbedPane implements MouseListener
 	
 	private class Kind
 	{
-		I18N.KeyString           label;
-		ArrayList<Tileset.Image> image;
+		I18N.KeyString      label;
+		ArrayList<VarImage> image;
 		
 		Kind(Tileset.Kind kind) throws MissingAttributeException
 		{
 			label = tileset.getString(kind.getI18n());
-			image = new ArrayList<Tileset.Image>();
-			if (kind.hasStack())
-			{
-				for (Tileset.Variants v : kind.getStack())
-				{
-					if (!v.isVisual(kind)) continue;
-					image.add(v.getDefaultVariant(kind).getImage());
-				}
-			}
-			else image.add(kind.getDefaultImage());
-			
-			while (image.get(image.size() - 1).getStack() != null)
-				image.add(image.get(image.size() - 1).getStack());
+			image = kind.getImage();
 		}
 		
-		Kind(Tileset.Variant variant)
+		Kind(Tileset.Alias alias)
 		{
-			label = tileset.getString(variant.getName());
-			image = new ArrayList<Tileset.Image>();
-			image.add(variant.getImage());
-			
-			while (image.get(image.size() - 1).getStack() != null)
-				image.add(image.get(image.size() - 1).getStack());
+			label = tileset.getString(alias.getName());
+			image = alias.getImage();
 		}
 	}
 	
@@ -94,7 +81,17 @@ public class KindList extends JTabbedPane implements MouseListener
 		Group(Tileset.Group group) throws MissingAttributeException, MissingImageException
 		{
 			label = tileset.getString(group.getI18n());
-			icon = new ImageIcon(((Sprite)group.getIconImage().getSprite()).getImage(ICONSIZE));
+			
+			final Tileset.Variant iconsrc = tileset.get(group.getIcon());
+			if (iconsrc instanceof Tileset.Kind)
+			{
+				if (((Tileset.Kind)iconsrc).hasIcon())
+					icon = new ImageIcon(((Sprite)((Tileset.Kind)iconsrc).getIcon().getSprite()).getImage(ICONSIZE));
+				else
+					icon = new ImageIcon(((Sprite)((Tileset.Kind)iconsrc).iterator().next().get(0).getSprite()).getImage(ICONSIZE));
+			}
+			else if (iconsrc instanceof Tileset.VarImage)
+				icon = new ImageIcon(((Sprite)((Tileset.VarImage)iconsrc).getSprite()).getImage(ICONSIZE));
 			kinds = new DefaultListModel<Kind>();
 		}
 	}
@@ -118,13 +115,12 @@ public class KindList extends JTabbedPane implements MouseListener
 				for (Tileset.Kind kind : page)
 				{
 					if (kind.isHidden()) continue;
-					if (!kind.hasStack() && kind.hasVariants() && kind.getVariants().getShowAll())
-					{
-						for (Tileset.Variant variant : kind.getVariants())
-							icongroup.kinds.addElement(new Kind(variant));
-					}
-					else
+					
+					if (!kind.showAliases())
 						icongroup.kinds.addElement(new Kind(kind));
+					else
+						for (Tileset.Alias alias : kind.getAliases())
+							icongroup.kinds.addElement(new Kind(alias));
 				}
 			}
 		}
@@ -174,13 +170,13 @@ public class KindList extends JTabbedPane implements MouseListener
 	{
 		private static final long serialVersionUID = 1L;
 		
-		private String            lang;
-		private Map<Kind, Sprite> sprites;
+		private String                   lang;
+		private Map<Kind, BufferedImage> sprites;
 		
 		public TileRenderer(Locale locale)
 		{
 			this.lang = locale.getLanguage();
-			this.sprites = new HashMap<Kind, Sprite>();
+			this.sprites = new HashMap<Kind, BufferedImage>();
 			
 			//this.setOpaque(false);
 			//this.setBackground(null);
@@ -202,24 +198,23 @@ public class KindList extends JTabbedPane implements MouseListener
 				{
 					if (kind.image.size() == 1)
 					{
-						sprites.put(kind, (Sprite)kind.image.get(0).getSprite());
+						sprites.put(kind, ((Sprite)kind.image.get(0).getSprite()).getImage(KindList.this.displaySize));
 					}
 					else
 					{
-						Sprite sprite = null;
-						for (Tileset.Image image : kind.image)
+						Sprite.Image buffer = null;
+						for (NamedImage image : kind.image)
 						{
-							if (sprite == null)
-								sprite = new Sprite(image, ((Sprite)image.getSprite()).getGfxPath(), ((Sprite)image.getSprite()).getFont());
-							else
-								sprite.stack(image);
+							if (buffer == null)
+								buffer = ((Sprite)image.getSprite()).new Image(KindList.this.displaySize);
+							buffer.draw(image);
 						}
-						sprites.put(kind, sprite);
+						sprites.put(kind, buffer);
 					}
 				}
 				
 				this.setText(kind.label.get(lang));
-				this.setIcon(new ImageIcon(sprites.get(kind).getImage(KindList.this.displaySize)));
+				this.setIcon(new ImageIcon(sprites.get(kind)));
 			}
 			catch (MissingImageException err)
 			{

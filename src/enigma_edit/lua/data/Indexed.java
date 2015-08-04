@@ -49,6 +49,8 @@ public interface Indexed extends Typed
 	 * @param value   Value to be assigned.
 	 * @param assign  Assignment source code.
 	 * @param mode    Mode to use the value for.
+	 * 
+	 * @return  The variable that was assigned to.
 	 */
 	Variable assign(String key, Source value, CodeSnippet assign, Mode mode);
 	
@@ -59,6 +61,8 @@ public interface Indexed extends Typed
 	 * @param value   Value to be assigned.
 	 * @param assign  Assignment source code.
 	 * @param mode    Mode to use the value for.
+	 * 
+	 * @return  The variable that was assigned to.
 	 */
 	Variable assign(int idx, Source value, CodeSnippet assign, Mode mode);
 	
@@ -76,7 +80,7 @@ public interface Indexed extends Typed
 	
 	/**
 	 * Get the value of a given field completely dereferencing all
-	 * references. {@see NonValue#getValue(Mode)}
+	 * references. @see NonValue#getValue(Mode)
 	 * 
 	 * @param key   Name of the field.
 	 * @param mode  Mode to fetch the value for.
@@ -86,7 +90,7 @@ public interface Indexed extends Typed
 	
 	/**
 	 * Get the value with a given index completely dereferencing all
-	 * references. {@see NonValue#getValue(Mode)}
+	 * references. @see NonValue#getValue(Mode)
 	 * 
 	 * @param idx   Index of the field.
 	 * @param mode  Mode to fetch the value for.
@@ -96,7 +100,7 @@ public interface Indexed extends Typed
 	
 	/**
 	 * Raw value getter.
-	 * @see {@link #getValue(String)}
+	 * @see #getValue(String)
 	 */
 	MMValue getValueI(String idx);
 	
@@ -115,7 +119,6 @@ public interface Indexed extends Typed
 	 * 
 	 * @param idx   Index of the field.
 	 * @return      The {@link MM} instance referenced by the identifier.
-	 * @see         Assignable#getValue(Mode)
 	 */
 	MMValue getValue(int idx);
 	
@@ -127,7 +130,6 @@ public interface Indexed extends Typed
 	
 	/**
 	 * Get the value assigned to the field of the given name.
-	 * @see #deref(Mode)
 	 * 
 	 * @param key   Name of the field.
 	 * @param mode  Mode to fetch the value for.
@@ -137,7 +139,6 @@ public interface Indexed extends Typed
 	
 	/**
 	 * Get the value assigned to the given index.
-	 * @see #deref(Mode)
 	 * 
 	 * @param idx   Index of the field.
 	 * @param mode  Mode to fetch the value for.
@@ -242,5 +243,14 @@ public interface Indexed extends Typed
 	
 	/** Check if a an index is defined in normal mode. */
 	public boolean hasNormal(int    idx);
+	
+	/** Raw mode existence checker. */
+	public boolean existI(String key, Mode2 mode);
+	
+	/** Check if a field is defined in a given mode. */
+	public boolean exist(String key, Mode2 mode);
+	
+	/** Check if a an index is defined in a given mode. */
+	public boolean exist(int    idx, Mode2 mode);
 }
 

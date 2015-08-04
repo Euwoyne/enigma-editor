@@ -210,7 +210,7 @@ public class WoCallAPI20 extends SourceData implements WoCall
 	/**
 	 * Call to {@code wo(resolver, defaultkey, width, height)} to create an empty level.
 	 * 
-	 * @param resolver    Resolver instance (already checked by the {@link enigma_edit.api.CodeAnalyser CodeAnalyser}).
+	 * @param resolver    Resolver instance (already checked by the {@link enigma_edit.lua.CodeAnalyser CodeAnalyser}).
 	 * @param defaultkey  Default tile key (should be a string).
 	 * @param width       Width of the new world (should be an integer).
 	 * @param height      Height of the new world (should be an integer).
@@ -251,7 +251,7 @@ public class WoCallAPI20 extends SourceData implements WoCall
 	/**
 	 * Call to {@code wo(resolver, defaultkey, map)} to create a world from map.
 	 * 
-	 * @param resolver    Resolver instance (already checked by the {@link enigma_edit.api.CodeAnalyser CodeAnalyser}).
+	 * @param resolver    Resolver instance (already checked by the {@link enigma_edit.lua.CodeAnalyser CodeAnalyser}).
 	 * @param defaultkey  Default tile key (should be a string).
 	 * @param map         World map (should be a table of strings).
 	 * @param mode        Mode that {@code wo} was called in.
@@ -294,7 +294,7 @@ public class WoCallAPI20 extends SourceData implements WoCall
 	/**
 	 * Call to {@code wo(resolver, libmap)} to create a world by the library {@code libmap}.
 	 * 
-	 * @param resolver  Resolver instance (already checked by the {@link enigma_edit.api.CodeAnalyser CodeAnalyser}).
+	 * @param resolver  Resolver instance (already checked by the {@link enigma_edit.lua.CodeAnalyser CodeAnalyser}).
 	 * @param libmap    World map (should be an instance of {@link LibmapMap}).
 	 * @param mode      Mode that {@code wo} was called in.
 	 * @param code      Code snippet containing the call.
@@ -340,7 +340,6 @@ public class WoCallAPI20 extends SourceData implements WoCall
 	 * 
 	 * @param x     X coordinate of the field ({@code 1 <= x <= width})
 	 * @param y     Y coordinate of the field ({@code 1 <= y <= height})
-	 * @param mode  Use the map for this mode.
 	 * @return      ImageTile at the specified position {@code (x,y)} on the map;
 	 *              or {@code null}, if the position is outside of the map or if the resolver fails.
 	 */

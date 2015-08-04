@@ -152,5 +152,8 @@ public interface Typed
 	
 	/** Check if this is defined in the given mode. */
 	abstract boolean isDefined(Mode mode);
+	
+	/** Check if this is defined in the given mode. */
+	abstract boolean isDefined(Mode2 mode);
 }
 
