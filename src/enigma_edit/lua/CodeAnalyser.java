@@ -285,7 +285,9 @@ public class CodeAnalyser
 		public void visit(Stat.LocalAssign stat)
 		{
 			final ExpVisitor visitor = new ExpVisitor();
-			for (int iName = 0, iExp = 0, nVar = stat.names.size(), nExp = stat.values.size(); iName < nVar || iExp < nExp; ++iName, ++iExp)
+			final int nVar = stat.names  != null ? stat.names.size()  : 0;
+			final int nExp = stat.values != null ? stat.values.size() : 0;
+			for (int iName = 0, iExp = 0; iName < nVar || iExp < nExp; ++iName, ++iExp)
 			{
 				if (iExp < nExp)
 				{
@@ -655,7 +657,7 @@ public class CodeAnalyser
  						 				tile = new MMTileDecl(new TileDecl(part1.easy));
  						 			else
  						 				tile = new MMTileDecl(part1.hasEasy() ? new TileDecl(part1.easy) : null, part1.hasDifficult() ? new TileDecl(part1.difficult) : null);
- 									tile.add(new TilePart.Construct(rhs.value), mode);
+ 									tile.add(new ObjectDecl(rhs.value), mode);
  									value = new MultiMode(tile, new CodeSnippet(code, exp));
  								}
 								value = rhs.value;
@@ -667,7 +669,7 @@ public class CodeAnalyser
 					 				tile = new MMTileDecl(new TileDecl(part1.easy));
 					 			else
 					 				tile = new MMTileDecl(part1.hasEasy() ? new TileDecl(part1.easy) : null, part1.hasDifficult() ? new TileDecl(part1.difficult) : null);
-								tile.add(new TilePart.Construct(rhs.value), mode);
+								tile.add(new ObjectDecl(rhs.value), mode);
 								value = new MultiMode(tile, new CodeSnippet(code, exp));
  							}
 	 					}
@@ -684,18 +686,18 @@ public class CodeAnalyser
  								if (!tile1.isNull())
  									tile1.add(tile2, mode);
  								else
- 									tile1.add(new TilePart.Construct(rhs.value), mode);
+ 									tile1.add(new ObjectDecl(rhs.value), mode);
  							}
  							else
  							{
-								tile1.add(new TilePart.Construct(rhs.value), mode);
+								tile1.add(new ObjectDecl(rhs.value), mode);
  							}
 							value = lhs.value;
  						}
 	 					else
 	 					{
 							MMTileDecl tile;
-			 				tile = new MMTileDecl(new TileDecl(new TilePart.Construct(lhs.value)));
+			 				tile = new MMTileDecl(new TileDecl(new ObjectDecl(lhs.value)));
  							if (!part2.isNull())
  							{
  								tile.add(part2, mode);
@@ -706,11 +708,11 @@ public class CodeAnalyser
  								if (!tile.isNull())
  									tile.add(tile2, mode);
  								else
- 									tile.add(new TilePart.Construct(rhs.value), mode);
+ 									tile.add(new ObjectDecl(rhs.value), mode);
  							}
  							else
  							{
-								tile.add(new TilePart.Construct(rhs.value), mode);
+								tile.add(new ObjectDecl(rhs.value), mode);
  							}
 							value = new MultiMode(tile, new CodeSnippet(code, exp));
 	 					}
@@ -800,7 +802,7 @@ public class CodeAnalyser
 		 				if (exp.args.exps == null || exp.args.exps.isEmpty())
 		 					return;
 		 				((Exp)exp.args.exps.get(0)).accept(this);
-		 				value = new TilePart.Construct(value);
+		 				value = new ObjectDecl(value);
 		 			}
 		 			
 		 			// cond()

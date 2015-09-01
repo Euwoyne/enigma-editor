@@ -28,23 +28,23 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import enigma_edit.model.Tileset;
+import enigma_edit.model.Tileset.VariantImage;
 
 public class SpriteSet implements enigma_edit.model.SpriteSet
 {
-	private Path                            gfxPath;
-	private Font                            font;
-	private Map<Tileset.NamedImage, Sprite> sprites;
+	private Path                      gfxPath;
+	private Font                      font;
+	private Map<VariantImage, Sprite> sprites;
 	
 	public SpriteSet(Path gfxPath, Font font)
 	{
 		this.gfxPath = gfxPath;
 		this.font    = font;
-		this.sprites = new LinkedHashMap<Tileset.NamedImage, Sprite>();
+		this.sprites = new LinkedHashMap<VariantImage, Sprite>();
 	}
 	
 	@Override
-	public enigma_edit.model.Sprite get(Tileset.NamedImage image)
+	public enigma_edit.model.Sprite get(VariantImage image)
 	{
 		Sprite sprite = sprites.get(image);
 		if (sprite == null)
@@ -58,7 +58,7 @@ public class SpriteSet implements enigma_edit.model.SpriteSet
 	@Override
 	public void free(int size)
 	{
-		for (Map.Entry<Tileset.NamedImage, Sprite> i : sprites.entrySet())
+		for (Map.Entry<VariantImage, Sprite> i : sprites.entrySet())
 			i.getValue().freeImage(size);
 	}
 	

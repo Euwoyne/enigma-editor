@@ -46,7 +46,22 @@ public interface Constants
 	 */
 	int value();
 	
-	
+	/**
+	 * Attribute {@code state} of all switch-able objects ({@code ON/OFF}).
+	 * Used by
+	 *  {@code it_magnet}, 
+	 *  {@code it_wormhole}, 
+	 *  {@code st_floppy}, 
+	 *  {@code st_key}, 
+	 *  {@code st_laser}, 
+	 *  {@code st_laserflop}, 
+	 *  {@code st_laserswitch}, 
+	 *  {@code st_lightpassenger}, 
+	 *  {@code st_monoflop}, 
+	 *  {@code st_polarswitch}, 
+	 *  {@code st_switch} and
+	 *  {@code st_timer}.
+	 */
 	public static enum SwitchState implements Constants
 	{
 		OFF(0), ON(1);
@@ -63,6 +78,17 @@ public interface Constants
 		}
 	}
 	
+	/**
+	 * Attribute {@code state} of all door-like objects ({@code OPEN/CLOSED}).
+	 * Used by
+	 *  {@code fl_bridge},
+	 *  {@code it_blocker},
+	 *  {@code it_trap},
+	 *  {@code it_vortex},
+	 *  {@code st_blocker},
+	 *  {@code st_door} and
+	 *  {@code st_fake}.
+	 */
 	public static enum DoorState implements Constants
 	{
 		CLOSED(0), OPEN(1);
@@ -82,6 +108,14 @@ public interface Constants
 		}
 	}
 	
+	/**
+	 * Generic attribute {@code state} (with values {@code IDLE/ACTIVE/INACTIVE}).
+	 * Used by
+	 *  {@code it_dynamite},
+	 *  {@code it_bomb},
+	 *  {@code st_spitter} and
+	 *  {@code st_volcano}.
+	 */
 	public static enum State implements Constants
 	{
 		IDLE(0), ACTIVE(1), INACTIVE(2);
@@ -782,7 +816,7 @@ public interface Constants
 	 * and possibly converted to the given constant.
 	 * 
 	 * @param val  A table, that defines a {@link enigma_edit.lua.data.TileDecl tile}
-	 *             (or a {@link enigma_edit.lua.data.TilePart part thereof}).
+	 *             (or a {@link enigma_edit.lua.data.TileDeclPart part thereof}).
 	 */
 	public static void checkTable(Table val)
 	{

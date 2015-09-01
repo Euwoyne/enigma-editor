@@ -453,7 +453,7 @@
             <attr name="code"      type="token"   default="1"    i18n="key_code"/>
             <attr name="invisible" type="boolean" default="true" i18n="key_invisible"/>
             <variants attrs="code">
-                <variant>        <image pos="0,0"/></variant>
+                <variant val=""> <image pos="0,0"/></variant>
                 <variant val="1"><image pos="0,1"/></variant>
                 <variant val="2"><image pos="0,2"/></variant>
                 <variant val="3"><image pos="0,3"/></variant>
@@ -915,64 +915,112 @@
         
         <!-- Blue Sand -->
         <kind name="st_bluesand" oldname="st-blue-sand" type="st">
-            <cluster>                                                                      <image pos="0,0"/>
-                <connect dirs="w"    name="st_bluesand_w"    oldname="st-bigbluesand-w">   <image pos="0,1"/></connect>
-                <connect dirs="s"    name="st_bluesand_s"    oldname="st-bigbluesand-s">   <image pos="0,2"/></connect>
-                <connect dirs="sw"   name="st_bluesand_sw"   oldname="st-bigbluesand-sw">  <image pos="0,3"/></connect>
-                <connect dirs="e"    name="st_bluesand_e"    oldname="st-bigbluesand-e">   <image pos="1,0"/></connect>
-                <connect dirs="ew"   name="st_bluesand_ew"   oldname="st-bigbluesand-ew">  <image pos="1,1"/></connect>
-                <connect dirs="es"   name="st_bluesand_es"   oldname="st-bigbluesand-es">  <image pos="1,2"/></connect>
-                <connect dirs="esw"  name="st_bluesand_esw"  oldname="st-bigbluesand-esw"> <image pos="1,3"/></connect>
-                <connect dirs="n"    name="st_bluesand_n"    oldname="st-bigbluesand-n">   <image pos="2,0"/></connect>
-                <connect dirs="nw"   name="st_bluesand_nw"   oldname="st-bigbluesand-nw">  <image pos="2,1"/></connect>
-                <connect dirs="ns"   name="st_bluesand_ns"   oldname="st-bigbluesand-ns">  <image pos="2,2"/></connect>
-                <connect dirs="nsw"  name="st_bluesand_nsw"  oldname="st-bigbluesand-nsw"> <image pos="2,3"/></connect>
-                <connect dirs="ne"   name="st_bluesand_ne"   oldname="st-bigbluesand-ne">  <image pos="3,0"/></connect>
-                <connect dirs="new"  name="st_bluesand_new"  oldname="st-bigbluesand-new"> <image pos="3,1"/></connect>
-                <connect dirs="nes"  name="st_bluesand_nes"  oldname="st-bigbluesand-nes"> <image pos="3,2"/></connect>
-                <connect dirs="nesw" name="st_bluesand_nesw" oldname="st-bigbluesand-nesw"><image pos="3,3"/></connect>
+            <alias name="st_bluesand_w"    oldname="st-bigbluesand-w">   <attr name="connections" val="w"/>   </alias>
+            <alias name="st_bluesand_s"    oldname="st-bigbluesand-s">   <attr name="connections" val="s"/>   </alias>
+            <alias name="st_bluesand_sw"   oldname="st-bigbluesand-sw">  <attr name="connections" val="sw"/>  </alias>
+            <alias name="st_bluesand_e"    oldname="st-bigbluesand-e">   <attr name="connections" val="e"/>   </alias>
+            <alias name="st_bluesand_ew"   oldname="st-bigbluesand-ew">  <attr name="connections" val="ew"/>  </alias>
+            <alias name="st_bluesand_es"   oldname="st-bigbluesand-es">  <attr name="connections" val="es"/>  </alias>
+            <alias name="st_bluesand_esw"  oldname="st-bigbluesand-esw"> <attr name="connections" val="esw"/> </alias>
+            <alias name="st_bluesand_n"    oldname="st-bigbluesand-n">   <attr name="connections" val="n"/>   </alias>
+            <alias name="st_bluesand_nw"   oldname="st-bigbluesand-nw">  <attr name="connections" val="nw"/>  </alias>
+            <alias name="st_bluesand_ns"   oldname="st-bigbluesand-ns">  <attr name="connections" val="ns"/>  </alias>
+            <alias name="st_bluesand_nsw"  oldname="st-bigbluesand-nsw"> <attr name="connections" val="nsw"/> </alias>
+            <alias name="st_bluesand_ne"   oldname="st-bigbluesand-ne">  <attr name="connections" val="ne"/>  </alias>
+            <alias name="st_bluesand_new"  oldname="st-bigbluesand-new"> <attr name="connections" val="new"/> </alias>
+            <alias name="st_bluesand_nes"  oldname="st-bigbluesand-nes"> <attr name="connections" val="nes"/> </alias>
+            <alias name="st_bluesand_nesw" oldname="st-bigbluesand-nesw"><attr name="connections" val="nesw"/></alias>
+            <cluster>
+                <connect dirs="">    <image pos="0,0"/></connect>
+                <connect dirs="w">   <image pos="0,1"/></connect>
+                <connect dirs="s">   <image pos="0,2"/></connect>
+                <connect dirs="sw">  <image pos="0,3"/></connect>
+                <connect dirs="e">   <image pos="1,0"/></connect>
+                <connect dirs="ew">  <image pos="1,1"/></connect>
+                <connect dirs="es">  <image pos="1,2"/></connect>
+                <connect dirs="esw"> <image pos="1,3"/></connect>
+                <connect dirs="n">   <image pos="2,0"/></connect>
+                <connect dirs="nw">  <image pos="2,1"/></connect>
+                <connect dirs="ns">  <image pos="2,2"/></connect>
+                <connect dirs="nsw"> <image pos="2,3"/></connect>
+                <connect dirs="ne">  <image pos="3,0"/></connect>
+                <connect dirs="new"> <image pos="3,1"/></connect>
+                <connect dirs="nes"> <image pos="3,2"/></connect>
+                <connect dirs="nesw"><image pos="3,3"/></connect>
             </cluster>
         </kind>
         
         <!-- Brick -->
         <kind name="st_brick" oldname="st-brick" type="st">
-            <cluster>                                                                <image pos="0,0"/>
-                <connect dirs="w"    name="st_brick_w"    oldname="st-bigbrick-w">   <image pos="0,1"/></connect>
-                <connect dirs="s"    name="st_brick_s"    oldname="st-bigbrick-s">   <image pos="0,2"/></connect>
-                <connect dirs="sw"   name="st_brick_sw"   oldname="st-bigbrick-sw">  <image pos="0,3"/></connect>
-                <connect dirs="e"    name="st_brick_e"    oldname="st-bigbrick-e">   <image pos="1,0"/></connect>
-                <connect dirs="ew"   name="st_brick_ew"   oldname="st-bigbrick-ew">  <image pos="1,1"/></connect>
-                <connect dirs="es"   name="st_brick_es"   oldname="st-bigbrick-es">  <image pos="1,2"/></connect>
-                <connect dirs="esw"  name="st_brick_esw"  oldname="st-bigbrick-esw"> <image pos="1,3"/></connect>
-                <connect dirs="n"    name="st_brick_n"    oldname="st-bigbrick-n">   <image pos="2,0"/></connect>
-                <connect dirs="nw"   name="st_brick_nw"   oldname="st-bigbrick-nw">  <image pos="2,1"/></connect>
-                <connect dirs="ns"   name="st_brick_ns"   oldname="st-bigbrick-ns">  <image pos="2,2"/></connect>
-                <connect dirs="nsw"  name="st_brick_nsw"  oldname="st-bigbrick-nsw"> <image pos="2,3"/></connect>
-                <connect dirs="ne"   name="st_brick_ne"   oldname="st-bigbrick-ne">  <image pos="3,0"/></connect>
-                <connect dirs="new"  name="st_brick_new"  oldname="st-bigbrick-new"> <image pos="3,1"/></connect>
-                <connect dirs="nes"  name="st_brick_nes"  oldname="st-bigbrick-nes"> <image pos="3,2"/></connect>
-                <connect dirs="nesw" name="st_brick_nesw" oldname="st-bigbrick-nesw"><image pos="3,3"/></connect>
+            <alias name="st_brick_w"    oldname="st-bigbrick-w">   <attr name="connections" val="w"/>   </alias>
+            <alias name="st_brick_s"    oldname="st-bigbrick-s">   <attr name="connections" val="s"/>   </alias>
+            <alias name="st_brick_sw"   oldname="st-bigbrick-sw">  <attr name="connections" val="sw"/>  </alias>
+            <alias name="st_brick_e"    oldname="st-bigbrick-e">   <attr name="connections" val="e"/>   </alias>
+            <alias name="st_brick_ew"   oldname="st-bigbrick-ew">  <attr name="connections" val="ew"/>  </alias>
+            <alias name="st_brick_es"   oldname="st-bigbrick-es">  <attr name="connections" val="es"/>  </alias>
+            <alias name="st_brick_esw"  oldname="st-bigbrick-esw"> <attr name="connections" val="esw"/> </alias>
+            <alias name="st_brick_n"    oldname="st-bigbrick-n">   <attr name="connections" val="n"/>   </alias>
+            <alias name="st_brick_nw"   oldname="st-bigbrick-nw">  <attr name="connections" val="nw"/>  </alias>
+            <alias name="st_brick_ns"   oldname="st-bigbrick-ns">  <attr name="connections" val="ns"/>  </alias>
+            <alias name="st_brick_nsw"  oldname="st-bigbrick-nsw"> <attr name="connections" val="nsw"/> </alias>
+            <alias name="st_brick_ne"   oldname="st-bigbrick-ne">  <attr name="connections" val="ne"/>  </alias>
+            <alias name="st_brick_new"  oldname="st-bigbrick-new"> <attr name="connections" val="new"/> </alias>
+            <alias name="st_brick_nes"  oldname="st-bigbrick-nes"> <attr name="connections" val="nes"/> </alias>
+            <alias name="st_brick_nesw" oldname="st-bigbrick-nesw"><attr name="connections" val="nesw"/></alias>
+            <cluster>
+                <connect dirs="">    <image pos="0,0"/></connect>
+                <connect dirs="w">   <image pos="0,1"/></connect>
+                <connect dirs="s">   <image pos="0,2"/></connect>
+                <connect dirs="sw">  <image pos="0,3"/></connect>
+                <connect dirs="e">   <image pos="1,0"/></connect>
+                <connect dirs="ew">  <image pos="1,1"/></connect>
+                <connect dirs="es">  <image pos="1,2"/></connect>
+                <connect dirs="esw"> <image pos="1,3"/></connect>
+                <connect dirs="n">   <image pos="2,0"/></connect>
+                <connect dirs="nw">  <image pos="2,1"/></connect>
+                <connect dirs="ns">  <image pos="2,2"/></connect>
+                <connect dirs="nsw"> <image pos="2,3"/></connect>
+                <connect dirs="ne">  <image pos="3,0"/></connect>
+                <connect dirs="new"> <image pos="3,1"/></connect>
+                <connect dirs="nes"> <image pos="3,2"/></connect>
+                <connect dirs="nesw"><image pos="3,3"/></connect>
             </cluster>
         </kind>
         
         <!-- Panel -->
         <kind name="st_panel" oldname="st-wood_001" type="st">
-            <cluster>                                     <image pos="0,0"/>
-                <connect dirs="w"    name="st_panel_w">   <image pos="0,1"/></connect>
-                <connect dirs="s"    name="st_panel_s">   <image pos="0,2"/></connect>
-                <connect dirs="sw"   name="st_panel_sw">  <image pos="0,3"/></connect>
-                <connect dirs="e"    name="st_panel_e">   <image pos="1,0"/></connect>
-                <connect dirs="ew"   name="st_panel_ew">  <image pos="1,1"/></connect>
-                <connect dirs="es"   name="st_panel_es">  <image pos="1,2"/></connect>
-                <connect dirs="esw"  name="st_panel_esw"> <image pos="1,3"/></connect>
-                <connect dirs="n"    name="st_panel_n">   <image pos="2,0"/></connect>
-                <connect dirs="nw"   name="st_panel_nw">  <image pos="2,1"/></connect>
-                <connect dirs="ns"   name="st_panel_ns">  <image pos="2,2"/></connect>
-                <connect dirs="nsw"  name="st_panel_nsw"> <image pos="2,3"/></connect>
-                <connect dirs="ne"   name="st_panel_ne">  <image pos="3,0"/></connect>
-                <connect dirs="new"  name="st_panel_new"> <image pos="3,1"/></connect>
-                <connect dirs="nes"  name="st_panel_nes"> <image pos="3,2"/></connect>
-                <connect dirs="nesw" name="st_panel_nesw"><image pos="3,3"/></connect>
+            <alias name="st_panel_w">   <attr name="connections" val="w"/>   </alias>
+            <alias name="st_panel_s">   <attr name="connections" val="s"/>   </alias>
+            <alias name="st_panel_sw">  <attr name="connections" val="sw"/>  </alias>
+            <alias name="st_panel_e">   <attr name="connections" val="e"/>   </alias>
+            <alias name="st_panel_ew">  <attr name="connections" val="ew"/>  </alias>
+            <alias name="st_panel_es">  <attr name="connections" val="es"/>  </alias>
+            <alias name="st_panel_esw"> <attr name="connections" val="esw"/> </alias>
+            <alias name="st_panel_n">   <attr name="connections" val="n"/>   </alias>
+            <alias name="st_panel_nw">  <attr name="connections" val="nw"/>  </alias>
+            <alias name="st_panel_ns">  <attr name="connections" val="ns"/>  </alias>
+            <alias name="st_panel_nsw"> <attr name="connections" val="nsw"/> </alias>
+            <alias name="st_panel_ne">  <attr name="connections" val="ne"/>  </alias>
+            <alias name="st_panel_new"> <attr name="connections" val="new"/> </alias>
+            <alias name="st_panel_nes"> <attr name="connections" val="nes"/> </alias>
+            <alias name="st_panel_nesw"><attr name="connections" val="nesw"/></alias>
+            <cluster>
+                <connect dirs="">    <image pos="0,0"/></connect>
+                <connect dirs="w">   <image pos="0,1"/></connect>
+                <connect dirs="s">   <image pos="0,2"/></connect>
+                <connect dirs="sw">  <image pos="0,3"/></connect>
+                <connect dirs="e">   <image pos="1,0"/></connect>
+                <connect dirs="ew">  <image pos="1,1"/></connect>
+                <connect dirs="es">  <image pos="1,2"/></connect>
+                <connect dirs="esw"> <image pos="1,3"/></connect>
+                <connect dirs="n">   <image pos="2,0"/></connect>
+                <connect dirs="nw">  <image pos="2,1"/></connect>
+                <connect dirs="ns">  <image pos="2,2"/></connect>
+                <connect dirs="nsw"> <image pos="2,3"/></connect>
+                <connect dirs="ne">  <image pos="3,0"/></connect>
+                <connect dirs="new"> <image pos="3,1"/></connect>
+                <connect dirs="nes"> <image pos="3,2"/></connect>
+                <connect dirs="nesw"><image pos="3,3"/></connect>
             </cluster>
         </kind>
     </page>
@@ -1054,7 +1102,7 @@
                 <variant name="st_box_wood_growing" oldname="st-wood-growing"><attr name="flavor" val="wood"/><image file="st_box_wood_growing" pos="0,1"/></variant>
                 <variant name="st_box_wood_h"       oldname="st-wood1">       <attr name="flavor" val="wood"/><image file="st_box_wood"         pos="0,0"/></variant>
                 <variant name="st_box_wood_v"       oldname="st-wood2">       <attr name="flavor" val="wood"/><image file="st_box_wood"         pos="0,1"/></variant>
-                <variant name="st_box_hay"          oldname="st-flhay">       <attr name="flavor" val="hay"/> <image file="st_box_hay"          pos="0,2"/></variant>
+                <variant name="st_box_hay"          oldname="st-flhay">       <attr name="flavor" val="hay"/> <image file="st_box_hay"          pos="0,0"/></variant>
                 <variant name="st_box_hay_growing"  oldname="st-flhay">       <attr name="flavor" val="hay"/> <image file="st_box_hay"          pos="0,2"/></variant>
                 <variant name="st_box_rock"         oldname="st-flrock">      <attr name="flavor" val="rock"/><image file="st_box_rock"/>                  </variant>
             </variants>
@@ -1203,19 +1251,27 @@
             <alias name="st_door_d" oldname="st-door_d"><attr name="flavor" val="d"/><attr name="faces" val="ns"/>  </alias>
             <variants attrs="flavor,faces,state">
                 <variant val="a,nesw,CLOSED"><image file="st_oxyda"/>              </variant>
-                <variant val="a,nesw,OPEN">  <image file="st_grate_cross"/>        </variant>
-                <variant val="b,nesw,CLOSED"><image file="st_flat" pos="0,1"/>     </variant>
-                <variant val="b,nesw,OPEN">  <image file="st_flat" pos="0,3"/>     </variant>
-                <variant val="c,nesw,CLOSED"><image file="st_flat"/>               </variant>
-                <variant val="c,nesw,OPEN">  <image file="st_grate_framed"/>       </variant>
                 <variant val="a,ns,CLOSED">  <image file="st_oxyda"/>              </variant>
+                <variant val="a,ew,CLOSED">  <image file="st_oxyda"/>              </variant>
+                <variant val="a,nesw,OPEN">  <image file="st_grate_cross"/>        </variant>
                 <variant val="a,ns,OPEN">    <image file="st_grate_cross"/>        </variant>
+                <variant val="a,ew,OPEN">    <image file="st_grate_cross"/>        </variant>
+                <variant val="b,nesw,CLOSED"><image file="st_flat" pos="0,1"/>     </variant>
                 <variant val="b,ns,CLOSED">  <image file="st_flat" pos="0,1"/>     </variant>
+                <variant val="b,ew,CLOSED">  <image file="st_flat" pos="0,1"/>     </variant>
+                <variant val="b,nesw,OPEN">  <image file="st_flat" pos="0,3"/>     </variant>
                 <variant val="b,ns,OPEN">    <image file="st_flat" pos="0,3"/>     </variant>
+                <variant val="b,ew,OPEN">    <image file="st_flat" pos="0,3"/>     </variant>
+                <variant val="c,nesw,CLOSED"><image file="st_flat"/>               </variant>
                 <variant val="c,ns,CLOSED">  <image file="st_flat"/>               </variant>
+                <variant val="c,ew,CLOSED">  <image file="st_flat"/>               </variant>
+                <variant val="c,nesw,OPEN">  <image file="st_grate_framed"/>       </variant>
                 <variant val="c,ns,OPEN">    <image file="st_grate_framed"/>       </variant>
+                <variant val="c,ew,OPEN">    <image file="st_grate_framed"/>       </variant>
+                <variant val="d,nesw,CLOSED"><image file="st_door_d_ns" pos="0,6"/></variant>
                 <variant val="d,ns,CLOSED">  <image file="st_door_d_ns" pos="0,6"/></variant>
                 <variant val="d,ew,CLOSED">  <image file="st_door_d_ew" pos="6,0"/></variant>
+                <variant val="d,nesw,OPEN">  <image file="st_door_d_ns" pos="0,1"/></variant>
                 <variant val="d,ns,OPEN">    <image file="st_door_d_ns" pos="0,1"/></variant>
                 <variant val="d,ew,OPEN">    <image file="st_door_d_ew" pos="1,0"/></variant>
             </variants>
@@ -1381,10 +1437,10 @@
             <attr name="orientation"  type="direction"               default="NORTH"                   ui="visual"/>
             <attr name="counterclock" type="boolean"                 default="false" i18n="fourswitch_ccw"/>
             <message name="signal"/><message name="on"/><message name="off"/><message name="turn"/><message name="turnback"/>
-            <alias name="st_laser_w" oldname="st-laser-w"><attr name="orientation" val="w"/></alias>
-            <alias name="st_laser_s" oldname="st-laser-s"><attr name="orientation" val="s"/></alias>
-            <alias name="st_laser_e" oldname="st-laser-e"><attr name="orientation" val="e"/></alias>
-            <alias name="st_laser_n" oldname="st-laser-n"><attr name="orientation" val="n"/></alias>
+            <alias name="st_laser_w" oldname="st-laser-w"><attr name="orientation" val="WEST"/> </alias>
+            <alias name="st_laser_s" oldname="st-laser-s"><attr name="orientation" val="SOUTH"/></alias>
+            <alias name="st_laser_e" oldname="st-laser-e"><attr name="orientation" val="EAST"/> </alias>
+            <alias name="st_laser_n" oldname="st-laser-n"><attr name="orientation" val="NORTH"/></alias>
             <variants attrs="state,orientation">
                 <variant val="OFF,WEST"> <image pos="3,0"/></variant>
                 <variant val="OFF,SOUTH"><image pos="2,0"/></variant>
@@ -1418,8 +1474,8 @@
         <kind name="st_lightglass" type="st">
             <variants>
             <variant name="st_lightglass"         oldname="st-glass1"      i18n="var_normal"/>
-            <variant name="st_lightglass_hollow"  oldname="st-glass1_hole" i18n="var_hollow"/>
-            <variant name="st_lightglass_movable" oldname="st-glass1_move" i18n="var_movable"/>
+            <variant name="st_lightglass_hollow"  oldname="st-glass1_hole" i18n="var_hollow"> <image text="hole"/></variant>
+            <variant name="st_lightglass_movable" oldname="st-glass1_move" i18n="var_movable"><image text="move"/></variant>
             </variants>
         </kind>
         
@@ -1582,20 +1638,20 @@
             <attr name="orientation" type="direction"                      default="NORTH" ui="switch"/>
             <attr name="color"       type="integer" enum="nil,BLACK,WHITE" default="nil"   ui="visual"/>
             <message name="orientate"/><message name="flip"/><message name="signal"/>
-            <alias name="st_oneway_n"       oldname="st-oneway-n">      <attr name="direction" val="NORTH"/></alias>
-            <alias name="st_oneway_e"       oldname="st-oneway-e">      <attr name="direction" val="EAST"/> </alias>
-            <alias name="st_oneway_s"       oldname="st-oneway-s">      <attr name="direction" val="SOUTH"/></alias>
-            <alias name="st_oneway_w"       oldname="st-oneway-w">      <attr name="direction" val="WEST"/> </alias>
-            <alias name="st_oneway_black"   oldname="st-oneway_black">                                      <attr name="color" val="BLACK"/></alias>
-            <alias name="st_oneway_black_n" oldname="st-oneway_black-n"><attr name="direction" val="NORTH"/><attr name="color" val="BLACK"/></alias>
-            <alias name="st_oneway_black_e" oldname="st-oneway_black-e"><attr name="direction" val="EAST"/> <attr name="color" val="BLACK"/></alias>
-            <alias name="st_oneway_black_s" oldname="st-oneway_black-s"><attr name="direction" val="SOUTH"/><attr name="color" val="BLACK"/></alias>
-            <alias name="st_oneway_black_w" oldname="st-oneway_black-w"><attr name="direction" val="WEST"/> <attr name="color" val="BLACK"/></alias>
-            <alias name="st_oneway_white"   oldname="st-oneway_white">                                      <attr name="color" val="WHITE"/></alias>
-            <alias name="st_oneway_white_n" oldname="st-oneway_white-n"><attr name="direction" val="NORTH"/><attr name="color" val="WHITE"/></alias>
-            <alias name="st_oneway_white_e" oldname="st-oneway_white-e"><attr name="direction" val="EAST"/> <attr name="color" val="WHITE"/></alias>
-            <alias name="st_oneway_white_s" oldname="st-oneway_white-s"><attr name="direction" val="SOUTH"/><attr name="color" val="WHITE"/></alias>
-            <alias name="st_oneway_white_w" oldname="st-oneway_white-w"><attr name="direction" val="WEST"/> <attr name="color" val="WHITE"/></alias>
+            <alias name="st_oneway_n"       oldname="st-oneway-n">      <attr name="orientation" val="NORTH"/></alias>
+            <alias name="st_oneway_e"       oldname="st-oneway-e">      <attr name="orientation" val="EAST"/> </alias>
+            <alias name="st_oneway_s"       oldname="st-oneway-s">      <attr name="orientation" val="SOUTH"/></alias>
+            <alias name="st_oneway_w"       oldname="st-oneway-w">      <attr name="orientation" val="WEST"/> </alias>
+            <alias name="st_oneway_black"   oldname="st-oneway_black">                                        <attr name="color" val="BLACK"/></alias>
+            <alias name="st_oneway_black_n" oldname="st-oneway_black-n"><attr name="orientation" val="NORTH"/><attr name="color" val="BLACK"/></alias>
+            <alias name="st_oneway_black_e" oldname="st-oneway_black-e"><attr name="orientation" val="EAST"/> <attr name="color" val="BLACK"/></alias>
+            <alias name="st_oneway_black_s" oldname="st-oneway_black-s"><attr name="orientation" val="SOUTH"/><attr name="color" val="BLACK"/></alias>
+            <alias name="st_oneway_black_w" oldname="st-oneway_black-w"><attr name="orientation" val="WEST"/> <attr name="color" val="BLACK"/></alias>
+            <alias name="st_oneway_white"   oldname="st-oneway_white">                                        <attr name="color" val="WHITE"/></alias>
+            <alias name="st_oneway_white_n" oldname="st-oneway_white-n"><attr name="orientation" val="NORTH"/><attr name="color" val="WHITE"/></alias>
+            <alias name="st_oneway_white_e" oldname="st-oneway_white-e"><attr name="orientation" val="EAST"/> <attr name="color" val="WHITE"/></alias>
+            <alias name="st_oneway_white_s" oldname="st-oneway_white-s"><attr name="orientation" val="SOUTH"/><attr name="color" val="WHITE"/></alias>
+            <alias name="st_oneway_white_w" oldname="st-oneway_white-w"><attr name="orientation" val="WEST"/> <attr name="color" val="WHITE"/></alias>
             <variants attrs="color,orientation">
                 <variant val="nil,NORTH">  <image pos="0,1"/></variant>
                 <variant val="nil,EAST">   <image pos="0,0"/></variant>
@@ -1727,80 +1783,163 @@
         
         <!-- Puzzle -->
         <kind name="st_puzzle" oldname="st-puzzle" type="st">
+            <icon file="st_puzzle_blue"/>
+            
             <attr name="color"     type="integer" enum="BLUE,YELLOW" default="BLUE"  ui="visual"/>
             <attr name="hollow"    type="boolean"                    default="false" ui="visual"/>
             <attr name="algorithm" type="string"  enum="marked"      default="nil"   i18n="puzzle_algorithm"/>
             <attr name="intensity" type="integer"                    default="3"     i18n="puzzle_intensity"/>
             <message name="get_adjacents"/><message name="pull_rotate"/><message name="push_rotate"/>
+            
+            <alias name="st_puzzle_blue">                                          <attr name="color" val="BLUE"/></alias>
+            <alias name="st_puzzle_blue_w"    oldname="st-puzzle-w">               <attr name="color" val="BLUE"/><attr name="connections" val="w"/>   </alias>
+            <alias name="st_puzzle_blue_s"    oldname="st-puzzle-s">               <attr name="color" val="BLUE"/><attr name="connections" val="s"/>   </alias>
+            <alias name="st_puzzle_blue_sw"   oldname="st-puzzle-sw">              <attr name="color" val="BLUE"/><attr name="connections" val="sw"/>  </alias>
+            <alias name="st_puzzle_blue_e"    oldname="st-puzzle-e">               <attr name="color" val="BLUE"/><attr name="connections" val="e"/>   </alias>
+            <alias name="st_puzzle_blue_ew"   oldname="st-puzzle-ew">              <attr name="color" val="BLUE"/><attr name="connections" val="ew"/>  </alias>
+            <alias name="st_puzzle_blue_es"   oldname="st-puzzle-es">              <attr name="color" val="BLUE"/><attr name="connections" val="es"/>  </alias>
+            <alias name="st_puzzle_blue_esw"  oldname="st-puzzle-esw">             <attr name="color" val="BLUE"/><attr name="connections" val="esw"/> </alias>
+            <alias name="st_puzzle_blue_n"    oldname="st-puzzle-n">               <attr name="color" val="BLUE"/><attr name="connections" val="n"/>   </alias>
+            <alias name="st_puzzle_blue_nw"   oldname="st-puzzle-nw">              <attr name="color" val="BLUE"/><attr name="connections" val="nw"/>  </alias>
+            <alias name="st_puzzle_blue_ns"   oldname="st-puzzle-ns">              <attr name="color" val="BLUE"/><attr name="connections" val="ns"/>  </alias>
+            <alias name="st_puzzle_blue_nsw"  oldname="st-puzzle-nsw">             <attr name="color" val="BLUE"/><attr name="connections" val="nsw"/> </alias>
+            <alias name="st_puzzle_blue_ne"   oldname="st-puzzle-ne">              <attr name="color" val="BLUE"/><attr name="connections" val="ne"/>  </alias>
+            <alias name="st_puzzle_blue_new"  oldname="st-puzzle-new">             <attr name="color" val="BLUE"/><attr name="connections" val="new"/> </alias>
+            <alias name="st_puzzle_blue_nes"  oldname="st-puzzle-nes">             <attr name="color" val="BLUE"/><attr name="connections" val="nes"/> </alias>
+            <alias name="st_puzzle_blue_nesw" oldname="st-puzzle-nesw">            <attr name="color" val="BLUE"/><attr name="connections" val="nesw"/></alias>
+            
+            <alias name="st_puzzle_blue_hollow">                                   <attr name="color" val="BLUE"/><attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_w_hollow">                                 <attr name="color" val="BLUE"/><attr name="connections" val="w"/>   <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_s_hollow">                                 <attr name="color" val="BLUE"/><attr name="connections" val="s"/>   <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_sw_hollow">                                <attr name="color" val="BLUE"/><attr name="connections" val="sw"/>  <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_e_hollow">                                 <attr name="color" val="BLUE"/><attr name="connections" val="e"/>   <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_ew_hollow">                                <attr name="color" val="BLUE"/><attr name="connections" val="ew"/>  <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_es_hollow">                                <attr name="color" val="BLUE"/><attr name="connections" val="es"/>  <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_esw_hollow">                               <attr name="color" val="BLUE"/><attr name="connections" val="esw"/> <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_n_hollow">                                 <attr name="color" val="BLUE"/><attr name="connections" val="n"/>   <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_nw_hollow">                                <attr name="color" val="BLUE"/><attr name="connections" val="nw"/>  <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_ns_hollow">                                <attr name="color" val="BLUE"/><attr name="connections" val="ns"/>  <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_nsw_hollow">                               <attr name="color" val="BLUE"/><attr name="connections" val="nsw"/> <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_ne_hollow">                                <attr name="color" val="BLUE"/><attr name="connections" val="ne"/>  <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_new_hollow">                               <attr name="color" val="BLUE"/><attr name="connections" val="new"/> <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_nes_hollow">                               <attr name="color" val="BLUE"/><attr name="connections" val="nes"/> <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_blue_nesw_hollow" oldname="st-puzzle-hollow">   <attr name="color" val="BLUE"/><attr name="connections" val="nesw"/><attr name="hollow" val="true"/></alias>
+            
+            <alias name="st_puzzle_yellow">                                        <attr name="color" val="YELLOW"/></alias>
+            <alias name="st_puzzle_yellow_w"    oldname="st-puzzle2-w">            <attr name="color" val="YELLOW"/><attr name="connections" val="w"/>   </alias>
+            <alias name="st_puzzle_yellow_s"    oldname="st-puzzle2-s">            <attr name="color" val="YELLOW"/><attr name="connections" val="s"/>   </alias>
+            <alias name="st_puzzle_yellow_sw"   oldname="st-puzzle2-sw">           <attr name="color" val="YELLOW"/><attr name="connections" val="sw"/>  </alias>
+            <alias name="st_puzzle_yellow_e"    oldname="st-puzzle2-e">            <attr name="color" val="YELLOW"/><attr name="connections" val="e"/>   </alias>
+            <alias name="st_puzzle_yellow_ew"   oldname="st-puzzle2-ew">           <attr name="color" val="YELLOW"/><attr name="connections" val="ew"/>  </alias>
+            <alias name="st_puzzle_yellow_es"   oldname="st-puzzle2-es">           <attr name="color" val="YELLOW"/><attr name="connections" val="es"/>  </alias>
+            <alias name="st_puzzle_yellow_esw"  oldname="st-puzzle2-esw">          <attr name="color" val="YELLOW"/><attr name="connections" val="esw"/> </alias>
+            <alias name="st_puzzle_yellow_n"    oldname="st-puzzle2-n">            <attr name="color" val="YELLOW"/><attr name="connections" val="n"/>   </alias>
+            <alias name="st_puzzle_yellow_nw"   oldname="st-puzzle2-nw">           <attr name="color" val="YELLOW"/><attr name="connections" val="nw"/>  </alias>
+            <alias name="st_puzzle_yellow_ns"   oldname="st-puzzle2-ns">           <attr name="color" val="YELLOW"/><attr name="connections" val="ns"/>  </alias>
+            <alias name="st_puzzle_yellow_nsw"  oldname="st-puzzle2-nsw">          <attr name="color" val="YELLOW"/><attr name="connections" val="nsw"/> </alias>
+            <alias name="st_puzzle_yellow_ne"   oldname="st-puzzle2-ne">           <attr name="color" val="YELLOW"/><attr name="connections" val="ne"/>  </alias>
+            <alias name="st_puzzle_yellow_new"  oldname="st-puzzle2-new">          <attr name="color" val="YELLOW"/><attr name="connections" val="new"/> </alias>
+            <alias name="st_puzzle_yellow_nes"  oldname="st-puzzle2-nes">          <attr name="color" val="YELLOW"/><attr name="connections" val="nes"/> </alias>
+            <alias name="st_puzzle_yellow_nesw" oldname="st-puzzle2-nesw">         <attr name="color" val="YELLOW"/><attr name="connections" val="nesw"/></alias>
+            
+            <alias name="st_puzzle_yellow_hollow">                                 <attr name="color" val="YELLOW"/><attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_w_hollow">                               <attr name="color" val="YELLOW"/><attr name="connections" val="w"/>   <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_s_hollow">                               <attr name="color" val="YELLOW"/><attr name="connections" val="s"/>   <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_sw_hollow">                              <attr name="color" val="YELLOW"/><attr name="connections" val="sw"/>  <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_e_hollow">                               <attr name="color" val="YELLOW"/><attr name="connections" val="e"/>   <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_ew_hollow">                              <attr name="color" val="YELLOW"/><attr name="connections" val="ew"/>  <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_es_hollow">                              <attr name="color" val="YELLOW"/><attr name="connections" val="es"/>  <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_esw_hollow">                             <attr name="color" val="YELLOW"/><attr name="connections" val="esw"/> <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_n_hollow">                               <attr name="color" val="YELLOW"/><attr name="connections" val="n"/>   <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_nw_hollow">                              <attr name="color" val="YELLOW"/><attr name="connections" val="nw"/>  <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_ns_hollow">                              <attr name="color" val="YELLOW"/><attr name="connections" val="ns"/>  <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_nsw_hollow">                             <attr name="color" val="YELLOW"/><attr name="connections" val="nsw"/> <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_ne_hollow">                              <attr name="color" val="YELLOW"/><attr name="connections" val="ne"/>  <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_new_hollow">                             <attr name="color" val="YELLOW"/><attr name="connections" val="new"/> <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_nes_hollow">                             <attr name="color" val="YELLOW"/><attr name="connections" val="nes"/> <attr name="hollow" val="true"/></alias>
+            <alias name="st_puzzle_yellow_nesw_hollow" oldname="st-puzzle2-hollow"><attr name="color" val="YELLOW"/><attr name="connections" val="nesw"/><attr name="hollow" val="true"/></alias>
+            
             <variants attrs="color,hollow">
-                <cluster val="BLUE,false" name="st_puzzle_blue">                              <image file="st_puzzle_blue" pos="0,0"/>
-                    <connect dirs="w"    name="st_puzzle_blue_w"    oldname="st-puzzle-w">    <image file="st_puzzle_blue" pos="0,1"/></connect>
-                    <connect dirs="s"    name="st_puzzle_blue_s"    oldname="st-puzzle-s">    <image file="st_puzzle_blue" pos="0,2"/></connect>
-                    <connect dirs="sw"   name="st_puzzle_blue_sw"   oldname="st-puzzle-sw">   <image file="st_puzzle_blue" pos="0,3"/></connect>
-                    <connect dirs="e"    name="st_puzzle_blue_e"    oldname="st-puzzle-e">    <image file="st_puzzle_blue" pos="1,0"/></connect>
-                    <connect dirs="ew"   name="st_puzzle_blue_ew"   oldname="st-puzzle-ew">   <image file="st_puzzle_blue" pos="1,1"/></connect>
-                    <connect dirs="es"   name="st_puzzle_blue_es"   oldname="st-puzzle-es">   <image file="st_puzzle_blue" pos="1,2"/></connect>
-                    <connect dirs="esw"  name="st_puzzle_blue_esw"  oldname="st-puzzle-esw">  <image file="st_puzzle_blue" pos="1,3"/></connect>
-                    <connect dirs="n"    name="st_puzzle_blue_n"    oldname="st-puzzle-n">    <image file="st_puzzle_blue" pos="2,0"/></connect>
-                    <connect dirs="nw"   name="st_puzzle_blue_nw"   oldname="st-puzzle-nw">   <image file="st_puzzle_blue" pos="2,1"/></connect>
-                    <connect dirs="ns"   name="st_puzzle_blue_ns"   oldname="st-puzzle-ns">   <image file="st_puzzle_blue" pos="2,2"/></connect>
-                    <connect dirs="nsw"  name="st_puzzle_blue_nsw"  oldname="st-puzzle-nsw">  <image file="st_puzzle_blue" pos="2,3"/></connect>
-                    <connect dirs="ne"   name="st_puzzle_blue_ne"   oldname="st-puzzle-ne">   <image file="st_puzzle_blue" pos="3,0"/></connect>
-                    <connect dirs="new"  name="st_puzzle_blue_new"  oldname="st-puzzle-new">  <image file="st_puzzle_blue" pos="3,1"/></connect>
-                    <connect dirs="nes"  name="st_puzzle_blue_nes"  oldname="st-puzzle-nes">  <image file="st_puzzle_blue" pos="3,2"/></connect>
-                    <connect dirs="nesw" name="st_puzzle_blue_nesw" oldname="st-puzzle-nesw"> <image file="st_puzzle_blue" pos="3,3"/></connect>
-                </cluster>
-                <cluster val="BLUE,true" name="st_puzzle_blue_hollow">                                 <image file="st_puzzle_blue_hollow" pos="0,0"/>
-                    <connect dirs="w"    name="st_puzzle_blue_w_hollow">                               <image file="st_puzzle_blue_hollow" pos="0,1"/></connect>
-                    <connect dirs="s"    name="st_puzzle_blue_s_hollow">                               <image file="st_puzzle_blue_hollow" pos="0,2"/></connect>
-                    <connect dirs="sw"   name="st_puzzle_blue_sw_hollow">                              <image file="st_puzzle_blue_hollow" pos="0,3"/></connect>
-                    <connect dirs="e"    name="st_puzzle_blue_e_hollow">                               <image file="st_puzzle_blue_hollow" pos="1,0"/></connect>
-                    <connect dirs="ew"   name="st_puzzle_blue_ew_hollow">                              <image file="st_puzzle_blue_hollow" pos="1,1"/></connect>
-                    <connect dirs="es"   name="st_puzzle_blue_es_hollow">                              <image file="st_puzzle_blue_hollow" pos="1,2"/></connect>
-                    <connect dirs="esw"  name="st_puzzle_blue_esw_hollow">                             <image file="st_puzzle_blue_hollow" pos="1,3"/></connect>
-                    <connect dirs="n"    name="st_puzzle_blue_n_hollow">                               <image file="st_puzzle_blue_hollow" pos="2,0"/></connect>
-                    <connect dirs="nw"   name="st_puzzle_blue_nw_hollow">                              <image file="st_puzzle_blue_hollow" pos="2,1"/></connect>
-                    <connect dirs="ns"   name="st_puzzle_blue_ns_hollow">                              <image file="st_puzzle_blue_hollow" pos="2,2"/></connect>
-                    <connect dirs="nsw"  name="st_puzzle_blue_nsw_hollow">                             <image file="st_puzzle_blue_hollow" pos="2,3"/></connect>
-                    <connect dirs="ne"   name="st_puzzle_blue_ne_hollow">                              <image file="st_puzzle_blue_hollow" pos="3,0"/></connect>
-                    <connect dirs="new"  name="st_puzzle_blue_new_hollow">                             <image file="st_puzzle_blue_hollow" pos="3,1"/></connect>
-                    <connect dirs="nes"  name="st_puzzle_blue_nes_hollow">                             <image file="st_puzzle_blue_hollow" pos="3,2"/></connect>
-                    <connect dirs="nesw" name="st_puzzle_blue_nesw_hollow" oldname="st-puzzle-hollow"> <image file="st_puzzle_blue_hollow" pos="3,3"/></connect>
-                </cluster>
-                <cluster val="YELLOW,false" name="st_puzzle_yellow">                             <image file="st_puzzle_yellow" pos="0,0"/>
-                    <connect dirs="w"    name="st_puzzle_yellow_w"    oldname="st-puzzle2-w">    <image file="st_puzzle_yellow" pos="0,1"/></connect>
-                    <connect dirs="s"    name="st_puzzle_yellow_s"    oldname="st-puzzle2-s">    <image file="st_puzzle_yellow" pos="0,2"/></connect>
-                    <connect dirs="sw"   name="st_puzzle_yellow_sw"   oldname="st-puzzle2-sw">   <image file="st_puzzle_yellow" pos="0,3"/></connect>
-                    <connect dirs="e"    name="st_puzzle_yellow_e"    oldname="st-puzzle2-e">    <image file="st_puzzle_yellow" pos="1,0"/></connect>
-                    <connect dirs="ew"   name="st_puzzle_yellow_ew"   oldname="st-puzzle2-ew">   <image file="st_puzzle_yellow" pos="1,1"/></connect>
-                    <connect dirs="es"   name="st_puzzle_yellow_es"   oldname="st-puzzle2-es">   <image file="st_puzzle_yellow" pos="1,2"/></connect>
-                    <connect dirs="esw"  name="st_puzzle_yellow_esw"  oldname="st-puzzle2-esw">  <image file="st_puzzle_yellow" pos="1,3"/></connect>
-                    <connect dirs="n"    name="st_puzzle_yellow_n"    oldname="st-puzzle2-n">    <image file="st_puzzle_yellow" pos="2,0"/></connect>
-                    <connect dirs="nw"   name="st_puzzle_yellow_nw"   oldname="st-puzzle2-nw">   <image file="st_puzzle_yellow" pos="2,1"/></connect>
-                    <connect dirs="ns"   name="st_puzzle_yellow_ns"   oldname="st-puzzle2-ns">   <image file="st_puzzle_yellow" pos="2,2"/></connect>
-                    <connect dirs="nsw"  name="st_puzzle_yellow_nsw"  oldname="st-puzzle2-nsw">  <image file="st_puzzle_yellow" pos="2,3"/></connect>
-                    <connect dirs="ne"   name="st_puzzle_yellow_ne"   oldname="st-puzzle2-ne">   <image file="st_puzzle_yellow" pos="3,0"/></connect>
-                    <connect dirs="new"  name="st_puzzle_yellow_new"  oldname="st-puzzle2-new">  <image file="st_puzzle_yellow" pos="3,1"/></connect>
-                    <connect dirs="nes"  name="st_puzzle_yellow_nes"  oldname="st-puzzle2-nes">  <image file="st_puzzle_yellow" pos="3,2"/></connect>
-                    <connect dirs="nesw" name="st_puzzle_yellow_nesw" oldname="st-puzzle2-nesw"> <image file="st_puzzle_yellow" pos="3,3"/></connect>
-                </cluster>
-                <cluster val="YELLOW,true" name="st_puzzle_yellow_hollow">                               <image file="st_puzzle_yellow_hollow" pos="0,0"/>
-                    <connect dirs="w"    name="st_puzzle_yellow_w_hollow">                               <image file="st_puzzle_yellow_hollow" pos="0,1"/></connect>
-                    <connect dirs="s"    name="st_puzzle_yellow_s_hollow">                               <image file="st_puzzle_yellow_hollow" pos="0,2"/></connect>
-                    <connect dirs="sw"   name="st_puzzle_yellow_sw_hollow">                              <image file="st_puzzle_yellow_hollow" pos="0,3"/></connect>
-                    <connect dirs="e"    name="st_puzzle_yellow_e_hollow">                               <image file="st_puzzle_yellow_hollow" pos="1,0"/></connect>
-                    <connect dirs="ew"   name="st_puzzle_yellow_ew_hollow">                              <image file="st_puzzle_yellow_hollow" pos="1,1"/></connect>
-                    <connect dirs="es"   name="st_puzzle_yellow_es_hollow">                              <image file="st_puzzle_yellow_hollow" pos="1,2"/></connect>
-                    <connect dirs="esw"  name="st_puzzle_yellow_esw_hollow">                             <image file="st_puzzle_yellow_hollow" pos="1,3"/></connect>
-                    <connect dirs="n"    name="st_puzzle_yellow_n_hollow">                               <image file="st_puzzle_yellow_hollow" pos="2,0"/></connect>
-                    <connect dirs="nw"   name="st_puzzle_yellow_nw_hollow">                              <image file="st_puzzle_yellow_hollow" pos="2,1"/></connect>
-                    <connect dirs="ns"   name="st_puzzle_yellow_ns_hollow">                              <image file="st_puzzle_yellow_hollow" pos="2,2"/></connect>
-                    <connect dirs="nsw"  name="st_puzzle_yellow_nsw_hollow">                             <image file="st_puzzle_yellow_hollow" pos="2,3"/></connect>
-                    <connect dirs="ne"   name="st_puzzle_yellow_ne_hollow">                              <image file="st_puzzle_yellow_hollow" pos="3,0"/></connect>
-                    <connect dirs="new"  name="st_puzzle_yellow_new_hollow">                             <image file="st_puzzle_yellow_hollow" pos="3,1"/></connect>
-                    <connect dirs="nes"  name="st_puzzle_yellow_nes_hollow">                             <image file="st_puzzle_yellow_hollow" pos="3,2"/></connect>
-                    <connect dirs="nesw" name="st_puzzle_yellow_nesw_hollow" oldname="st-puzzle2-hollow"><image file="st_puzzle_yellow_hollow" pos="3,3"/></connect>
-                </cluster>
+                <variant val="BLUE,false">
+                    <cluster>
+                        <connect dirs="">    <image file="st_puzzle_blue" pos="0,0"/></connect>
+                        <connect dirs="w">   <image file="st_puzzle_blue" pos="0,1"/></connect>
+                        <connect dirs="s">   <image file="st_puzzle_blue" pos="0,2"/></connect>
+                        <connect dirs="sw">  <image file="st_puzzle_blue" pos="0,3"/></connect>
+                        <connect dirs="e">   <image file="st_puzzle_blue" pos="1,0"/></connect>
+                        <connect dirs="ew">  <image file="st_puzzle_blue" pos="1,1"/></connect>
+                        <connect dirs="es">  <image file="st_puzzle_blue" pos="1,2"/></connect>
+                        <connect dirs="esw"> <image file="st_puzzle_blue" pos="1,3"/></connect>
+                        <connect dirs="n">   <image file="st_puzzle_blue" pos="2,0"/></connect>
+                        <connect dirs="nw">  <image file="st_puzzle_blue" pos="2,1"/></connect>
+                        <connect dirs="ns">  <image file="st_puzzle_blue" pos="2,2"/></connect>
+                        <connect dirs="nsw"> <image file="st_puzzle_blue" pos="2,3"/></connect>
+                        <connect dirs="ne">  <image file="st_puzzle_blue" pos="3,0"/></connect>
+                        <connect dirs="new"> <image file="st_puzzle_blue" pos="3,1"/></connect>
+                        <connect dirs="nes"> <image file="st_puzzle_blue" pos="3,2"/></connect>
+                        <connect dirs="nesw"><image file="st_puzzle_blue" pos="3,3"/></connect>
+                    </cluster>
+                </variant>
+                <variant val="BLUE,true">
+                    <cluster>
+                        <connect dirs="">    <image file="st_puzzle_blue_hollow" pos="0,0"/></connect>
+                        <connect dirs="w">   <image file="st_puzzle_blue_hollow" pos="0,1"/></connect>
+                        <connect dirs="s">   <image file="st_puzzle_blue_hollow" pos="0,2"/></connect>
+                        <connect dirs="sw">  <image file="st_puzzle_blue_hollow" pos="0,3"/></connect>
+                        <connect dirs="e">   <image file="st_puzzle_blue_hollow" pos="1,0"/></connect>
+                        <connect dirs="ew">  <image file="st_puzzle_blue_hollow" pos="1,1"/></connect>
+                        <connect dirs="es">  <image file="st_puzzle_blue_hollow" pos="1,2"/></connect>
+                        <connect dirs="esw"> <image file="st_puzzle_blue_hollow" pos="1,3"/></connect>
+                        <connect dirs="n">   <image file="st_puzzle_blue_hollow" pos="2,0"/></connect>
+                        <connect dirs="nw">  <image file="st_puzzle_blue_hollow" pos="2,1"/></connect>
+                        <connect dirs="ns">  <image file="st_puzzle_blue_hollow" pos="2,2"/></connect>
+                        <connect dirs="nsw"> <image file="st_puzzle_blue_hollow" pos="2,3"/></connect>
+                        <connect dirs="ne">  <image file="st_puzzle_blue_hollow" pos="3,0"/></connect>
+                        <connect dirs="new"> <image file="st_puzzle_blue_hollow" pos="3,1"/></connect>
+                        <connect dirs="nes"> <image file="st_puzzle_blue_hollow" pos="3,2"/></connect>
+                        <connect dirs="nesw"><image file="st_puzzle_blue_hollow" pos="3,3"/></connect>
+                    </cluster>
+                </variant>
+                <variant val="YELLOW,false">
+                    <cluster>
+                        <connect dirs="">    <image file="st_puzzle_yellow" pos="0,0"/></connect>
+                        <connect dirs="w">   <image file="st_puzzle_yellow" pos="0,1"/></connect>
+                        <connect dirs="s">   <image file="st_puzzle_yellow" pos="0,2"/></connect>
+                        <connect dirs="sw">  <image file="st_puzzle_yellow" pos="0,3"/></connect>
+                        <connect dirs="e">   <image file="st_puzzle_yellow" pos="1,0"/></connect>
+                        <connect dirs="ew">  <image file="st_puzzle_yellow" pos="1,1"/></connect>
+                        <connect dirs="es">  <image file="st_puzzle_yellow" pos="1,2"/></connect>
+                        <connect dirs="esw"> <image file="st_puzzle_yellow" pos="1,3"/></connect>
+                        <connect dirs="n">   <image file="st_puzzle_yellow" pos="2,0"/></connect>
+                        <connect dirs="nw">  <image file="st_puzzle_yellow" pos="2,1"/></connect>
+                        <connect dirs="ns">  <image file="st_puzzle_yellow" pos="2,2"/></connect>
+                        <connect dirs="nsw"> <image file="st_puzzle_yellow" pos="2,3"/></connect>
+                        <connect dirs="ne">  <image file="st_puzzle_yellow" pos="3,0"/></connect>
+                        <connect dirs="new"> <image file="st_puzzle_yellow" pos="3,1"/></connect>
+                        <connect dirs="nes"> <image file="st_puzzle_yellow" pos="3,2"/></connect>
+                        <connect dirs="nesw"><image file="st_puzzle_yellow" pos="3,3"/></connect>
+                    </cluster>
+                </variant>
+                <variant val="YELLOW,true">
+                    <cluster>
+                        <connect dirs="">    <image file="st_puzzle_yellow_hollow" pos="0,0"/></connect>
+                        <connect dirs="w">   <image file="st_puzzle_yellow_hollow" pos="0,1"/></connect>
+                        <connect dirs="s">   <image file="st_puzzle_yellow_hollow" pos="0,2"/></connect>
+                        <connect dirs="sw">  <image file="st_puzzle_yellow_hollow" pos="0,3"/></connect>
+                        <connect dirs="e">   <image file="st_puzzle_yellow_hollow" pos="1,0"/></connect>
+                        <connect dirs="ew">  <image file="st_puzzle_yellow_hollow" pos="1,1"/></connect>
+                        <connect dirs="es">  <image file="st_puzzle_yellow_hollow" pos="1,2"/></connect>
+                        <connect dirs="esw"> <image file="st_puzzle_yellow_hollow" pos="1,3"/></connect>
+                        <connect dirs="n">   <image file="st_puzzle_yellow_hollow" pos="2,0"/></connect>
+                        <connect dirs="nw">  <image file="st_puzzle_yellow_hollow" pos="2,1"/></connect>
+                        <connect dirs="ns">  <image file="st_puzzle_yellow_hollow" pos="2,2"/></connect>
+                        <connect dirs="nsw"> <image file="st_puzzle_yellow_hollow" pos="2,3"/></connect>
+                        <connect dirs="ne">  <image file="st_puzzle_yellow_hollow" pos="3,0"/></connect>
+                        <connect dirs="new"> <image file="st_puzzle_yellow_hollow" pos="3,1"/></connect>
+                        <connect dirs="nes"> <image file="st_puzzle_yellow_hollow" pos="3,2"/></connect>
+                        <connect dirs="nesw"><image file="st_puzzle_yellow_hollow" pos="3,3"/></connect>
+                    </cluster>
+                </variant>
             </variants>
         </kind>
         

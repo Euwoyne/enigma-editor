@@ -33,7 +33,7 @@ public class MMTileDecl extends MM<TileDecl>
 	public MMTileDecl(TileDecl easy, TileDecl difficult)     {super(easy, difficult);}
 	public MMTileDecl(MMTileDecl easy, MMTileDecl difficult) {super(easy.easy, difficult.difficult);}
 	
-	public void add(TilePart part, Mode mode)
+	public void add(TileDeclPart part, Mode mode)
 	{
 		switch (mode)
 		{
@@ -101,17 +101,17 @@ public class MMTileDecl extends MM<TileDecl>
 	{
 		if (tile.hasNormal())
 		{
-			for (TilePart part : tile.easy.parts)
+			for (TileDeclPart part : tile.easy.parts)
 				this.add(part, mode);
 		}
 		else
 		{
 			if (mode != Mode.DIFFICULT && tile.hasEasy())
-				for (TilePart part : tile.easy.parts)
+				for (TileDeclPart part : tile.easy.parts)
 					this.add(part, Mode.EASY);
 			
 			if (mode != Mode.EASY && tile.hasDifficult())
-				for (TilePart part : tile.difficult.parts)
+				for (TileDeclPart part : tile.difficult.parts)
 					this.add(part, Mode.DIFFICULT);
 		}
 	}
@@ -126,8 +126,8 @@ public class MMTileDecl extends MM<TileDecl>
 	 */
 	public MMTileConstruct getObject(int idx)
 	{
-		final TilePart.Construct easy = this.easy.getObject(idx, Mode2.EASY); 
-		final TilePart.Construct diff = this.difficult.getObject(idx, Mode2.DIFFICULT);
+		final ObjectDecl easy = this.easy.getObject(idx, Mode2.EASY); 
+		final ObjectDecl diff = this.difficult.getObject(idx, Mode2.DIFFICULT);
 		if (easy == diff) return new MMTileConstruct(easy);
 		return new MMTileConstruct(easy, diff);
 	}

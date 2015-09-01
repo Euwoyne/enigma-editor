@@ -25,6 +25,7 @@ package enigma_edit.lua.data;
 
 import enigma_edit.lua.CodeAnalyser;
 import org.luaj.vm2.Lua;
+import org.luaj.vm2.LuaError;
 
 /**
  * An expression within the lua code, that is not interpreted by the {@link CodeAnalyser}.
@@ -92,5 +93,41 @@ public class Expression extends SourceData
 	
 	@Override public String   typename()            {return "<expression>";}
 	@Override public String   typename(Mode2 mode)  {return "<expression>";}
+
+	@Override public SimpleValue checkSimple(Mode2 mode)
+	{
+		SimpleValue arg0 = arg[0].checkSimple(mode);
+		SimpleValue arg1 = arg[1] != null ? arg[0].checkSimple(mode) : null;
+		if (arg0 == null) return null;
+		try
+		{
+			switch (op)
+			{
+			case Lua.OP_ADD:      return arg1 == null ? null : new SimpleValue(arg0.value.add(arg1.value), this.code);
+			case Lua.OP_AND:      return arg1 == null ? null : new SimpleValue(arg0.value.and(arg1.value), this.code);
+			case Lua.OP_CONCAT:   return arg1 == null ? null : new SimpleValue(arg0.value.concat(arg1.value), this.code);
+			case Lua.OP_DIV:      return arg1 == null ? null : new SimpleValue(arg0.value.div(arg1.value), this.code);
+			case Lua.OP_EQ:       return arg1 == null ? null : new SimpleValue(arg0.value.eq(arg1.value), this.code);
+			case Lua.OP_GE:       return arg1 == null ? null : new SimpleValue(arg0.value.gteq(arg1.value), this.code);
+			case Lua.OP_GT:       return arg1 == null ? null : new SimpleValue(arg0.value.gt(arg1.value), this.code);
+			case Lua.OP_LE:       return arg1 == null ? null : new SimpleValue(arg0.value.lteq(arg1.value), this.code);
+			case Lua.OP_LEN:      return new SimpleValue(arg0.value.len(), this.code);
+			case Lua.OP_LT:       return arg1 == null ? null : new SimpleValue(arg0.value.lt(arg1.value), this.code);
+			case Lua.OP_MOD:      return arg1 == null ? null : new SimpleValue(arg0.value.mod(arg1.value), this.code);
+			case Lua.OP_MUL:      return arg1 == null ? null : new SimpleValue(arg0.value.mul(arg1.value), this.code);
+			case Lua.OP_NEQ:      return arg1 == null ? null : new SimpleValue(arg0.value.neq(arg1.value), this.code);
+			case Lua.OP_NOT:      return new SimpleValue(arg0.value.not(), this.code);
+			case Lua.OP_OR:       return arg1 == null ? null : new SimpleValue(arg0.value.or(arg1.value), this.code);
+			case Lua.OP_POW:      return arg1 == null ? null : new SimpleValue(arg0.value.pow(arg1.value), this.code);
+			case Lua.OP_SUB:      return arg1 == null ? null : new SimpleValue(arg0.value.sub(arg1.value), this.code);
+			case Lua.OP_UNM:      return new SimpleValue(arg0.value.neg(), this.code);
+			default:              return null;
+			}
+		}
+		catch (LuaError e)
+		{
+			return null;
+		}
+	}
 }
 

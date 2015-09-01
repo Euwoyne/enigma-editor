@@ -53,7 +53,7 @@ public class Sprite implements enigma_edit.model.Sprite
 			this.size   = size;
 		}
 		
-		void draw(Tileset.NamedImage image) throws MissingImageException
+		void draw(Tileset.VariantImage image) throws MissingImageException
 		{
 			Graphics2D     g;
 			java.awt.Image file;
@@ -100,10 +100,10 @@ public class Sprite implements enigma_edit.model.Sprite
 	
 	private Path                     gfxPath;
 	private Font                     font;
-	private Tileset.NamedImage       data;
+	private Tileset.VariantImage     data;
 	private Map<Integer, Image>      sizes;
 	
-	public Sprite(Tileset.NamedImage image, Path gfxPath, Font font)
+	public Sprite(Tileset.VariantImage image, Path gfxPath, Font font)
 	{
 		this.gfxPath = gfxPath;
 		this.font    = font;

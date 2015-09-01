@@ -78,6 +78,7 @@ public class LevelView extends JPanel implements MouseListener
 		if (world == null || !world.isAnalysed()) return;
 		this.setPreferredSize(new java.awt.Dimension(world.getWidth() * displaySize, world.getHeight() * displaySize));
 		this.buffer = null;
+		this.revalidate();
 		this.repaint();
 	}
 	
@@ -137,8 +138,10 @@ public class LevelView extends JPanel implements MouseListener
 		}
 		else
 		{
-			System.out.println(label + "[easy]: " + part.get(Mode.EASY).checkTable(Mode2.EASY));
-			System.out.println(label + "[diff]: " + part.get(Mode.DIFFICULT).checkTable(Mode2.DIFFICULT));
+			if (part.hasEasy())
+				System.out.println(label + "[easy]: " + part.get(Mode.EASY).checkTable(Mode2.EASY));
+			if (part.hasDifficult())
+				System.out.println(label + "[diff]: " + part.get(Mode.DIFFICULT).checkTable(Mode2.DIFFICULT));
 		}
 	}
 	

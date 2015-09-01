@@ -65,6 +65,7 @@ import enigma_edit.control.ToggleAction;
 import enigma_edit.error.LevelLuaException;
 import enigma_edit.error.LevelXMLException;
 import enigma_edit.error.MissingAttributeException;
+import enigma_edit.lua.data.Mode;
 import enigma_edit.model.Level;
 import enigma_edit.model.LevelReader;
 import enigma_edit.model.Tileset;
@@ -86,9 +87,9 @@ public class MainWnd extends JFrame implements WindowListener
 	private JMenuBar    menuBar;
 	private ToolBar     toolBar;
 	
-	private static ImageIcon loadIcon(String path, String tooltip, int size)
+	private static ImageIcon loadIcon(String path, int size)
 	{
-		Image img    = new ImageIcon(path, tooltip).getImage();
+		Image img    = new ImageIcon(path).getImage();
 		int   height = img.getWidth(null);
 		int   width  = img.getHeight(null);
 		if (width == height)
@@ -141,11 +142,11 @@ public class MainWnd extends JFrame implements WindowListener
 		@SuppressWarnings("serial")
 		final Action exitAction   = new Action(0, Resources.uiText.getString("MainWnd.fileMenu.exit")) {
 			public void actionPerformed(ActionEvent e) {MainWnd.this.dispose();}};
-		final Action easyAction   = new NullAction("easy", loadIcon(options.enigmaPath.resolve("gfx/completed-easy.png").toString(), "easy", 19));
-		final Action diffAction   = new NullAction("diff", loadIcon(options.enigmaPath.resolve("gfx/completed.png").toString(), "difficult", 19));
-		final Action itemsAction  = new VisibilityAction(VisibilityAction.ITEMS,  new ImageIcon());
-		final Action actorsAction = new VisibilityAction(VisibilityAction.ACTORS, new ImageIcon());
-		final Action stonesAction = new VisibilityAction(VisibilityAction.STONES, new ImageIcon());
+		final Action easyAction   = new ModeAction(ModeAction.EASY,      loadIcon(options.enigmaPath.resolve("gfx/completed-easy.png").toString(), 19));
+		final Action diffAction   = new ModeAction(ModeAction.DIFFICULT, loadIcon(options.enigmaPath.resolve("gfx/completed.png").toString(), 19));
+		final Action itemsAction  = new VisibilityAction(VisibilityAction.ITEMS,  kindList.getIconAt(kindList.getIndexByLabel("grp_items")));
+		final Action actorsAction = new VisibilityAction(VisibilityAction.ACTORS, kindList.getIconAt(kindList.getIndexByLabel("grp_actors")));
+		final Action stonesAction = new VisibilityAction(VisibilityAction.STONES, kindList.getIconAt(kindList.getIndexByLabel("grp_stones")));
 		
 		// setup default level
 		try
@@ -188,10 +189,10 @@ public class MainWnd extends JFrame implements WindowListener
 		
 		// setup tabs
 		editTabs.addTab(Resources.uiText.getString("MainWnd.levelTab"),
-		                new ImageIcon(((Sprite)tileset.get("fl_lawn").getImage().get(0).getSprite()).getImage(16)),
+		                new ImageIcon(((Sprite)tileset.getKind("fl_lawn").getIcon().getSprite()).getImage(16)),
 		                levelScroll);
 		editTabs.addTab(Resources.uiText.getString("MainWnd.codeTab"),
-		                new ImageIcon(((Sprite)tileset.get("it_document").getImage().get(0).getSprite()).getImage(32).getScaledInstance(16, 16, Image.SCALE_SMOOTH)),
+		                new ImageIcon(((Sprite)tileset.getKind("it_document").getIcon().getSprite()).getImage(32).getScaledInstance(16, 16, Image.SCALE_SMOOTH)),
 		                codeScroll);
 		editTabs.setTabPlacement(JTabbedPane.TOP);
 		editTabs.addChangeListener(new TabChangeAction());
@@ -284,7 +285,7 @@ public class MainWnd extends JFrame implements WindowListener
 		}
 	}
 	
-	private static final String[] viewUiText = {"MainWnd.viewMenu.floors", "MainWnd.viewMenu.items", "MainWnd.viewMenu.actors", "MainWnd.viewMenu.stones"};
+	private static final String[] visibilityUiText = {"MainWnd.viewMenu.floors", "MainWnd.viewMenu.items", "MainWnd.viewMenu.actors", "MainWnd.viewMenu.stones"};
 	
 	private class VisibilityAction extends ToggleAction
 	{
@@ -296,7 +297,7 @@ public class MainWnd extends JFrame implements WindowListener
 		
 		public VisibilityAction(int id, Icon icon)
 		{
-			super(id, Resources.uiText.getString(viewUiText[id]), icon);
+			super(id, Resources.uiText.getString(visibilityUiText[id]), icon);
 			putValue(Action.SELECTED_KEY, true);
 		}
 		
@@ -310,6 +311,32 @@ public class MainWnd extends JFrame implements WindowListener
 			case ITEMS:  MainWnd.this.levelView.setItemVisibility ((boolean)this.getValue(Action.SELECTED_KEY)); break;
 			case ACTORS: MainWnd.this.levelView.setActorVisibility((boolean)this.getValue(Action.SELECTED_KEY)); break;
 			case STONES: MainWnd.this.levelView.setStoneVisibility((boolean)this.getValue(Action.SELECTED_KEY)); break;
+			}
+		}
+	}
+	
+	private static final String[] modeUiText = {"MainWnd.modeMenu.easy", "MainWnd.modeMenu.difficult"};
+	
+	private class ModeAction extends ToggleAction
+	{
+		private static final long serialVersionUID = 1L;
+		public  static final int  EASY = 0;
+		public  static final int  DIFFICULT  = 1;
+		
+		public ModeAction(int id, Icon icon)
+		{
+			super(id, Resources.uiText.getString(modeUiText[id]), icon);
+			putValue(Action.SELECTED_KEY, false);
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent event)
+		{
+			super.actionPerformed(event);
+			switch (this.getId())
+			{
+			case EASY:      MainWnd.this.levelView.setMode(Mode.EASY); break;
+			case DIFFICULT: MainWnd.this.levelView.setMode(Mode.DIFFICULT); break;
 			}
 		}
 	}

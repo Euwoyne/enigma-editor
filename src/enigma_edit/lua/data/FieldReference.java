@@ -66,7 +66,7 @@ public class FieldReference extends SourceData implements Assignable
 	@Override public Nil            checkNil(Mode2 mode)       {final Source val = table.derefI(key, mode); return val != null ? val.checkNil(mode)      : new Nil(code);}
 	@Override public SimpleValue    checkSimple(Mode2 mode)    {final Source val = table.derefI(key, mode); return val != null ? val.checkSimple(mode)   : null;}
 	@Override public Table          checkTable(Mode2 mode)     {final Source val = table.derefI(key, mode); return val != null ? val.checkTable(mode)    : null;}
-	@Override public TilePart       checkTilePart(Mode2 mode)  {final Source val = table.derefI(key, mode); return val != null ? val.checkTilePart(mode) : null;}
+	@Override public TileDeclPart       checkTilePart(Mode2 mode)  {final Source val = table.derefI(key, mode); return val != null ? val.checkTilePart(mode) : null;}
 	@Override public TileDecl       checkTile(Mode2 mode)      {final Source val = table.derefI(key, mode); return val != null ? val.checkTile(mode)     : null;}
 	@Override public Resolver       checkResolver(Mode2 mode)  {final Source val = table.derefI(key, mode); return val != null ? val.checkResolver(mode) : null;}
 	

@@ -27,15 +27,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-import enigma_edit.lua.data.TilePart.Construct;
-
 /**
  * A tile declaration.
  * This is essentially a stack of tables or references to tables.
  */
 public class TileDecl extends Value implements Iterable<MMTileConstruct>
 {
-	public LinkedList<TilePart> parts;
+	public LinkedList<TileDeclPart> parts;
 	
 	/**
 	 * Copy constructor.
@@ -45,8 +43,8 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	private TileDecl(TileDecl tile)
 	{
 		super(tile.code);
-		this.parts = new LinkedList<TilePart>();
-		for (TilePart part : tile.parts)
+		this.parts = new LinkedList<TileDeclPart>();
+		for (TileDeclPart part : tile.parts)
 			this.parts.add(part.snapshot());
 	}
 	
@@ -57,7 +55,7 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	public TileDecl()
 	{
 		super(CodeSnippet.NONE);
-		this.parts = new LinkedList<TilePart>();
+		this.parts = new LinkedList<TileDeclPart>();
 	}
 	
 	/**
@@ -66,10 +64,10 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	 * 
 	 * @param part  Basic code snippet.
 	 */
-	public TileDecl(TilePart part)
+	public TileDecl(TileDeclPart part)
 	{
 		super(part.getCode());
-		this.parts = new LinkedList<TilePart>();
+		this.parts = new LinkedList<TileDeclPart>();
 		this.parts.add(part);
 	}
 	
@@ -79,7 +77,7 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	 * 
 	 * @param part  New tile part to append.
 	 */
-	public void add(TilePart part)
+	public void add(TileDeclPart part)
 	{
 		this.parts.add(part);
 		this.code = this.code.extend(part.getCode());
@@ -92,12 +90,12 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	 * 
 	 * @param idx   Part index.
 	 * @param mode  Mode to check for.
-	 * @return      Requested tile part (as it is wrapped by {@link Construct}).
+	 * @return      Requested tile part (as it is wrapped by {@link ObjectDecl}).
 	 */
-	public Construct getObject(int idx, Mode2 mode)
+	public ObjectDecl getObject(int idx, Mode2 mode)
 	{
 		int cnt = 0, pcnt = 0;
-		for (TilePart part : parts)
+		for (TileDeclPart part : parts)
 		{
 			pcnt = part.objectCount(mode);
 			if (cnt + pcnt > idx)
@@ -117,8 +115,8 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	 */
 	public MMTileConstruct getObject(int idx)
 	{
-		final Construct easy = this.getObject(idx, Mode2.EASY); 
-		final Construct diff = this.getObject(idx, Mode2.DIFFICULT);
+		final ObjectDecl easy = this.getObject(idx, Mode2.EASY); 
+		final ObjectDecl diff = this.getObject(idx, Mode2.DIFFICULT);
 		if (easy == diff) return new MMTileConstruct(easy);
 		return new MMTileConstruct(easy, diff);
 	}
@@ -132,7 +130,7 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	public int objectCount(Mode2 mode)
 	{
 		int cnt = 0;
-		for (TilePart part : parts)
+		for (TileDeclPart part : parts)
 			cnt += part.objectCount(mode);
 		return cnt;
 	}
@@ -149,7 +147,7 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 		if (parts.size() == 1) return parts.getFirst().toString();
 		
 		StringBuilder out = new StringBuilder();
-		java.util.Iterator<TilePart> partit = parts.iterator();
+		java.util.Iterator<TileDeclPart> partit = parts.iterator();
 		out.append(partit.next().toString());
 		while (partit.hasNext())
 		{

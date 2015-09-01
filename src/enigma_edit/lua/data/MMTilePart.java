@@ -25,12 +25,12 @@ package enigma_edit.lua.data;
 
 /**
  * Multi-mode tile part.
- * @see TilePart
+ * @see TileDeclPart
  */
-public class MMTilePart extends MM<TilePart>
+public class MMTilePart extends MM<TileDeclPart>
 {
-	public MMTilePart(TilePart normal)                       {super(normal);}
-	public MMTilePart(TilePart easy, TilePart difficult)     {super(easy, difficult);}
+	public MMTilePart(TileDeclPart normal)                       {super(normal);}
+	public MMTilePart(TileDeclPart easy, TileDeclPart difficult)     {super(easy, difficult);}
 	public MMTilePart(MMTilePart easy, MMTilePart difficult) {super(easy.easy, difficult.difficult);}
 	
 	@Override public String typename() {return "<mixed tile-part>";}

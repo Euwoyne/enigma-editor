@@ -33,8 +33,10 @@ import enigma_edit.lua.data.Resolver;
 import enigma_edit.lua.data.Source;
 import enigma_edit.lua.data.Table;
 import enigma_edit.lua.data.Tile;
+import enigma_edit.lua.data.ObjectDecl;
 import enigma_edit.lua.data.TileDecl;
-import enigma_edit.lua.data.TilePart;
+import enigma_edit.lua.data.TileDeclPart;
+import enigma_edit.lua.data.TileReference;
 import enigma_edit.lua.data.Variable;
 
 /**
@@ -70,7 +72,7 @@ public class Tiles extends Table implements Resolver
 	public Tile resolve(String key, Mode mode)
 	{
 		final Tile tile = new Tile();
-		if (this.exist(key)) tile.add(key, new TileDecl(new TilePart.Ref(this, '"' + key + '"', CodeSnippet.NONE)), mode);
+		if (this.exist(key)) tile.add(key, new TileDecl(new TileReference(this, '"' + key + '"', CodeSnippet.NONE)), mode);
 		return tile;
 	}
 	
@@ -101,7 +103,7 @@ public class Tiles extends Table implements Resolver
 	/**
 	 * Assigns a tile to the given field.
 	 * This overrides {@link Table#assign(String, Source, CodeSnippet, Mode)}
-	 * to add conversion of the {@code value} to {@link TilePart}. 
+	 * to add conversion of the {@code value} to {@link TileDeclPart}. 
 	 * 
 	 * @param key     Name of the field.
 	 * @param value   Value to be assigned.
@@ -132,56 +134,56 @@ public class Tiles extends Table implements Resolver
 			if (value instanceof TileDecl)
 				return super.assignI(key, value, assign, mode);
 			
-			if (value instanceof TilePart)
-				return super.assignI(key, new TileDecl((TilePart)value), assign, mode);
+			if (value instanceof TileDeclPart)
+				return super.assignI(key, new TileDecl((TileDeclPart)value), assign, mode);
 			
-			return super.assignI(key, new TileDecl(new TilePart.Construct(value)), assign, mode);
+			return super.assignI(key, new TileDecl(new ObjectDecl(value)), assign, mode);
 		}
 	}
 	
 	/**
 	 * Get a reference to the given field (raw index).
 	 * This overrides {@link Table#getReferenceI(String, CodeSnippet)}
-	 * to return an instance of {@link TilePart.Ref}. 
+	 * to return an instance of {@link TileReference}. 
 	 * 
 	 * @param key   Name of the field.
 	 * @param code  The referencing code part.
-	 * @return      A new {@link TilePart.Ref}.
+	 * @return      A new {@link TileReference}.
 	 */
 	@Override
-	public TilePart.Ref getReferenceI(String key, CodeSnippet code)
+	public TileReference getReferenceI(String key, CodeSnippet code)
 	{
-		return new TilePart.Ref(this, key, code);
+		return new TileReference(this, key, code);
 	}
 	
 	/**
 	 * Get a reference to the given field.
 	 * This overrides {@link Table#getReference(String, CodeSnippet)}
-	 * to return an instance of {@link TilePart.Ref}. 
+	 * to return an instance of {@link TileReference}. 
 	 * 
 	 * @param key   Name of the field.
 	 * @param code  The referencing code part.
-	 * @return      A new {@link TilePart.Ref}.
+	 * @return      A new {@link TileReference}.
 	 */
 	@Override
-	public TilePart.Ref getReference(String key, CodeSnippet code)
+	public TileReference getReference(String key, CodeSnippet code)
 	{
-		return new TilePart.Ref(this, '"' + key + '"', code);
+		return new TileReference(this, '"' + key + '"', code);
 	}
 	
 	/**
 	 * Get a reference to the given indexed field.
 	 * This overrides {@link Table#getReference(String, CodeSnippet)}
-	 * to return an instance of {@link TilePart.Ref}. 
+	 * to return an instance of {@link TileReference}. 
 	 * 
 	 * @param key   Index of the field.
 	 * @param code  The referencing code part.
-	 * @return      A new {@link TilePart.Ref}.
+	 * @return      A new {@link TileReference}.
 	 */
 	@Override
-	public TilePart.Ref getReference(int key, CodeSnippet code)
+	public TileReference getReference(int key, CodeSnippet code)
 	{
-		return new TilePart.Ref(this, Integer.toString(key), code);
+		return new TileReference(this, Integer.toString(key), code);
 	}
 }
 

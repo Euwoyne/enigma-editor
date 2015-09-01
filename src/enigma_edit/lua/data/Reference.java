@@ -61,7 +61,7 @@ public class Reference extends SourceData implements Assignable
 	@Override public Nil         checkNil(Mode2 mode)       {return target != null ? target.checkNil(mode) : new Nil(code);}
 	@Override public SimpleValue checkSimple(Mode2 mode)    {return target != null ? target.checkSimple(mode) : null;}
 	@Override public Table       checkTable(Mode2 mode)     {return target != null ? target.checkTable(mode) : null;}
-	@Override public TilePart    checkTilePart(Mode2 mode)  {return target != null ? target.checkTilePart(mode) : null;}
+	@Override public TileDeclPart    checkTilePart(Mode2 mode)  {return target != null ? target.checkTilePart(mode) : null;}
 	@Override public TileDecl    checkTile(Mode2 mode)      {return target != null ? target.checkTile(mode) : null;}
 	@Override public Resolver    checkResolver(Mode2 mode)  {return target != null ? target.checkResolver(mode) : null;}
 	

@@ -115,7 +115,6 @@ public class Puzzle extends SourceData implements Resolver
 		// generate connections
 		final Table table = decl.snapshot();
 		final char c = key.charAt(key.length()-1);
-		System.out.println("Key Char: '" + c + "'");
 		if (c >= '0' && c <= '9')
 		{
 			table.assign("cluster", new SimpleValue(LuaValue.valueOf((int)(c - '0')), CodeSnippet.NONE), CodeSnippet.NONE, mode);
@@ -127,21 +126,21 @@ public class Puzzle extends SourceData implements Resolver
 			table.assign("cluster", new Nil(CodeSnippet.NONE), CodeSnippet.NONE, mode);
 			switch (c)
 			{
-			case 'a': case 'A': table.assign("connections", new SimpleValue(LuaValue.valueOf("w"),    CodeSnippet.NONE), CodeSnippet.NONE, mode);
-			case 'b': case 'B': table.assign("connections", new SimpleValue(LuaValue.valueOf("s"),    CodeSnippet.NONE), CodeSnippet.NONE, mode);
-			case 'c': case 'C': table.assign("connections", new SimpleValue(LuaValue.valueOf("sw"),   CodeSnippet.NONE), CodeSnippet.NONE, mode);
-			case 'd': case 'D': table.assign("connections", new SimpleValue(LuaValue.valueOf("e"),    CodeSnippet.NONE), CodeSnippet.NONE, mode);
-			case 'e': case 'E': table.assign("connections", new SimpleValue(LuaValue.valueOf("ew"),   CodeSnippet.NONE), CodeSnippet.NONE, mode);
-			case 'f': case 'F': table.assign("connections", new SimpleValue(LuaValue.valueOf("es"),   CodeSnippet.NONE), CodeSnippet.NONE, mode);
-			case 'g': case 'G': table.assign("connections", new SimpleValue(LuaValue.valueOf("esw"),  CodeSnippet.NONE), CodeSnippet.NONE, mode);
-			case 'h': case 'H': table.assign("connections", new SimpleValue(LuaValue.valueOf("n"),    CodeSnippet.NONE), CodeSnippet.NONE, mode);
-			case 'i': case 'I': table.assign("connections", new SimpleValue(LuaValue.valueOf("nw"),   CodeSnippet.NONE), CodeSnippet.NONE, mode);
-			case 'j': case 'J': table.assign("connections", new SimpleValue(LuaValue.valueOf("ns"),   CodeSnippet.NONE), CodeSnippet.NONE, mode);
-			case 'k': case 'K': table.assign("connections", new SimpleValue(LuaValue.valueOf("nsw"),  CodeSnippet.NONE), CodeSnippet.NONE, mode);
-			case 'l': case 'L': table.assign("connections", new SimpleValue(LuaValue.valueOf("ne"),   CodeSnippet.NONE), CodeSnippet.NONE, mode);
-			case 'm': case 'M': table.assign("connections", new SimpleValue(LuaValue.valueOf("new"),  CodeSnippet.NONE), CodeSnippet.NONE, mode);
-			case 'n': case 'N': table.assign("connections", new SimpleValue(LuaValue.valueOf("nes"),  CodeSnippet.NONE), CodeSnippet.NONE, mode);
-			case 'o': case 'O': table.assign("connections", new SimpleValue(LuaValue.valueOf("nesw"), CodeSnippet.NONE), CodeSnippet.NONE, mode);
+			case 'a': case 'A': table.assign("connections", new SimpleValue(LuaValue.valueOf("w"),    CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
+			case 'b': case 'B': table.assign("connections", new SimpleValue(LuaValue.valueOf("s"),    CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
+			case 'c': case 'C': table.assign("connections", new SimpleValue(LuaValue.valueOf("sw"),   CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
+			case 'd': case 'D': table.assign("connections", new SimpleValue(LuaValue.valueOf("e"),    CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
+			case 'e': case 'E': table.assign("connections", new SimpleValue(LuaValue.valueOf("ew"),   CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
+			case 'f': case 'F': table.assign("connections", new SimpleValue(LuaValue.valueOf("es"),   CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
+			case 'g': case 'G': table.assign("connections", new SimpleValue(LuaValue.valueOf("esw"),  CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
+			case 'h': case 'H': table.assign("connections", new SimpleValue(LuaValue.valueOf("n"),    CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
+			case 'i': case 'I': table.assign("connections", new SimpleValue(LuaValue.valueOf("nw"),   CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
+			case 'j': case 'J': table.assign("connections", new SimpleValue(LuaValue.valueOf("ns"),   CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
+			case 'k': case 'K': table.assign("connections", new SimpleValue(LuaValue.valueOf("nsw"),  CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
+			case 'l': case 'L': table.assign("connections", new SimpleValue(LuaValue.valueOf("ne"),   CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
+			case 'm': case 'M': table.assign("connections", new SimpleValue(LuaValue.valueOf("new"),  CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
+			case 'n': case 'N': table.assign("connections", new SimpleValue(LuaValue.valueOf("nes"),  CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
+			case 'o': case 'O': table.assign("connections", new SimpleValue(LuaValue.valueOf("nesw"), CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
 			}
 		    table.assign("hollow",  new SimpleValue(LuaValue.valueOf(c < 'a'), CodeSnippet.NONE), CodeSnippet.NONE, mode);
 		}
@@ -157,9 +156,6 @@ public class Puzzle extends SourceData implements Resolver
 			table.assign("connections", new Nil(CodeSnippet.NONE), CodeSnippet.NONE, mode);
 		    table.assign("hollow",  new SimpleValue(LuaValue.valueOf(true), CodeSnippet.NONE), CodeSnippet.NONE, mode);
 		}
-		System.out.println("    cluster     = " + table.get("cluster").toString());
-		System.out.println("    connections = " + table.get("connections").toString());
-		System.out.println("    hollow      = " + table.get("hollow").toString());
 		
 		// set new stone
 		tile.substitute(table, mode);

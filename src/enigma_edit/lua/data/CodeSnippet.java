@@ -235,6 +235,29 @@ public final class CodeSnippet implements Comparable<CodeSnippet>
 	}
 	
 	/**
+	 * Equality operator.
+	 */
+	@Override
+	public boolean equals(Object o)
+	{
+		return (o instanceof CodeSnippet &&
+			((CodeSnippet)o).startPos    == startPos    &&
+			((CodeSnippet)o).endPos      == endPos      &&
+			((CodeSnippet)o).startLine   == startLine   &&
+			((CodeSnippet)o).endLine     == endLine     &&
+			((CodeSnippet)o).startColumn == startColumn &&
+			((CodeSnippet)o).endColumn   == endColumn);
+	}
+	
+	/**
+	 * Check, if this code snippet is entirely behind another one. 
+	 */
+	public boolean isBehind(CodeSnippet code)
+	{
+		return startPos >= code.endPos;
+	}
+	
+	/**
 	 * Very rough ordering on the code snippets.
 	 */
 	@Override
@@ -286,5 +309,4 @@ public final class CodeSnippet implements Comparable<CodeSnippet>
 		return startPos < 0 || endPos < 0;
 	}
 }
-
 

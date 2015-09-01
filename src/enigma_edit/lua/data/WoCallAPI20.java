@@ -46,7 +46,7 @@ public class WoCallAPI20 extends SourceData implements WoCall
 	private static class Map
 	{
 		/** mode this map is defined for */
-		public final Mode2    mode;
+		public final Mode     mode;
 		
 		/** width of the map (in tiles) */
 		public final int      width;
@@ -74,7 +74,7 @@ public class WoCallAPI20 extends SourceData implements WoCall
 		 * @param defaultkey  Default tile key (should be a string).
 		 * @param mode        Mode that {@code wo} was called in.
 		 */
-		Map(Resolver resolver, SimpleValue width, SimpleValue height, SimpleValue defaultkey, Mode2 mode)
+		Map(Resolver resolver, SimpleValue width, SimpleValue height, SimpleValue defaultkey, Mode mode)
 		{
 			this.mode = mode;
 			this.map  = null;
@@ -82,18 +82,18 @@ public class WoCallAPI20 extends SourceData implements WoCall
 			
 			// check width
 			if (!width.value.isinttype())
-				throw new LevelLuaException.Runtime("IllegalWoWidth", mode.mode(), width.typename(mode), width.code);
+				throw new LevelLuaException.Runtime("IllegalWoWidth", mode, width.typename(mode), width.code);
 			this.width = width.value.checkint();
 			
 			// check height
 			if (!height.value.isinttype())
-				throw new LevelLuaException.Runtime("IllegalWoHeight", mode.mode(), height.typename(mode), height.code);
+				throw new LevelLuaException.Runtime("IllegalWoHeight", mode, height.typename(mode), height.code);
 			this.height = height.value.checkint();
 			
 			// check default key
 			this.defaultkey = defaultkey.value.checkjstring();
 			if (this.defaultkey == null)
-				throw new LevelLuaException.Runtime("IllegalWoDefaultKey", mode.mode(), defaultkey.typename(mode), defaultkey.code);
+				throw new LevelLuaException.Runtime("IllegalWoDefaultKey", mode, defaultkey.typename(mode), defaultkey.code);
 			
 			// get default tile
 			this.defaulttile = resolver.resolve(this.defaultkey, Mode.NORMAL);
@@ -106,19 +106,20 @@ public class WoCallAPI20 extends SourceData implements WoCall
 		 * @param source      World map (should be a table of strings).
 		 * @param defaultkey  Default tile key (should be a string).
 		 * @param mode        Mode that {@code wo} was called in.
+		 * @param instmode    Mode, this instance is created for
 		 */
-		Map(Resolver resolver, Table source, SimpleValue defaultkey, Mode2 mode) throws LevelLuaException.Runtime
+		Map(Resolver resolver, Table source, SimpleValue defaultkey, Mode mode, Mode2 instmode) throws LevelLuaException.Runtime
 		{
-			this.mode = mode;
+			this.mode = instmode.mode();
 			this.map = source;
 			
 			// check default key
 			this.defaultkey = defaultkey.value.checkjstring();
 			if (this.defaultkey == null)
-				throw new LevelLuaException.Runtime("IllegalWoDefaultKey", mode.mode(), defaultkey.typename(mode), defaultkey.code);
+				throw new LevelLuaException.Runtime("IllegalWoDefaultKey", mode, defaultkey.typename(mode), defaultkey.code);
 			
 			// get default tile
-			this.defaulttile = resolver.resolve(this.defaultkey, Mode.NORMAL);
+			this.defaulttile = resolver.resolve(this.defaultkey, mode);
 			
 			// check height
 			int height = 0;
@@ -131,12 +132,12 @@ public class WoCallAPI20 extends SourceData implements WoCall
 			data = new String[height];
 			for (int i = 0; i < height; ++i)
 			{
-				line = source.get(i+1).checkSimple(mode);
+				line = source.get(i+1).checkSimple(instmode);
 				if (!line.value.isstring())
-					throw new LevelLuaException.Runtime("IllegalWoMapEntry", mode.mode(), line.typename(mode), Integer.toString(i+1), line.code);
+					throw new LevelLuaException.Runtime("IllegalWoMapEntry", mode, line.typename(mode), Integer.toString(i+1), line.code);
 				data[i] = line.value.checkjstring();
 				if (data[i].length() % this.defaultkey.length() != 0)
-					throw new LevelLuaException.Runtime("IllegalWoMapWidth", mode.mode(), Integer.toString(i+1), line.code);
+					throw new LevelLuaException.Runtime("IllegalWoMapWidth", mode, Integer.toString(i+1), line.code);
 				if (width < data[i].length()) width = data[i].length();
 			}
 			
@@ -165,6 +166,26 @@ public class WoCallAPI20 extends SourceData implements WoCall
 			return data[y].substring(x, x + defaultkey.length());
 		}
 		
+		private String updateRow(int x, String row, String newkey)
+		{
+			if (x < row.length())
+			{
+				final String temp = row.substring(0, x).concat(newkey);
+				x += newkey.length();
+				if (x < row.length())
+					row = temp.concat(row.substring(x));
+				else
+					row = temp;
+			}
+			else
+			{
+				while (x > row.length())
+					row = row.concat(defaultkey);
+				row = row.concat(newkey);
+			}
+			return row;
+		}
+		
 		/**
 		 * Set the key at the specified position in the map.
 		 * The key must have the same length as the default key. Note, that this returns
@@ -179,16 +200,60 @@ public class WoCallAPI20 extends SourceData implements WoCall
 		 * @param newkey  Key to replace the old value with.
 		 * @param code    Level source code.
 		 * @return        The changed source code.
-		 * 
-		 * @throws IllegalKeyLength  Thrown, if the length of the given {@code newkey}
-		 *                           differs from the default key length of this map.
 		 */
-		String setKey(int x, int y, String newkey, String code) throws IllegalKeyLength
+		String setKey(int x, int y, String newkey, String code) throws Exception
 		{
 			if (y < 1 || y > height) return null;
 			if (x < 1 || x > width)  return null;
 			if (newkey.length() != defaultkey.length()) throw new IllegalKeyLength(newkey.length(), defaultkey.length());
-			return map.deref(y, mode).getCode().change(code, data[x].substring(0, (y-1) * defaultkey.length()) + newkey + data[x].substring(y * defaultkey.length()));
+			final Variable row = map.get(y);
+			x = (x - 1) * newkey.length();
+			
+			switch (mode)
+			{
+			case EASY:
+				if (row.hasEasy())
+				{
+					final SimpleValue val = row.checkSimple(Mode2.EASY);
+					assert(val != null);
+					code = val.getCode().change(code, updateRow(x, val.toString_noquote(), newkey));
+				}
+				break;
+				
+			case DIFFICULT:
+				if (row.hasDifficult())
+				{
+					final SimpleValue val = row.checkSimple(Mode2.DIFFICULT);
+					assert(val != null);
+					code = val.getCode().change(code, updateRow(x, val.toString_noquote(), newkey));
+				}
+				break;
+				
+			default:
+				final SimpleValue easy = row.checkSimple(Mode2.EASY);
+				final SimpleValue diff = row.checkSimple(Mode2.DIFFICULT);
+				assert(easy != null && diff != null);
+				
+				if (easy.getCode().equals(diff.getCode()))
+				{
+					code = easy.getCode().change(code, updateRow(x, easy.toString_noquote(), newkey));
+				}
+				else if (easy.getCode().isBehind(diff.getCode()))
+				{
+					code = easy.getCode().change(code, updateRow(x, easy.toString_noquote(), newkey));
+					code = diff.getCode().change(code, updateRow(x, diff.toString_noquote(), newkey));
+				}
+				else if (diff.getCode().isBehind(easy.getCode()))
+				{
+					code = diff.getCode().change(code, updateRow(x, diff.toString_noquote(), newkey));
+					code = easy.getCode().change(code, updateRow(x, easy.toString_noquote(), newkey));
+				}
+				else throw new Exception("Map string code locations for easy and difficult mode overlap. (It is quite impossible, that this occurs!)");
+				
+				break;
+			}
+			
+			return code;
 		}
 	}
 	
@@ -238,12 +303,12 @@ public class WoCallAPI20 extends SourceData implements WoCall
 		
 		// create empty map
 		if (this.defaultkey.hasEasy() && this.width.hasEasy() && this.height.hasEasy())
-			this.easyMap = new Map(resolver, this.width.easy, this.height.easy, this.defaultkey.easy, Mode2.EASY);
+			this.easyMap = new Map(resolver, this.width.easy, this.height.easy, this.defaultkey.easy, Mode.EASY);
 		else
 			this.easyMap = null;
 		
 		if (this.defaultkey.hasDifficult() && this.width.hasDifficult() && this.height.hasDifficult())
-			this.difficultMap = new Map(resolver, this.width.difficult,  this.height.difficult, this.defaultkey.difficult, Mode2.DIFFICULT);
+			this.difficultMap = new Map(resolver, this.width.difficult,  this.height.difficult, this.defaultkey.difficult, Mode.DIFFICULT);
 		else
 			this.difficultMap = null;
 	}
@@ -279,14 +344,14 @@ public class WoCallAPI20 extends SourceData implements WoCall
 			throw new LevelLuaException.Runtime("IllegalWoMap", mode, mapSrc.typename(mode), defaultkeySrc.getCode());
 		
 		if (this.defaultkey.hasEasy() && this.map.hasEasy())
-			this.easyMap = new Map(resolver, this.map.easy, this.defaultkey.easy, Mode2.EASY);
+			this.easyMap = new Map(resolver, this.map.easy, this.defaultkey.easy, mode, Mode2.EASY);
 		else
 			this.easyMap = null;
 		
 		if (this.defaultkey.isNormal() && this.map.isNormal())
 			this.difficultMap = this.easyMap;
 		else if (this.defaultkey.hasDifficult() && this.map.hasDifficult())
-			this.difficultMap = new Map(resolver, this.map.difficult, this.defaultkey.difficult, Mode2.DIFFICULT);
+			this.difficultMap = new Map(resolver, this.map.difficult, this.defaultkey.difficult, mode, Mode2.DIFFICULT);
 		else
 			this.difficultMap = null;
 	}
@@ -346,12 +411,43 @@ public class WoCallAPI20 extends SourceData implements WoCall
 	@Override
 	public Tile getTile(int x, int y)
 	{
-		final String easyKey = easyMap.getKey(x, y);
-		final String diffKey = difficultMap.getKey(x, y);
-		final Tile tile =
-				(easyKey.equals(diffKey)) ?
-					resolver.resolve(easyKey, Mode.NORMAL) :
-					Tile.composeMode(resolver.resolve(easyKey, Mode.EASY), resolver.resolve(diffKey, Mode.DIFFICULT));
+		final String easyKey = easyMap      != null ? easyMap.getKey(x, y)      : null;
+		final String diffKey = difficultMap != null ? difficultMap.getKey(x, y) : null;
+		final Tile tile;
+		if (easyKey == diffKey)
+			tile = (easyKey != null) ? resolver.resolve(easyKey, Mode.NORMAL) : new Tile();
+		else
+			tile = Tile.composeMode(easyKey != null ? resolver.resolve(easyKey, Mode.EASY)      : new Tile(),
+					                diffKey != null ? resolver.resolve(diffKey, Mode.DIFFICULT) : new Tile());
+		return tile;
+	}
+	
+	/**
+	 * Resolve the tile for the given position.
+	 * This calls {@link Resolver#resolve} on the value returned by {@link #getKey}.
+	 * 
+	 * @param x     X coordinate of the field ({@code 1 <= x <= width})
+	 * @param y     Y coordinate of the field ({@code 1 <= y <= height})
+	 * @return      ImageTile at the specified position {@code (x,y)} on the map;
+	 *              or {@code null}, if the position is outside of the map or if the resolver fails.
+	 */
+	@Override
+	public Tile getTile(int x, int y, Mode mode)
+	{
+		final String easyKey = easyMap      != null ? easyMap.getKey(x, y)      : null;
+		final String diffKey = difficultMap != null ? difficultMap.getKey(x, y) : null;
+		final Tile tile;
+		switch (mode)
+		{
+		case EASY:      tile = (easyKey != null) ? resolver.resolve(easyKey, mode) : new Tile(); break;
+		case DIFFICULT: tile = (diffKey != null) ? resolver.resolve(diffKey, mode) : new Tile(); break;
+		default:
+			if (easyKey == diffKey)
+				tile = (easyKey != null) ? resolver.resolve(easyKey, Mode.NORMAL) : new Tile();
+			else
+				tile = Tile.composeMode(easyKey != null ? resolver.resolve(easyKey, Mode.EASY)      : new Tile(),
+						                diffKey != null ? resolver.resolve(diffKey, Mode.DIFFICULT) : new Tile());
+		}
 		return tile;
 	}
 	
@@ -381,11 +477,8 @@ public class WoCallAPI20 extends SourceData implements WoCall
 	 * @param code    Level source code.
 	 * @param mode    Mode to change the map for.
 	 * @return        The changed source code (or {@code null}, if the operation failed).
-	 * 
-	 * @throws IllegalKeyLength  Thrown, if the length of the given {@code newkey}
-	 *                           differs from the default key length of this map.
 	 */
-	String setKey(int x, int y, String newkey, String code, Mode2 mode) throws IllegalKeyLength
+	String setKey(int x, int y, String newkey, String code, Mode2 mode) throws Exception
 	{
 		switch (mode)
 		{

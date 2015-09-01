@@ -1,15 +1,13 @@
 package enigma_edit.lua.data;
 
-import enigma_edit.lua.data.TilePart.Construct;
-
 public class Tile
 {
 	public interface Part
 	{
-		String    getKey(Mode  mode);
-		String    getKey(Mode2 mode);
-		Construct get(Mode  mode);
-		Construct get(Mode2 mode);
+		String     getKey(Mode  mode);
+		String     getKey(Mode2 mode);
+		ObjectDecl get(Mode  mode);
+		ObjectDecl get(Mode2 mode);
 		
 		boolean   isNull();
 		boolean   isNormal();
@@ -23,13 +21,13 @@ public class Tile
 	protected class Part_private implements Part
 	{
 		public String    easyKey;
-		public Construct easy;
+		public ObjectDecl easy;
 		public String    difficultKey;
-		public Construct difficult;
+		public ObjectDecl difficult;
 		
 		public Part_private() {easy = null; difficult = null;}
 		
-		public void set(String key, Construct part, Mode mode)
+		public void set(String key, ObjectDecl part, Mode mode)
 		{
 			if (mode != Mode.DIFFICULT) {easy      = part; if (key != null) easyKey      = key;}
 			if (mode != Mode.EASY)      {difficult = part; if (key != null) difficultKey = key;}
@@ -48,7 +46,7 @@ public class Tile
 		
 		public String getKey(Mode2 mode) {return mode == Mode2.EASY ? easyKey : difficultKey;}
 		
-		public Construct get(Mode mode)
+		public ObjectDecl get(Mode mode)
 		{
 			switch (mode)
 			{
@@ -59,7 +57,7 @@ public class Tile
 			}
 		}
 		
-		public Construct get(Mode2 mode) {return mode == Mode2.EASY ? easy : difficult;}
+		public ObjectDecl get(Mode2 mode) {return mode == Mode2.EASY ? easy : difficult;}
 		
 		public boolean isNull()       {return easy == null && difficult == null;}
 		public boolean isNormal()     {return easy == difficult;}
@@ -143,7 +141,7 @@ public class Tile
 		this.stone.difficultKey = tile.stone.difficultKey;
 	}
 	
-	private void add(String key, Construct part, String kind, Mode mode)
+	private void add(String key, ObjectDecl part, String kind, Mode mode)
 	{
 		if (kind.startsWith("#")) kind = kind.substring(1);
 		switch (kind.substring(0, 2))
@@ -155,7 +153,7 @@ public class Tile
 		}
 	}
 	
-	private void add(String key, Construct part, Table table, Mode mode)
+	private void add(String key, ObjectDecl part, Table table, Mode mode)
 	{
 		if (!table.exist(1)) return;
 		final MMSimpleValue kind = table.get(1).checkSimple(mode);
@@ -235,7 +233,7 @@ public class Tile
 	
 	public void substitute(Table table, Mode mode)
 	{
-		this.add(null, new Construct(table), table, mode);
+		this.add(null, new ObjectDecl(table), table, mode);
 	}
 	
 	public void substitute(MMTable table, Mode mode)

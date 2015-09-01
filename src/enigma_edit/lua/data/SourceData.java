@@ -41,7 +41,7 @@ public abstract class SourceData extends Data implements Source
 	@Override public Nil         checkNil(Mode2 mode)       {return null;}
 	@Override public SimpleValue checkSimple(Mode2 mode)    {return null;}
 	@Override public Table       checkTable(Mode2 mode)     {return null;}
-	@Override public TilePart    checkTilePart(Mode2 mode)  {return null;}
+	@Override public TileDeclPart    checkTilePart(Mode2 mode)  {return null;}
 	@Override public TileDecl    checkTile(Mode2 mode)      {return null;}
 	@Override public Resolver    checkResolver(Mode2 mode)  {return null;}
 }

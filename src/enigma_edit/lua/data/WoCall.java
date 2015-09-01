@@ -18,6 +18,17 @@ public interface WoCall
 	Tile getTile(int x, int y);
 	
 	/**
+	 * Resolve the tile for the given position and mode.
+	 * 
+	 * @param x     X coordinate of the field ({@code 1 <= x <= width})
+	 * @param y     Y coordinate of the field ({@code 1 <= y <= height})
+	 * @param mode  Mode to use.
+	 * @return      ImageTile at the specified position {@code (x,y)} on the map;
+	 *              or {@code null}, if the position is outside of the map or if the resolver fails.
+	 */
+	Tile getTile(int x, int y, Mode mode);
+	
+	/**
 	 * Returns the tile declaration used, when no object was defined.
 	 * 
 	 * @param mode  Mode to resolve the tile for.

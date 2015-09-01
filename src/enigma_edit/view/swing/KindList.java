@@ -46,8 +46,7 @@ import enigma_edit.error.MissingAttributeException;
 import enigma_edit.error.MissingImageException;
 import enigma_edit.model.I18N;
 import enigma_edit.model.Tileset;
-import enigma_edit.model.Tileset.NamedImage;
-import enigma_edit.model.Tileset.VarImage;
+import enigma_edit.model.Tileset.VariantImage;
 
 public class KindList extends JTabbedPane implements MouseListener 
 {
@@ -57,7 +56,7 @@ public class KindList extends JTabbedPane implements MouseListener
 	private class Kind
 	{
 		I18N.KeyString      label;
-		ArrayList<VarImage> image;
+		ArrayList<VariantImage> image;
 		
 		Kind(Tileset.Kind kind) throws MissingAttributeException
 		{
@@ -82,16 +81,9 @@ public class KindList extends JTabbedPane implements MouseListener
 		{
 			label = tileset.getString(group.getI18n());
 			
-			final Tileset.Variant iconsrc = tileset.get(group.getIcon());
-			if (iconsrc instanceof Tileset.Kind)
-			{
-				if (((Tileset.Kind)iconsrc).hasIcon())
-					icon = new ImageIcon(((Sprite)((Tileset.Kind)iconsrc).getIcon().getSprite()).getImage(ICONSIZE));
-				else
-					icon = new ImageIcon(((Sprite)((Tileset.Kind)iconsrc).iterator().next().get(0).getSprite()).getImage(ICONSIZE));
-			}
-			else if (iconsrc instanceof Tileset.VarImage)
-				icon = new ImageIcon(((Sprite)((Tileset.VarImage)iconsrc).getSprite()).getImage(ICONSIZE));
+			final Tileset.Kind iconsrc = tileset.getKind(group.getIcon());
+			if (iconsrc != null)
+				icon = new ImageIcon(((Sprite)iconsrc.getIcon().getSprite()).getImage(ICONSIZE));
 			kinds = new DefaultListModel<Kind>();
 		}
 	}
@@ -166,6 +158,18 @@ public class KindList extends JTabbedPane implements MouseListener
 		}
 	}
 	
+	public int getIndexByLabel(String i18n)
+	{
+		int i = 0;
+		for (Tileset.Group group : tileset)
+		{
+			if (group.getI18n().equals(i18n))
+				return i;
+			++i;
+		}
+		return -1;
+	}
+	
 	private class TileRenderer extends JLabel implements ListCellRenderer<Kind>
 	{
 		private static final long serialVersionUID = 1L;
@@ -203,7 +207,7 @@ public class KindList extends JTabbedPane implements MouseListener
 					else
 					{
 						Sprite.Image buffer = null;
-						for (NamedImage image : kind.image)
+						for (VariantImage image : kind.image)
 						{
 							if (buffer == null)
 								buffer = ((Sprite)image.getSprite()).new Image(KindList.this.displaySize);

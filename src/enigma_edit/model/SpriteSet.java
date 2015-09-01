@@ -25,7 +25,7 @@ package enigma_edit.model;
 
 public interface SpriteSet
 {
-	public Sprite get(Tileset.NamedImage image);
+	public Sprite get(Tileset.VariantImage image);
 	public void   free(int size);
 	public void   free();
 }

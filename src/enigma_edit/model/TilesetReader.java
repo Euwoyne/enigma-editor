@@ -91,10 +91,11 @@ public class TilesetReader
 			                                                         ALIAS, AATTR,
 			                                                         MESSAGE,
                                                                      IMAGE, ICON,
+			                                                         CLUSTER, CONNECT,
 			                                                         
 			                                                         STACK,
-			                                                         VARIANTS, VARIANT, VATTR,
-			                                                         CLUSTER, CONNECT,
+			                                                         NVARIANTS, NVARIANT, VATTR,
+			                                                         AVARIANTS, AVARIANT,
 			                                      
 			                                      I18N, STRING, ENGLISH,
 			                                                    TRANSLATION}
@@ -108,27 +109,30 @@ public class TilesetReader
 			public boolean is(State state) {return this.getLast() == state;}
 		}
 		
-		public  Tileset                  target;
-		private ReaderType               type;
-		private Locator                  locator;
-		private StateStack               state;
+		public  Tileset                   target;
+		private ReaderType                type;
+		private Locator                   locator;
+		private StateStack                state;
 		
-		private Tileset.Group            group;
-		private Tileset.Page             page;
-		private Tileset.Group.Attributes attrgroup;
-		private Tileset.Attribute        attr;
-		private Tileset.Kind             kind;
-		private Tileset.Variants         variants;
-		private Tileset.Alias            alias;
-		private Tileset.VarImage         variant;
-		private Tileset.Cluster          cluster;
-		private Tileset.NamedImage       imagetarget;
-		private I18N.KeyString           string;
+		private Tileset.Group             group;
+		private Tileset.Page              page;
+		private Tileset.Group.Attributes  attrgroup;
+		private Tileset.Attribute         attr;
+		private Tileset.Kind              kind;
+		private Tileset.Alias             alias;
+		private Tileset.NamedVariants     nvariants;
+		private Tileset.AttributeVariants avariants;
+		private Tileset.Variant           variant;
+		private Tileset.NamedVariant      nvariant;
+		private Tileset.AttributeVariant  avariant;
+		private Tileset.VariantImage      imagetarget;
+		private Tileset.ClusterImage      cluster;
+		private I18N.KeyString            string;
 		
-		private int                      dirs;
-		private String                   id;
-		private String                   temp;
-		private StringBuffer             buf;
+		private int                       dirs;
+		private String                    id;
+		private String                    temp;
+		private StringBuffer              buf;
 		
 		public TilesetParser()
 		{
@@ -393,21 +397,36 @@ public class TilesetReader
 				}
 				else if (qName.equals("image"))
 				{
-					if (kind.stack.size() > 1)
-						this.error(new TilesetXMLException("UnexpectedImage", id, locator));
 					if (kind.stack.isEmpty())
-						kind.stack.add(new Tileset.Variants(kind));
-					variant = new Tileset.VarImage(kind.name, kind);
-					variant.oldname = kind.oldname;
-					kind.stack.get(kind.stack.size() - 1).add(variant);
-					variant.images.add(parse_image(attrs, kind.name));
-					imagetarget = variant;
-					variant = null;
+						kind.stack.add(nvariants = new Tileset.NamedVariants(kind.name));
+					if (kind.stack.size() > 1 || nvariants == null)
+						this.error(new TilesetXMLException("UnexpectedImage", id, locator));
+					nvariant = new Tileset.NamedVariant(kind.name, kind);
+					nvariant.name.oldname = kind.oldname;
+					nvariants.add(nvariant);
+					nvariant.image.images.add(parse_image(attrs, kind.name));
+					imagetarget = nvariant.image;
+					avariant = null;
+					avariants = null;
 					state.to(State.IMAGE);
+				}
+				else if (qName.equals("cluster"))
+				{
+					if (kind.stack.isEmpty())
+						kind.stack.add(nvariants = new Tileset.NamedVariants(kind.name));
+					if (kind.stack.size() > 1 || nvariants == null)
+						this.error(new TilesetXMLException("UnexpectedImage", id, locator));
+					nvariant = new Tileset.NamedVariant(kind.name, kind);
+					nvariant.name.oldname = kind.oldname;
+					nvariants.add(nvariant);
+					nvariant.image = imagetarget = cluster = new Tileset.ClusterImage();
+					avariant = null;
+					avariants = null;
+					state.to(State.CLUSTER);
 				}
 				else if (qName.equals("icon"))
 				{
-					kind.icon = new Tileset.NamedImage(kind.name);
+					kind.icon = new Tileset.VariantImage();
 					kind.icon.images.add(parse_image(attrs, kind.name));
 					imagetarget = kind.icon;
 					state.to(State.ICON);
@@ -429,27 +448,35 @@ public class TilesetReader
 				{
 					if (!kind.stack.isEmpty())
 						this.error(new TilesetXMLException("UnexpectedVariants", id, locator));
-					variants = new Tileset.Variants(kind);
-					kind.stack.add(variants);
-					if ((temp = attrs.getValue("attrs"))   != null) parse_list(temp, variants.attrs);
-					if ((temp = attrs.getValue("default")) != null) variants.defaultName = temp;
-					state.to(State.VARIANTS);
+					nvariants = null;
+					avariants = null;
+					if ((temp = attrs.getValue("attrs")) != null)
+					{
+						avariants = new Tileset.AttributeVariants();
+						parse_list(temp, avariants.attrs);
+						kind.stack.add(avariants);
+						state.to(State.AVARIANTS);
+					}
+					if ((temp = attrs.getValue("default")) != null)
+					{
+						if (avariants != null)
+							this.error(new TilesetXMLException("IllegalVariants", id, locator)); 
+						nvariants = new Tileset.NamedVariants(temp);
+						kind.stack.add(nvariants);
+						state.to(State.NVARIANTS);
+					}
+					else if (avariants == null)
+					{
+						nvariants = new Tileset.NamedVariants(kind.name);
+						kind.stack.add(nvariants);
+						state.to(State.NVARIANTS);
+					}
 				}
 				else if (qName.equals("stack"))
 				{
 					if (!kind.stack.isEmpty())
 						this.error(new TilesetXMLException("UnexpectedStack", id, locator));
 					state.to(State.STACK);
-				}
-				else if (qName.equals("cluster"))
-				{
-					if (!kind.stack.isEmpty())
-						this.error(new TilesetXMLException("UnexpectedImage", id, locator));
-					kind.stack.add(new Tileset.Variants(kind));
-					variant = cluster = new Tileset.Cluster(kind.name, kind);
-					variant.oldname = kind.oldname;
-					kind.stack.get(kind.stack.size() - 1).add(variant);
-					state.to(State.CLUSTER);
 				}
 				else this.error(new TilesetXMLException("UnexpectedTagKind", qName, id, locator));
 				break;
@@ -474,75 +501,73 @@ public class TilesetReader
 			case STACK:
 				if (qName.equals("variants"))
 				{
-					variants = new Tileset.Variants(kind);
-					kind.stack.add(variants);
-					if ((temp = attrs.getValue("attrs"))   != null) parse_list(temp, variants.attrs);
-					if ((temp = attrs.getValue("default")) != null) variants.defaultName = temp;
-					state.to(State.VARIANTS);
-				}
-				else if (qName.equals("cluster"))
-				{
-					variants = new Tileset.Variants(kind);
-					kind.stack.add(variants);
-					variant = cluster = new Tileset.Cluster(kind.name, kind);
-					variant.oldname = kind.oldname;
-					variants.add(variant);
-					state.to(State.CLUSTER);
+					avariants = new Tileset.AttributeVariants();
+					nvariants = null;
+					kind.stack.add(avariants);
+					if ((attrs.getValue("default")) != null) 
+						this.error(new TilesetXMLException("IllegalVariantStack", id, locator));
+					if ((temp = attrs.getValue("attrs")) != null) parse_list(temp, avariants.attrs);
+					state.to(State.AVARIANTS);
 				}
 				else this.error(new TilesetXMLException("UnexpectedTagStack", qName, id, locator));
 				break;
 				
-			case VARIANTS:
+			case NVARIANTS:
 				if (qName.equals("variant"))
 				{
-					if ((temp = attrs.getValue("name")) != null)
-					{
-						variant = new Tileset.VarImage(temp, kind);
-						if ((temp = attrs.getValue("val")) != null)
-						{
-							parse_list(temp, variant.val);
-							if (variant.val.isEmpty()) variant.val.add("");
-						}
-					}
-					else if ((temp = attrs.getValue("val")) != null)
-					{
-						ArrayList<String> val = new ArrayList<String>();
-						parse_list(temp, val);
-						if (val.isEmpty()) val.add("");
-						variant = new Tileset.VarImage(null, kind);
-						variant.val = val;
-					}
-					else
-					{
-						variant = new Tileset.VarImage(kind.name, kind);
-					}
-					if ((temp = attrs.getValue("oldname")) != null) variant.oldname = temp;
-					variants.add(variant);
-					state.to(State.VARIANT);
+					if ((id = attrs.getValue("name")) == null)
+						id = kind.name;
+					variant = nvariant = new Tileset.NamedVariant(id, kind);
+					if ((temp = attrs.getValue("oldname")) != null)
+						nvariant.name.oldname = temp;
+					nvariants.add(nvariant);
+					state.to(State.NVARIANT);
+				}
+				else this.error(new TilesetXMLException("UnexpectedTagVariants", qName, id, locator));
+				break;
+				
+			case AVARIANTS:
+				if (qName.equals("variant"))
+				{
+					if ((id = attrs.getValue("val")) == null)
+						this.error(new TilesetXMLException("MissingAttributeVal", id, locator));
+					
+					ArrayList<String> val = new ArrayList<String>();
+					parse_list(id, val);
+					if (val.isEmpty()) val.add("");
+					variant = avariant = new Tileset.AttributeVariant(kind);
+					avariant.val = val;
+					avariants.add(avariant);
+					state.to(State.AVARIANT);
+				}
+				else this.error(new TilesetXMLException("UnexpectedTagVariants", qName, id, locator));
+				break;
+			
+			case NVARIANT:
+			case AVARIANT:
+				if (qName.equals("image"))
+				{
+					imagetarget = variant.image;
+					imagetarget.images.add(parse_image(attrs, kind.name));
+					state.to(State.IMAGE);
 				}
 				else if (qName.equals("cluster"))
 				{
-					if ((temp = attrs.getValue("name")) != null)
-					{
-						variant = cluster = new Tileset.Cluster(temp, kind);
-						if ((temp = attrs.getValue("val")) != null) parse_list(temp, variant.val);
-					}
-					else if ((temp = attrs.getValue("val")) != null)
-					{
-						ArrayList<String> val = new ArrayList<String>();
-						parse_list(temp, val);
-						variant = cluster = new Tileset.Cluster(null, kind);
-						variant.val = val;
-					}
-					else
-					{
-						variant = cluster = new Tileset.Cluster(kind.name, kind);
-					}
-					if ((temp = attrs.getValue("oldname")) != null) variant.oldname = temp;
-					variants.add(variant);
+					if (variant.image.images.size() > 0)
+						this.error(new TilesetXMLException("UnexpectedClusterVariant", id, kind.name, locator));
+					variant.image = imagetarget = cluster = new Tileset.ClusterImage();
 					state.to(State.CLUSTER);
 				}
-				else this.error(new TilesetXMLException("UnexpectedTagVariants", qName, id, locator));
+				else if (qName.equals("attr"))
+				{
+					if ((id = attrs.getValue("name")) == null)
+						this.error(new TilesetXMLException("MissingAttributeAttrName", kind.name, locator));
+					if ((temp = attrs.getValue("val")) == null)
+						this.error(new TilesetXMLException("MissingAttributeAttrVal", kind.name, locator));
+					variant.attributes.put(id, temp);
+					state.to(State.VATTR);
+				}
+				else this.error(new TilesetXMLException("UnexpectedTagVariant", qName, kind.name, locator));
 				break;
 			
 			case CLUSTER:
@@ -550,22 +575,10 @@ public class TilesetReader
 				{
 					if ((temp = attrs.getValue("dirs")) == null)
 						this.error(new TilesetXMLException("MissingAttributeKind", "dirs", "connect", kind.name, locator));
-					if ((dirs = Tileset.Cluster.getIndex(temp)) < 0)
+					if ((dirs = Tileset.ClusterImage.getIndex(temp)) < 0)
 						this.error(new TilesetXMLException("UnexpectedValueKindTag", "dirs", "connect", kind.name, locator));
-					cluster.connect[dirs] = new Tileset.NamedImage(attrs.getValue("name"));
-					if ((temp = attrs.getValue("oldname")) != null) cluster.connect[dirs].oldname = temp;
-					if (cluster.connect[dirs].hasName())
-					{
-						alias = new Tileset.Alias(cluster.connect[dirs].name, kind);
-						alias.attributes.put("connections", temp);
-						kind.alias.add(alias);
-					}
-					if (cluster.connect[dirs].hasOldName())
-					{
-						alias = new Tileset.Alias(cluster.connect[dirs].oldname, kind);
-						alias.attributes.put("connections", temp);
-						kind.alias.add(alias);
-					}
+					if (dirs > 0)
+						cluster.connect[dirs] = new Tileset.VariantImage();
 					state.to(State.CONNECT);
 				}
 				else if (qName.equals("image"))
@@ -585,25 +598,6 @@ public class TilesetReader
 					state.to(State.IMAGE);
 				}
 				else this.error(new TilesetXMLException("UnexpectedTagConnect", qName, kind.name, locator));
-				break;
-				
-			case VARIANT:
-				if (qName.equals("image"))
-				{
-					imagetarget = variant;
-					imagetarget.images.add(parse_image(attrs, kind.name));
-					state.to(State.IMAGE);
-				}
-				else if (qName.equals("attr"))
-				{
-					if ((id = attrs.getValue("name")) == null)
-						this.error(new TilesetXMLException("MissingAttributeName", kind.name, locator));
-					if ((temp = attrs.getValue("val")) == null)
-						this.error(new TilesetXMLException("MissingAttributeVal", kind.name, locator));
-					variant.attributes.put(id, temp);
-					state.to(State.VATTR);
-				}
-				else this.error(new TilesetXMLException("UnexpectedTagVariant", qName, kind.name, locator));
 				break;
 				
 			case GATTR:
@@ -710,11 +704,12 @@ public class TilesetReader
 					this.error(new TilesetXMLException("UnexpectedEndTagKind", qName, kind.name, locator));
 				if (kind.stack.isEmpty())
 				{
-					kind.stack.add(new Tileset.Variants(kind));
-					variant = new Tileset.VarImage(kind.name, kind);
-					variant.oldname = kind.oldname;
-					variant.images.add(new Tileset.Image(kind.name));
-					kind.stack.get(kind.stack.size() - 1).add(variant);
+					nvariants = new Tileset.NamedVariants(kind.name);
+					nvariant = new Tileset.NamedVariant(kind.name, kind);
+					nvariant.name.oldname = kind.oldname;
+					nvariant.image.images.add(new Tileset.Image(kind.name));
+					nvariants.add(nvariant);
+					kind.stack.add(nvariants);
 				}
 				kind = null;
 				state.back();
@@ -744,36 +739,38 @@ public class TilesetReader
 					this.error(new TilesetXMLException("UnexpectedEndTagStack", qName, kind.name, locator));
 				state.back();
 				break;
-			case VARIANTS:
+			case NVARIANTS:
+			case AVARIANTS:
 				if (!qName.equals("variants"))
 					this.error(new TilesetXMLException("UnexpectedEndTagVariants", qName, kind.name, locator));
-				if (variants.isAttributeIndependent() && variants.defaultName == null)
-					variants.defaultName = kind.name;
-				variants = null;
+				nvariants = null;
+				avariants = null;
 				state.back();
 				break;
-			case VARIANT:
+			case NVARIANT:
 				if (!qName.equals("variant"))
 					this.error(new TilesetXMLException("UnexpectedEndTagVariant", qName, kind.name, locator));
-				if (variant.images.isEmpty())
-					variant.images.add(new Tileset.Image(variant.hasName() ? variant.name : kind.name));
-				if (!variant.hasName())
-					variant.name = "__" + String.join(",", variant.val) + "__";
-				variant.checkCompare();
-				if (variant.hasCompare) variants.hasCompare = true;
+				if (variant.image.images.isEmpty())
+					variant.image.images.add(new Tileset.Image(nvariant.name.name));
 				variant = null;
+				nvariant = null;
+				state.back();
+				break;
+			case AVARIANT:
+				if (!qName.equals("variant"))
+					this.error(new TilesetXMLException("UnexpectedEndTagVariant", qName, kind.name, locator));
+				if (variant.image.images.isEmpty())
+					variant.image.images.add(new Tileset.Image(kind.name));
+				if (avariant.checkCompare())
+					avariants.hasCompare = true;
+				variant = null;
+				avariant = null;
 				state.back();
 				break;
 			case CLUSTER:
 				if (!qName.equals("cluster"))
 					this.error(new TilesetXMLException("UnexpectedEndTagCluster", qName, kind.name, locator));
-				if (variant.images.isEmpty())
-					variant.images.add(new Tileset.Image(variant.hasName() ? variant.name : kind.name));
-				if (!variant.hasName())
-					variant.name = "__" + String.join(",", variant.val) + "__";
-				variant.checkCompare();
-				if (variant.hasCompare) variants.hasCompare = true;
-				variant = cluster = null;
+				cluster = null;
 				state.back();
 				break;
 			case CONNECT:

@@ -23,15 +23,13 @@
 
 package enigma_edit.lua.data;
 
-import enigma_edit.lua.data.TilePart.Construct;
-
 /**
  * Multi-mode tile constructor.
  */
-public class MMTileConstruct extends MM<Construct>
+public class MMTileConstruct extends MM<ObjectDecl>
 {
-	public MMTileConstruct(Construct normal)                                {super(normal);}
-	public MMTileConstruct(Construct easy, Construct difficult)             {super(easy, difficult);}
+	public MMTileConstruct(ObjectDecl normal)                                {super(normal);}
+	public MMTileConstruct(ObjectDecl easy, ObjectDecl difficult)             {super(easy, difficult);}
 	public MMTileConstruct(MMTileConstruct easy, MMTileConstruct difficult) {super(easy.easy, difficult.difficult);}
 	
 	@Override public String typename() {return "<mixed tile-constructor>";}

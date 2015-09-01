@@ -71,7 +71,7 @@ public interface Typed
 	/** Check if this represents a {@link Table} in any mode. If it does, it is returned; otherwise {@code null} is. */
 	abstract MMTable checkTable();
 	
-	/** Check if this represents a {@link TilePart} in any mode. If it does, it is returned; otherwise {@code null} is. */
+	/** Check if this represents a {@link TileDeclPart} in any mode. If it does, it is returned; otherwise {@code null} is. */
 	abstract MMTilePart checkTilePart();
 	
 	/** Check if this represents a {@link TileDecl} in any mode. If it does, it is returned; otherwise {@code null} is. */
@@ -89,7 +89,7 @@ public interface Typed
 	/** Check if this represents a {@link Table} in the given mode. If it does, it is returned; otherwise {@code null} is. */
 	abstract MMTable checkTable(Mode mode);
 	
-	/** Check if this represents a {@link TilePart} in the given mode. If it does, it is returned; otherwise {@code null} is. */
+	/** Check if this represents a {@link TileDeclPart} in the given mode. If it does, it is returned; otherwise {@code null} is. */
 	abstract MMTilePart checkTilePart(Mode mode);
 	
 	/** Check if this represents a {@link TileDecl} in the given mode. If it does, it is returned; otherwise {@code null} is. */
@@ -110,8 +110,8 @@ public interface Typed
 	/** Check if this represents a {@link Table} in the given mode. If it does, it is returned; otherwise {@code null} is. */
 	abstract Table checkTable(Mode2 mode);
 	
-	/** Check if this represents a {@link TilePart} in the given mode. If it does, it is returned; otherwise {@code null} is. */
-	abstract TilePart checkTilePart(Mode2 mode);
+	/** Check if this represents a {@link TileDeclPart} in the given mode. If it does, it is returned; otherwise {@code null} is. */
+	abstract TileDeclPart checkTilePart(Mode2 mode);
 	
 	/** Check if this represents a {@link TileDecl} in the given mode. If it does, it is returned; otherwise {@code null} is. */
 	abstract TileDecl checkTile(Mode2 mode);

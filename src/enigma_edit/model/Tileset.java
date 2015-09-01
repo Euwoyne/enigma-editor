@@ -24,6 +24,7 @@
 package enigma_edit.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -32,9 +33,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import enigma_edit.lua.data.Mode2;
-import enigma_edit.lua.data.SimpleValue;
 import enigma_edit.lua.data.Table;
-import enigma_edit.lua.data.TilePart;
+import enigma_edit.lua.data.ObjectDecl;
 import enigma_edit.model.I18N.KeyString;
 import enigma_edit.error.MissingImageException;
 import enigma_edit.error.MissingStringException;
@@ -51,15 +51,107 @@ import enigma_edit.error.MissingStringException;
 public class Tileset implements Iterable<Tileset.Group>
 {
 	/**
-	 * Identifier for object kinds and variants.
-	 * Each kind has a unique name. A variant <i>may</i> have a name.
+	 * Interface for named entities, i.e. kinds, named variants and aliases.
+	 * Each kind has a unique name and optionally several aliases. A variant
+	 * <i>might</i> have a name.
 	 * And anything that has a name, may have an additional deprecated name
 	 * which will be called the {@code oldname}.
 	 */
-	public static class Name
+	public static interface Named
 	{
+		/**
+		 * Check, if this named entity has a name.
+		 * @return  {@code true}, if the name is set.
+		 */
+		boolean hasName();
+		
+		/**
+		 * This entity's name.
+		 * @return  Associated name string.
+		 */
+		String  getName();
+		
+		/**
+		 * Keyword for name translation.
+		 * @return  Key within the tileset's {@link I18n} dictionary.
+		 */
+		String  getI18n();
+		
+		/**
+		 * Check, if this named entity has a deprecated (i.e. pre-1.0) name.
+		 * @return  {@code true}, if the old name is set.
+		 */
+		boolean hasOldName();
+		
+		/**
+		 * Deprecated (i.e. pre-1.0) name of this entity.
+		 * @return  Associated deprecated name.
+		 */
+		String  getOldName();
+	}
+	
+	/**
+	 * Interface for any entity that defines attribute values (i.e. kinds,
+	 * variants and aliases).
+	 * Often different entities declare different default values for certain
+	 * attributes, that are used, when the user does not specify a value. These
+	 * share this interface.
+	 */
+	public static interface AttributeProvider
+	{
+		/**
+		 * Get the parent kind.
+		 * @return  The kind that is parent to this attribute providing structure.
+		 */
+		Kind getKind();
+		
+		/**
+		 * Get the value provided for the given attribute.
+		 * @param attrName  Attribute name.
+		 * @return          The attribute's (most often default) value.
+		 */
+		String  getAttribute(String attrName);
+		
+		/**
+		 * Check, if this instance provides any value for the given attribute.
+		 * This returns {@code true}, if (and only if) {@link getAttribute}
+		 * returns a value.
+		 * 
+		 * @param attrName  Attribute name.
+		 * @return          {@code true}, if a default value is declared.
+		 */
+		boolean hasAttribute(String attrName);
+	}
+	
+	/**
+	 * An object is defined by its kind and its attributes.
+	 * This interface makes those easily accessible.
+	 */
+	public static interface ObjectProvider extends AttributeProvider
+	{
+		/**
+		 * Get the name of the object's kind.
+		 * @return  Name of the kind.
+		 */
+		String getKindName();
+		
+		List<Variant>      getVariant();
+		List<VariantImage> getImage();
+	}
+	
+	/**
+	 * Identifier data for kinds, named variants and aliases.
+	 * This simply implements the {@link Named} interface.
+	 */
+	public static class Name implements Named
+	{
+		/** name */
 		String name;
+		
+		/** pre-1.0 name */
 		String oldname;
+		
+		/** keyword for i18n data */
 		String i18n;
 		
 		Name(String name)           {this.name = name; this.oldname = null; this.i18n = name;}
@@ -68,63 +160,6 @@ public class Tileset implements Iterable<Tileset.Group>
 		public String  getI18n()    {return i18n;}
 		public boolean hasOldName() {return oldname != null;}
 		public String  getOldName() {return oldname != null ? oldname : "";}
-	}
-	
-	/**
-	 * General variant interface.
-	 */
-	public static interface Variant
-	{
-		Kind                getKind();
-		String              getDefaultValue(String attrName);
-		ArrayList<VarImage> getImage();
-		ArrayList<VarImage> getImage(Table table, Mode2 mode);
-	}
-	
-	/**
-	 * Alias for a kind.
-	 * An alias may provide different attribute default values.
-	 */
-	public static class Alias extends Name implements Variant
-	{
-		/** parent kind */
-		final Kind kind;
-		
-		/** Alias dependent attribute default-values */
-		TreeMap<String, String> attributes;
-		
-		Alias(String name, Kind parent)
-		{
-			super(name);
-			this.kind = parent;
-			this.attributes = new TreeMap<String, String>();
-		}
-		
-		public Kind getKind() {return kind;}
-		
-		public String getDefaultValue(String attrName)
-		{
-			String out = attributes.get(attrName);
-			return out == null ? kind.getDefaultValue(attrName) : out;
-		}
-		
-		@Override
-		public ArrayList<VarImage> getImage()
-		{
-			return kind.getImage(this);
-		}
-		
-		@Override
-		public ArrayList<VarImage> getImage(Table table, Mode2 mode)
-		{
-			final ArrayList<VarImage> stack = new ArrayList<VarImage>(kind.stack.size());
-			for (Variants variants : kind)
-			{
-				VarImage var = variants.getImage(table, this, mode);
-				if (var != null) stack.add(var);
-			}
-			return stack;
-		}
 	}
 	
 	/**
@@ -137,9 +172,9 @@ public class Tileset implements Iterable<Tileset.Group>
 		int    x;
 		int    y;
 		
-		public Image()                                       {this("",   "",   0, 0);}
-		public Image(String file)                            {this(file, "",   0, 0);}
-		public Image(String file, String text)               {this(file, text, 0, 0);}
+		public Image()                         {this("",   "",   0, 0);}
+		public Image(String file)              {this(file, "",   0, 0);}
+		public Image(String file, String text) {this(file, text, 0, 0);}
 		
 		public Image(String file, String text, int x, int y)
 		{
@@ -156,16 +191,16 @@ public class Tileset implements Iterable<Tileset.Group>
 	}
 	
 	/**
-	 * A stack of {@link Image images} with a {@link Name name}. 
+	 * Stack of {@link Image images}.
+	 * This is, what a resolved variant will be represented as. 
 	 */
-	public static class NamedImage extends Name implements Renderable, Iterable<Image>
+	public static class VariantImage implements Renderable, Iterable<Image>
 	{
 		ArrayList<Image> images;
 		Sprite           sprite;
 		
-		NamedImage(String name)
+		VariantImage()
 		{
-			super(name);
 			images = new ArrayList<Image>();
 		}
 		
@@ -183,84 +218,12 @@ public class Tileset implements Iterable<Tileset.Group>
 	}
 	
 	/**
-	 * A named image, that is mapped to a list of string values.
-	 */
-	public static class VarImage extends NamedImage implements Variant
-	{
-		/** kind kind */
-		final Kind kind;
-		
-		/** Attribute value list, that is mapped to this variant */
-		ArrayList<String> val;
-		
-		/** Existence of comparators (such as {@code <}, {@code >} or {@code =})
-		 *  within the {@link #val variant values}. */
-		boolean hasCompare;
-		
-		/** Special variant dependent attribute default values */
-		TreeMap<String, String> attributes;
-		
-		VarImage(String name, Kind kind)
-		{
-			super(name);
-			this.kind = kind;
-			this.val = new ArrayList<String>();
-			this.hasCompare = false;
-			this.attributes = new TreeMap<String, String>();
-		}
-		
-		void checkCompare()
-		{
-			hasCompare = false;
-			for (String v : val)
-			{
-				if (v.isEmpty()) continue;
-				switch (v.charAt(0))
-				{
-				case '>':
-				case '<':
-				case '=': hasCompare = true; break;
-				}
-			}
-		}
-		
-		public Kind    getKind()       {return kind;}
-		public boolean isNamed()       {return hasName();}
-		public boolean hasComparison() {return hasCompare;}
-		
-		public String getDefaultValue(String attrName)
-		{
-			String out = attributes.get(attrName);
-			return out == null ? kind.getDefaultValue(attrName) : out;
-		}
-		
-		@Override
-		public ArrayList<VarImage> getImage()
-		{
-			final ArrayList<VarImage> stack = new ArrayList<VarImage>(1);
-			stack.add(this);
-			return stack;
-		}
-		
-		@Override
-		public ArrayList<VarImage> getImage(Table table, Mode2 mode)
-		{
-			final ArrayList<VarImage> stack = new ArrayList<VarImage>(kind.stack.size());
-			for (Variants variants : kind)
-			{
-				VarImage var = variants.getImage(table, this, mode);
-				if (var != null) stack.add(var);
-			}
-			return stack;
-		}
-	}
-	
-	/**
-	 * Variant with cluster data.
+	 * Variant image with cluster data.
 	 * This provides an image for each connection configuration.
 	 */
-	public static class Cluster extends VarImage
+	public static class ClusterImage extends VariantImage
 	{
+		// direction bits
 		public static final int WEST  = 1;
 		public static final int SOUTH = 2;
 		public static final int EAST  = 4;
@@ -282,7 +245,6 @@ public class Tileset implements Iterable<Tileset.Group>
 				case 's': idx |= SOUTH; break;
 				case 'e': idx |= EAST;  break;
 				case 'n': idx |= NORTH; break;
-				default:  return -1;
 				}
 			}
 			return idx;
@@ -304,185 +266,354 @@ public class Tileset implements Iterable<Tileset.Group>
 		}
 		
 		/** one image for each possible connection configuration */
-		NamedImage[] connect;
+		VariantImage[] connect;
 		
-		Cluster(String name, Kind parent)
+		/** Default constructor. */
+		ClusterImage()
 		{
-			super(name, parent);
-			connect = new NamedImage[16];
+			connect = new VariantImage[16];
 			connect[0] = this;
 		}
 		
-		void set(String connections, NamedImage image)
+		void set(String connections, VariantImage image)
 		{
 			connect[getIndex(connections)] = image;
 		}
 		
-		NamedImage get(String connections)
+		VariantImage get(String connections)
 		{
 			return connect[getIndex(connections)];
 		}
 	}
 	
 	/**
-	 * Variant list (with attribute dependency information).
+	 * Abstract base for all variants.
+	 * This class provides the variant's image and its parent kind.
+	 * Furthermore each variant may alter the default values of the kind's
+	 * attributes.
 	 */
-	public static class Variants extends ArrayList<VarImage>
+	public static abstract class Variant implements ObjectProvider
 	{
-		private static final long serialVersionUID = 1L;
+		/** parent kind */
+		final Kind kind;
 		
-		ArrayList<String>         attrs;
-		TreeMap<String, VarImage> valmap;
-		TreeMap<String, VarImage> namemap;
-		String                    defaultName;
-		boolean                   showAll;
-		boolean                   hasCompare;
+		/** variant image */
+		VariantImage image; 
+		
+		/** Special variant dependent attribute default values */
+		TreeMap<String, String> attributes;
+		
+		public Variant(Kind kind)
+		{
+			this.kind = kind;
+			this.image = new VariantImage();
+			this.attributes = new TreeMap<String, String>();
+		}
+		
+		/**
+		 * Variant type check.
+		 * @return  Equivalent to {@code this instanceof NamedVariant}.
+		 * @see NamedVariant, AttributeVariant
+		 */
+		public abstract boolean isNamed();
+		
+		@Override
+		public Kind getKind()
+		{
+			return kind;
+		}
+		
+		@Override
+		public String getAttribute(String attrName)
+		{
+			String out = attributes.get(attrName);
+			return out == null ? kind.getAttribute(attrName) : out;
+		}
+		
+		@Override
+		public boolean hasAttribute(String attrName)
+		{
+			return attributes.containsKey(attrName) || kind.hasAttribute(attrName);
+		}
+		
+		@Override public String                  getKindName() {return kind.getName();}
+		@Override public ArrayList<Variant>      getVariant()  {return kind.getVariant(this);}
+		@Override public ArrayList<VariantImage> getImage()    {return kind.getImage(this);}
+	}
+	
+	/**
+	 * A named variant in an attribute independent variant list.
+	 */
+	public static class NamedVariant extends Variant implements Named
+	{
+		/** variant name */
+		final Name name;
+		
+		public NamedVariant(String name, Kind kind)
+		{
+			super(kind);
+			this.name = new Name(name);
+		}
+		
+		@Override public boolean isNamed()    {return true;}
+		@Override public boolean hasName()    {return name.hasName();}
+		@Override public String  getName()    {return name.getName();}
+		@Override public String  getI18n()    {return name.getI18n();}
+		@Override public boolean hasOldName() {return name.hasOldName();}
+		@Override public String  getOldName() {return name.getOldName();}
+	}
+	
+	/**
+	 * An attribute dependent variant.
+	 */
+	public static class AttributeVariant extends Variant
+	{
+		/** Attribute value list, that is mapped to this variant */
+		ArrayList<String> val;
+		
+		/** Existence of comparators (such as {@code <}, {@code >} or {@code =})
+		 *  within the {@link #val variant values}. */
+		boolean hasCompare;
+		
+		public AttributeVariant(Kind kind)
+		{
+			super(kind);
+			this.val = new ArrayList<String>();
+			this.hasCompare = false;
+		}
+		
+		@Override
+		public boolean isNamed() {return false;}
+		
+		/**
+		 * Search the {@link val attribute value list} for compare expressions.
+		 * That is any value starting with either one of {@code <}, {@code >} or
+		 * {@code =}.
+		 */
+		boolean checkCompare()
+		{
+			hasCompare = false;
+			for (String v : val)
+			{
+				if (v.isEmpty()) continue;
+				switch (v.charAt(0))
+				{
+				case '>':
+				case '<':
+				case '=': hasCompare = true; break;
+				}
+			}
+			return hasCompare;
+		}
+	}
+	
+	/**
+	 * Variant list base class.
+	 * This only contains the {@code showAll} flag, which is shared by both variant types.
+	 */
+	public static abstract class Variants
+	{
+		boolean showAll;
+		
+		Variants()
+		{
+			showAll = false;
+		}
+		
+		/**
+		 * Determines the default variant of this variant set.
+		 * @return  The default variant of this variant set.
+		 */
+		public abstract Variant getDefaultVariant();
+		
+		/**
+		 * Return the variant as determined by the given object provider.
+		 * @param obj  Object declaration.
+		 * @return     Variant as declared by the given object.
+		 */
+		public abstract Variant getVariant(ObjectProvider obj);
+		
+		/**
+		 * Generic variant iterator.
+		 * @return  an {@code Iterator} of the variants in this list.
+		 */
+		public abstract Iterator<Variant> viterator();
+	}
+	
+	/**
+	 * Variant list intermediary template.
+	 */
+	private static abstract class VariantsT<T extends Variant> extends Variants implements Collection<T>
+	{
+		ArrayList<T>       variants;
+		TreeMap<String, T> variantMap;
+		
+		VariantsT()
+		{
+			variants = new ArrayList<T>();
+			variantMap = new TreeMap<String, T>();
+		}
+		
+		public T get(int    index) {return variants.get(index);}
+		public T get(String key)   {return variantMap.get(key);}
+		
+		@Override public int                size()                            {return variants.size();}
+		@Override public boolean            isEmpty()                         {return variants.isEmpty();}
+		@Override public boolean            contains(java.lang.Object o)      {return variants.contains(o);}
+		@Override public Iterator<T>        iterator()                        {return variants.iterator();}
+		@Override public java.lang.Object[] toArray()                         {return variants.toArray();}
+		@Override public <U> U[]            toArray(U[] a)                    {return variants.toArray(a);}
+		@Override public boolean            add(T e)                          {return variants.add(e);}
+		@Override public boolean            remove(java.lang.Object o)        {return variants.remove(o);}
+		@Override public boolean            containsAll(Collection<?> c)      {return variants.containsAll(c);}
+		@Override public boolean            addAll(Collection<? extends T> c) {return variants.addAll(c);}
+		@Override public boolean            removeAll(Collection<?> c)        {return variants.removeAll(c);}
+		@Override public boolean            retainAll(Collection<?> c)        {return variants.retainAll(c);}
+		@Override public void               clear()                           {variants.clear();}
+		
+		@Override public Iterator<Variant>  viterator()
+		{
+			return new Iterator<Variant>()
+			{
+				private Iterator<T> it = variants.iterator();
+				@Override public boolean hasNext() {return it.hasNext();}
+				@Override public Variant next()    {return it.next();}
+			};
+		}
+	}
+	
+	/**
+	 * List of named variants.
+	 * All contained variants are {@link NamedVariants} and a default variant
+	 * name is provided.
+	 */
+	public static class NamedVariants extends VariantsT<NamedVariant>
+	{
+		/** name of the default variant */
+		String defaultName;
+		
+		NamedVariants(String defaultName)
+		{
+			this.defaultName = defaultName;
+		}
+		
+		public boolean add(NamedVariant variant)
+		{
+			if (!variants.isEmpty() && variant.kind != variants.get(0).kind)
+				throw new IllegalArgumentException("Unable to add variant for kind '" + variant.kind.getName() + "' to kind '" + this.get(0).kind.getName() + "'");
+			
+			if (variant.hasName())
+				variantMap.put(variant.getName(), variant);
+			if (variant.hasOldName())
+				variantMap.put(variant.getOldName(), variant);
+			
+			return super.add(variant);
+		}
+		
+		/**
+		 * Determines the default variant of this variant set.
+		 * It is chosen by the given {@link defaultName} attribute.
+		 * @return  The default variant of this variant set.
+		 */
+		@Override
+		public Variant getDefaultVariant()
+		{
+			return variantMap.get(defaultName);
+		}
+		
+		/**
+		 * Return the variant as determined by the given object provider.
+		 * In this case, only the kind-name is used.
+		 * @param obj  Object declaration.
+		 * @return     Variant as declared by the given object.
+		 */
+		@Override
+		public Variant getVariant(ObjectProvider obj)
+		{
+			if (!variantMap.containsKey(obj.getKindName()))
+				return variantMap.get(defaultName);
+			return variantMap.get(obj.getKindName());
+		}
+	}
+	
+	/**
+	 * Variant list base class.
+	 */
+	public static class AttributeVariants extends VariantsT<AttributeVariant>
+	{
+		ArrayList<String> attrs;
+		boolean           hasCompare;
 		
 		/**
 		 * Constructs a variant set for the specified kind.
 		 * @param parent  The variants parent kind. The default variant name will be initialized to the kind's name.
 		 */
-		public Variants(Kind parent)
+		public AttributeVariants()
 		{
-			attrs = new ArrayList<String>();
-			valmap = new TreeMap<String, VarImage>();
-			namemap = new TreeMap<String, VarImage>();
-			defaultName = null;
-			showAll = false;
+			attrs      = new ArrayList<String>();
 			hasCompare = false;
 		}
 		
-		/**
-		 * Check, if this kind's variants depend on attribute values.
-		 * If they do not, they will always be used by means of their names.
-		 * 
-		 * @return  {@code true}, if these variants do not depend on attribute values.
-		 */
-		public boolean isAttributeIndependent() {return attrs.isEmpty();}
-		
-		@Override
-		public boolean add(VarImage variant)
+		public boolean add(AttributeVariant variant)
 		{
 			if (!this.isEmpty() && variant.kind != this.get(0).kind)
 				throw new IllegalArgumentException("Unable to add variant for kind '" + variant.kind.getName() + "' to kind '" + this.get(0).kind.getName() + "'");
 			
-			if (!attrs.isEmpty())
-				valmap.put(String.join(",", variant.val), variant);
-			
-			if (variant instanceof Name)
-			{
-				if (((Name)variant).hasName())
-					namemap.put(((Name)variant).name, variant);
-				if (((Name)variant).hasOldName())
-					namemap.put(((Name)variant).oldname, variant);
-			}
-			
+			variantMap.put(String.join(",", variant.val), variant);
 			hasCompare |= variant.hasCompare;
 			
 			return super.add(variant);
 		}
 		
 		/**
-		 * Get the variant corresponding to the given attribute value list.
-		 * 
-		 * @param values  List of values of the attributes declared in {@link attrs}.
-		 * @return        Variant, corresponding to the given values.
+		 * Determines the default variant of this variant set.
+		 * It is chosen by the parent kind's attribute default values. For this
+		 * type of variants this is the same as calling {@link #getVariant(ObjectProvider)}
+		 * on the parent kind.
+		 * @return  The default variant of this variant set.
 		 */
-		private VarImage getImage(ArrayList<String> values)
+		@Override
+		public Variant getDefaultVariant()
 		{
-			if (hasCompare)
-			{
-				boolean found;
-				for (VarImage variant : this)
-				{
-					found = true;
-					for (int i = 0; i < variant.val.size() && found; ++i)
-					{
-						try
-						{
-							switch (variant.val.get(i).charAt(0))
-							{
-							case '<': found &= Double.parseDouble(variant.val.get(i).substring(1)) > Double.parseDouble(values.get(i)); break;
-							case '>': found &= Double.parseDouble(variant.val.get(i).substring(1)) < Double.parseDouble(values.get(i)); break;
-							case '=': found &= variant.val.get(i).regionMatches(1, values.get(i), 0, values.get(i).length()); break;
-							default:  found &= variant.val.get(i).equals(values.get(i)); break;
-							}
-						}
-						catch (NumberFormatException e)
-						{
-							found = false;
-							break;
-						}
-					}
-					if (found) return variant;
-				}
-				System.err.println("Unable to resolve variant '" + String.join(",", values) + "' for kind '" + this.get(0).kind.getName() + "'");
-				return null;
-			}
-			else
-			{
-				final VarImage var = valmap.get(String.join(",", values));
-				if (var == null)
-					System.err.println("Unable to resolve variant '" + String.join(",", values) + "' for kind '" + this.get(0).kind.getName() + "'");
-				return var;
-			}
+			if (this.isEmpty())   return null;
+			if (this.size() == 1) return this.get(0);
+			return getVariant(this.get(0).kind);
 		}
 		
 		
 		/**
-		 * Get the default variant.
-		 * For attribute independent variants, the default variant is determined
-		 * by the {@code defaultName} field, if present. If this field is empty,
-		 * the default variant is the one, that is named like the parent kind.
-		 * In case of attribute dependency, the default variant is defined by
-		 * the attributes default values.
-		 * 
-		 * @return The default variant.
+		 * Return the variant as determined by the given object provider.
+		 * @param obj  Object declaration.
+		 * @return     Variant as declared by the given object.
 		 */
-		public VarImage getImage()
+		@Override
+		public Variant getVariant(ObjectProvider obj)
 		{
-			if (this.isEmpty())      return null;
-			if (this.size() == 1)    return this.get(0);
-			if (defaultName != null) return namemap.get(defaultName);
-			if (attrs.isEmpty())     return namemap.get(this.get(0).kind.name);
-			
-			final TreeMap<String, Attribute> kindattrs = this.get(0).kind.attributes;
-			final ArrayList<String>          values    = new ArrayList<String>(attrs.size());
-			
-			for (String attrname : attrs)
-			{
-				final Attribute attr = kindattrs.get(attrname);
-				if      (attr == null)                  values.add("nil");
-				else if (attr.defaultValue.equals("*")) values.add(attr.getEnum((int)(Math.random() * attr.enumSize())));
-				else                                    values.add(attr.defaultValue);
-			}
-			
-			return this.getImage(values);
+			return getVariant((AttributeProvider)obj);
 		}
 		
 		/**
-		 * Get the kind variant for the given alias.
+		 * Get the variant corresponding to the given attribute source.
 		 * 
-		 * @return The default variant.
+		 * @param provider  Source of attribute values based on which to choose the variant.
+		 * @return          Variant, corresponding to the given values.
 		 */
-		public VarImage getImage(Alias alias)
+		private Variant getVariant(AttributeProvider provider)
 		{
-			if (this.isEmpty())      return null;
-			if (this.size() == 1)    return this.get(0);
-			if (defaultName != null) return namemap.get(defaultName);
+			if (this.isEmpty())   return null;
+			if (this.size() == 1) return this.get(0);
 			
 			final TreeMap<String, Attribute> kindattrs = this.get(0).kind.attributes;
 			final ArrayList<String>          values    = new ArrayList<String>(attrs.size());
 			
-			for (String attrname : attrs)
+			for (int i = 0; i < attrs.size(); ++i)
 			{
-				String attrval = alias.getDefaultValue(attrname);
+				final String attrname = attrs.get(i);
+				final String attrval  = provider.getAttribute(attrname);
+				
 				if (attrval == null)
 				{
-					final Attribute attr = kindattrs.get(attrname);
-					if      (attr == null)                  values.add("nil");
-					else if (attr.defaultValue.equals("*")) values.add(attr.getEnum((int)(Math.random() * attr.enumSize())));
-					else                                    values.add(attr.defaultValue);
+					values.add("nil");
 				}
 				else if (attrval.equals("*"))
 				{
@@ -492,46 +623,88 @@ public class Tileset implements Iterable<Tileset.Group>
 				else values.add(attrval);
 			}
 			
-			return this.getImage(values);
-		}
-		
-		/**
-		 * Get the kind variant as declared by the given table.
-		 * 
-		 * @param table  Lua object declaration.
-		 * @param mode   Mode to resolve the attributes for.
-		 * @return       The variant specified by the object declaration.
-		 */
-		public VarImage getImage(Table table, Variant base, Mode2 mode)
-		{
-			if (this.isEmpty())      return null;
-			if (this.size() == 1)    return this.get(0);
-			if (defaultName != null) return namemap.get(defaultName);
+			Variant out = null;
 			
-			final TreeMap<String, Attribute> kindattrs = this.get(0).kind.attributes;
-			final ArrayList<String>          values    = new ArrayList<String>(attrs.size());
-			
-			for (String attrname : attrs)
+			if (!hasCompare)
 			{
-				final SimpleValue attr = (table.exist(attrname)) ? table.get(attrname).checkSimple(mode) : null;
-				final String attrval = (attr != null ? attr.toString_noquote() : base.getDefaultValue(attrname));
-				if (attrval == null)
+				out = variantMap.get(String.join(",", values));
+			}
+			else
+			{
+				for (Variant variant : this)
 				{
-					final Attribute kindattr = kindattrs.get(attrname);
-					if      (kindattr == null)                  values.add("nil");
-					else if (kindattr.defaultValue.equals("*")) values.add(kindattr.getEnum((int)(Math.random() * kindattr.enumSize())));
-					else                                        values.add(kindattr.defaultValue);
+					out = variant;
+					final ArrayList<String> val = ((AttributeVariant)variant).val;
+					for (int i = 0; i < val.size() && out != null; ++i)
+					{
+						try
+						{
+							switch (val.get(i).charAt(0))
+							{
+							case '<': if (Double.parseDouble(values.get(i)) >= Double.parseDouble(val.get(i).substring(1))) out = null; break;
+							case '>': if (Double.parseDouble(values.get(i)) <= Double.parseDouble(val.get(i).substring(1))) out = null; break;
+							case '=': if (!val.get(i).regionMatches(1, values.get(i), 0, values.get(i).length())) out = null; break;
+							default:  if (!val.get(i).equals(values.get(i))) out = null; break;
+							}
+						}
+						catch (NumberFormatException e)
+						{
+							out = null;
+							break;
+						}
+					}
+					if (out != null) break;
 				}
-				else if (attrval.equals("*"))
-				{
-					final Attribute kindattr = kindattrs.get(attrname);
-					values.add(kindattr == null ? "*" : kindattr.getEnum((int)(Math.random() * kindattr.enumSize())));
-				}
-				else values.add(attrval);
 			}
 			
-			return this.getImage(values);
+			if (out == null)
+				System.err.println("Unable to resolve variant '" + String.join(",", values) + "' for kind '" + this.get(0).kind.getName() + "'");
+			
+			return out;
 		}
+	}
+	
+	/**
+	 * Alias for a kind.
+	 * An alias may provide different attribute default values.
+	 */
+	public static class Alias extends Name implements ObjectProvider
+	{
+		/** parent kind */
+		final Kind kind;
+		
+		/** Alias dependent attribute default-values */
+		TreeMap<String, String> attributes;
+		
+		Alias(String name, Kind parent)
+		{
+			super(name);
+			this.kind = parent;
+			this.attributes = new TreeMap<String, String>();
+		}
+		
+		@Override
+		public Kind getKind()
+		{
+			return kind;
+		}
+		
+		@Override
+		public String getAttribute(String attrName)
+		{
+			String out = attributes.get(attrName);
+			return out == null ? kind.getAttribute(attrName) : out;
+		}
+		
+		@Override
+		public boolean hasAttribute(String attrName)
+		{
+			return attributes.containsKey(attrName) || kind.hasAttribute(attrName);
+		}
+		
+		@Override public String                  getKindName() {return kind.getName();}
+		@Override public ArrayList<Variant>      getVariant()  {return kind.getVariant(this);}
+		@Override public ArrayList<VariantImage> getImage()    {return kind.getImage(this);}
 	}
 	
 	/**
@@ -655,9 +828,9 @@ public class Tileset implements Iterable<Tileset.Group>
 	/**
 	 * Enigma object kind.
 	 */
-	public static class Kind extends Name implements Iterable<Variants>, Variant
+	public static class Kind extends Name implements Iterable<Variants>, ObjectProvider
 	{
-		/** object type */
+		/** object type enumeration */
 		public enum Type {AC, FL, IT, ST};
 		
 		/** user access mode */
@@ -679,7 +852,7 @@ public class Tileset implements Iterable<Tileset.Group>
 		TreeSet<String>            messages;
 		
 		/** special sprite-set icon */
-		NamedImage                 icon;
+		VariantImage               icon;
 		
 		/** user accessibility */
 		Access                     access;
@@ -702,70 +875,76 @@ public class Tileset implements Iterable<Tileset.Group>
 		
 		@Override public Iterator<Variants> iterator() {return stack.iterator();}
 		
-		public List<Alias> getAliases()  {return Collections.unmodifiableList(alias);}
-		public Type        getType()     {return type;}
-		public boolean     isHidden()    {return access == Access.HIDDEN;}
-		public boolean     showAliases() {return access == Access.ALIAS;}
-		public boolean     hasIcon()     {return icon != null;}
-		public NamedImage  getIcon()     {return icon;}
-
-		@Override
-		public Kind getKind()
+		public List<Alias>  getAliases()  {return Collections.unmodifiableList(alias);}
+		public Type         getType()     {return type;}
+		public boolean      isHidden()    {return access == Access.HIDDEN;}
+		public boolean      showAliases() {return access == Access.ALIAS;}
+		public boolean      hasIcon()     {return icon != null;}
+		public VariantImage getIcon()
 		{
-			return this;
+			if (icon != null) return icon;
+			return stack.get(0).getDefaultVariant().image;
 		}
 		
+		
+		@Override public Kind   getKind()     {return this;}
+		@Override public String getKindName() {return name;}
+		
 		@Override
-		public String getDefaultValue(String attrName)
+		public String getAttribute(String attrName)
 		{
 			final Attribute attr = attributes.get(attrName);
-			if (attr == null) return "nil";
+			if (attr == null || attr.defaultValue == null) return "nil";
 			return attr.defaultValue;
 		}
 		
-		public ArrayList<VarImage> getImage()
+		@Override
+		public boolean hasAttribute(String attrName)
 		{
-			final ArrayList<VarImage> stack = new ArrayList<VarImage>(this.stack.size());
-			for (Variants variants : this)
-			{
-				VarImage var = variants.getImage();
-				if (var != null) stack.add(var);
-			}
-			return stack;
-		}
-		
-		public ArrayList<VarImage> getImage(Alias alias)
-		{
-			final ArrayList<VarImage> stack = new ArrayList<VarImage>(this.stack.size());
-			for (Variants variants : this)
-			{
-				VarImage var = variants.getImage(alias);
-				if (var != null) stack.add(var);
-			}
-			return stack;
-		}
-		
-		public ArrayList<VarImage> getImage(Table table, Variant base, Mode2 mode)
-		{
-			final ArrayList<VarImage> stack = new ArrayList<VarImage>(this.stack.size());
-			for (Variants variants : this)
-			{
-				VarImage var = variants.getImage(table, base, mode);
-				if (var != null) stack.add(var);
-			}
-			return stack;
+			final Attribute attr = attributes.get(attrName);
+			return (attr != null && attr.defaultValue != null);
 		}
 		
 		@Override
-		public ArrayList<VarImage> getImage(Table table, Mode2 mode)
+		public ArrayList<Variant> getVariant()
 		{
-			final ArrayList<VarImage> stack = new ArrayList<VarImage>(this.stack.size());
-			for (Variants variants : this)
+			final ArrayList<Variant> list = new ArrayList<Variant>();
+			for (Variants variants : stack)
+				list.add(variants.getDefaultVariant());
+			return list;
+		}
+		
+		public ArrayList<Variant> getVariant(ObjectProvider obj)
+		{
+			final ArrayList<Variant> list = new ArrayList<Variant>();
+			for (Variants variants : stack)
+				list.add(variants.getVariant(obj));
+			return list;
+		}
+		
+		@Override
+		public ArrayList<VariantImage> getImage()
+		{
+			final ArrayList<VariantImage> list = new ArrayList<VariantImage>();
+			for (Variants variants : stack)
 			{
-				VarImage var = variants.getImage(table, this, mode);
-				if (var != null) stack.add(var);
+				final Variant variant = variants.getDefaultVariant();
+				if (variant != null);
+					list.add(variant.image);
 			}
-			return stack;
+			return list;
+		}
+		
+		public ArrayList<VariantImage> getImage(ObjectProvider obj)
+		{
+			final ArrayList<VariantImage> list = new ArrayList<VariantImage>();
+			for (Variants variants : stack)
+			{
+				final Variant variant = variants.getVariant(obj);
+				if (variant != null);
+					list.add(variant.image);
+			}
+			return list;
 		}
 	}
 	
@@ -817,15 +996,15 @@ public class Tileset implements Iterable<Tileset.Group>
 	 */
 	private static class NameMap
 	{
-		private TreeMap<String, Kind>     kindMap;
-		private TreeMap<String, Alias>    aliasMap;
-		private TreeMap<String, VarImage> variantMap;
+		private TreeMap<String, Kind>         kindMap;
+		private TreeMap<String, Alias>        aliasMap;
+		private TreeMap<String, NamedVariant> variantMap;
 		
 		NameMap()
 		{
 			kindMap    = new TreeMap<String, Kind>();
 			aliasMap   = new TreeMap<String, Alias>();
-			variantMap = new TreeMap<String, VarImage>();
+			variantMap = new TreeMap<String, NamedVariant>();
 		}
 		
 		/**
@@ -833,38 +1012,35 @@ public class Tileset implements Iterable<Tileset.Group>
 		 * This links the {@link Name#name name} and the {@link Name#oldname old name}
 		 * to the given object.
 		 * 
-		 * @param obj  Object to be registered.
+		 * @param obj  Variant to be registered.
 		 */
-		void add(VarImage obj)
+		void add(NamedVariant obj)
 		{
 			if (obj.hasName())
-				variantMap.put(((Name)obj).name, obj);
+				variantMap.put(obj.getName(), obj);
 			if (obj.hasOldName())
-				variantMap.put(obj.oldname, obj);
+				variantMap.put(obj.getOldName(), obj);
 		}
 		
 		/**
-		 * Register a variant with an alias name.
+		 * Register an alias name for a kind.
 		 * Links the {@link Name#name name} and the {@link Name#oldname old name} given
-		 * by {@code alias} to the object {@code obj}. This is primarily used to link
-		 * cluster-parts to the respective cluster instead of itself.
+		 * by {@code alias} to the given object.
 		 * 
-		 * @param obj    Object to be registered.
-		 * @param alias  Name the object is registered with.
+		 * @param alias  Alias to be registered.
 		 */
-		void add(VarImage obj, Name alias)
+		void add(Alias alias)
 		{
 			if (alias.hasName())
-				variantMap.put(alias.name, obj);
+				aliasMap.put(alias.name, alias);
 			if (alias.hasOldName())
-				variantMap.put(alias.oldname, obj);
+				aliasMap.put(alias.oldname, alias);
 		}
 		
 		/**
 		 * Register kind.
 		 * This links the {@link Name#name name} and the {@link Name#oldname old name}
-		 * of the given kind, as well as all its {@link Kind#alias aliases} to the given
-		 * object.
+		 * of the given kind, and registers all its {@link Kind#alias aliases}.
 		 * 
 		 * @param kind  Kind to be registered.
 		 */
@@ -886,27 +1062,28 @@ public class Tileset implements Iterable<Tileset.Group>
 					if (alias.hasOldName())
 						kindMap.put(alias.oldname, kind);
 				}
-				else
-				{
-					if (alias.hasName())
-						aliasMap.put(alias.name, alias);
-					if (alias.hasOldName())
-						aliasMap.put(alias.oldname, alias);
-				}
+				else this.add(alias);
 			}
 		}
 		
-		boolean  has     (String name) {return kindMap.containsKey(name) || aliasMap.containsKey(name) || variantMap.containsKey(name);}
-		Variant  get     (String name) {return kindMap.containsKey(name) ? kindMap.get(name) : (aliasMap.containsKey(name) ? aliasMap.get(name) : variantMap.get(name));}
+		boolean has(String name)
+		{
+			return kindMap.containsKey(name) || aliasMap.containsKey(name) || variantMap.containsKey(name);
+		}
 		
-		boolean  isKind  (String name) {return kindMap.containsKey(name);}
-		Kind     getKind (String name) {return kindMap.get(name);}
+		AttributeProvider get(String name)
+		{
+			return kindMap.containsKey(name) ? kindMap.get(name) : (aliasMap.containsKey(name) ? aliasMap.get(name) : variantMap.get(name));
+		}
 		
-		boolean  isAlias (String name) {return aliasMap.containsKey(name);}
-		Alias    getAlias(String name) {return aliasMap.get(name);}
+		boolean isKind    (String name) {return kindMap.containsKey(name);}
+		Kind    getKind   (String name) {return kindMap.get(name);}
 		
-		boolean  isImage (String name) {return variantMap.containsKey(name);}
-		VarImage getImage(String name) {return variantMap.get(name);}
+		boolean isAlias   (String name) {return aliasMap.containsKey(name);}
+		Alias   getAlias  (String name) {return aliasMap.get(name);}
+		
+		boolean isVariant (String name) {return variantMap.containsKey(name);}
+		Variant getVariant(String name) {return variantMap.get(name);}
 	}
 	
 	
@@ -939,14 +1116,20 @@ public class Tileset implements Iterable<Tileset.Group>
 		this.groups = new ArrayList<Group>();
 		this.names  = new NameMap();
 		this.i18n   = new I18N();
+		
+		Kind nil; 
+		names.add(nil = new Kind("fl_nil", Kind.Type.FL)); nil.access = Kind.Access.HIDDEN;
+		names.add(nil = new Kind("st_nil", Kind.Type.ST)); nil.access = Kind.Access.HIDDEN;
+		names.add(nil = new Kind("it_nil", Kind.Type.IT)); nil.access = Kind.Access.HIDDEN;
+		names.add(nil = new Kind("ac_nil", Kind.Type.AC)); nil.access = Kind.Access.HIDDEN;
 	}
 	
 	public String     getEditorVersion()    {return editorVer;}
 	public String     getEnigmaVersion()    {return enigmaVer;}
 	public I18N       getI18n()             {return i18n;}
 	
-	public boolean    has(String id)        {return names.has(id);}
-	public Variant    get(String id)        {return names.get(id);}
+	public boolean           has(String id) {return names.has(id);}
+	public AttributeProvider get(String id) {return names.get(id);}
 	
 	public boolean    hasKind(String id)    {return names.isKind(id);}
 	public Kind       getKind(String id)    {return names.getKind(id);}
@@ -954,8 +1137,8 @@ public class Tileset implements Iterable<Tileset.Group>
 	public boolean    hasAlias(String id)   {return names.isAlias(id);}
 	public Alias      getAlias(String id)   {return names.getAlias(id);}
 	
-	public boolean    hasImage(String id)   {return names.isImage(id);}
-	public VarImage   getImage(String id)   {return names.getImage(id);}
+	public boolean    hasVariant(String id) {return names.isVariant(id);}
+	public Variant    getVariant(String id) {return names.getVariant(id);}
 	
 	public boolean    hasString(String id)  {return i18n.exists(id);}
 	public KeyString  getString(String id)  {return i18n.get(id);}
@@ -990,17 +1173,13 @@ public class Tileset implements Iterable<Tileset.Group>
 				for (Kind kind : page)
 				{
 					names.add(kind);
-					for (Variants variants : kind.stack)
+					for (Variants variants : kind)
 					{
-						for (VarImage variant : variants)
+						if (variants instanceof NamedVariants)
 						{
-							names.add(variant);
-							if (variant instanceof Cluster)
+							for (NamedVariant variant : (NamedVariants)variants)
 							{
-								for (NamedImage connect : ((Cluster)variant).connect)
-								{
-									names.add(variant, connect);	// cluster resolving takes place elsewhere
-								}
+								names.add(variant);
 							}
 						}
 					}
@@ -1026,13 +1205,14 @@ public class Tileset implements Iterable<Tileset.Group>
 				{
 					for (Variants variants : kind.stack)
 					{
-						for (VarImage variant : variants)
+						for (Iterator<Variant> vIt = variants.viterator(); vIt.hasNext();)
 						{
-							variant.sprite = spriteset.get(variant);
+							final Variant variant = vIt.next();
+							variant.image.sprite = spriteset.get(variant.image);
 							
-							if (variant instanceof Cluster)
+							if (variant.image instanceof ClusterImage)
 							{
-								for (NamedImage connect : ((Cluster)variant).connect)
+								for (VariantImage connect : ((ClusterImage)variant.image).connect)
 								{
 									connect.sprite = spriteset.get(connect);
 								}
@@ -1102,22 +1282,12 @@ public class Tileset implements Iterable<Tileset.Group>
 	 * @param mode       Mode to use for resolving.
 	 * @return           The corresponding variant (or stack of variants).
 	 */
-	public ArrayList<VarImage> resolve(TilePart.Construct construct, Mode2 mode)
+	public TilePart resolve(ObjectDecl construct, Mode2 mode)
 	{
-		final Table table = construct.checkTable(mode);
-		final SimpleValue kind = table.exist(1) ? table.get(1).checkSimple(mode) : null;
-		if (kind == null) return null;
-		
-		String name = kind.toString_noquote();
-		if (name.startsWith("#")) name = name.substring(1);
-		Variant obj = names.get(name);
-		
-		if (obj == null)
-		{
-			System.err.println("Error: unable to find kind '" + kind.toString_noquote() + "'");
-			return new ArrayList<VarImage>();
-		}
-		return obj.getImage(table, mode);
+		final TilePart part = new TilePart(construct.checkTable(mode), this, mode);
+		if (part.objdef == null)
+			System.err.println("Error: unable to resolve kind '" + part.kindName + "'");
+		return part;
 	}
 	
 	/**
@@ -1183,19 +1353,43 @@ public class Tileset implements Iterable<Tileset.Group>
 						System.out.println();
 					}
 					
+					for (Alias alias : kind.alias)
+					{
+						System.out.print("\t\t\tALIAS " + alias.name);
+						if (alias.hasOldName())
+							System.out.print(" [" + alias.oldname + "]");
+						System.out.println();
+					}
+					
 					for (Variants variants : kind.stack)
 					{
-						for (VarImage variant : variants)
+						if (variants instanceof NamedVariants)
+							System.out.println("\t\t\tVARIANTS" + ((((NamedVariants)variants).defaultName != null) ? (" <" + ((NamedVariants)variants).defaultName + ">:") : ":"));
+						else if (variants instanceof AttributeVariants)
+							System.out.println("\t\t\tVARIANTS <" + String.join(", ", ((AttributeVariants)variants).attrs) + ">:");
+						
+						for (Iterator<Variant> vIt = variants.viterator(); vIt.hasNext();)
 						{
-							if (variant instanceof Cluster)
+							final Variant variant = vIt.next();
+							System.out.print("\t\t\t\tVAR");
+							if (variant.isNamed())
 							{
-								final Cluster cluster = (Cluster)variant;
-								System.out.print("\t\t\t\tCLUSTER " + cluster.name);
-								if (variant.oldname != null) System.out.println("[" + cluster.oldname + "]:"); else System.out.println(":");
+								if (((NamedVariant)variant).hasName())
+									System.out.print(" " + ((NamedVariant)variant).getName());
+								if (((NamedVariant)variant).hasOldName())
+									System.out.print(" [" + ((NamedVariant)variant).getOldName() + "]");
+							}
+							else
+							{
+								System.out.print(" <" + String.join(",", ((AttributeVariant)variant).val) + ">");
+							}
+							if (variant.image instanceof ClusterImage)
+							{
+								System.out.println(':');
+								final ClusterImage cluster = (ClusterImage)variant.image;
 								for (int c = 0; c < cluster.connect.length; ++c)
 								{
-									System.out.print("\t\t\t\t\t{" + Cluster.getConnections(c) + "}: " + cluster.connect[c].name);
-									if (cluster.connect[c].oldname != null) System.out.print("[" + cluster.connect[c].oldname + "]: "); else System.out.print(": ");
+									System.out.print("\t\t\t\t\t{" + ClusterImage.getConnections(c) + "}: ");
 									for (Image image : cluster.connect[c])
 									{
 										System.out.print(" " + image.file);
@@ -1206,13 +1400,12 @@ public class Tileset implements Iterable<Tileset.Group>
 							}
 							else
 							{
-								System.out.print("\t\t\t\tVAR " + variant.name);
-								if (variant.oldname != null) System.out.print("[" + variant.oldname + "]:"); else System.out.print(":");
-								for (Image image : variant)
+								System.out.print(':');
+								for (Image image : variant.image)
 								{
 									System.out.print(" " + image.file);
 								}
-								if (variant.sprite == null) System.out.print("!");
+								if (variant.image.sprite == null) System.out.print("!");
 								System.out.println();
 							}
 						}

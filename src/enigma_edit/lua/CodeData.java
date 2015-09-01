@@ -46,8 +46,8 @@ public class CodeData implements Iterable<Entry<String, Variable>>
 {
 	private TreeMap<String, CodeSnippet> functionMap;
 	private Table                        varMap;
-	private WoCallAPI20                       easyWo;
-	private WoCallAPI20                       difficultWo;
+	private WoCallAPI20                  easyWo;
+	private WoCallAPI20                  difficultWo;
 	
 	/**
 	 * Initializes common values.

@@ -29,8 +29,8 @@ public class InfoPanel extends JPanel
 		public LabeledText(String label)
 		{
 			this.label = new JLabel(label);
-			this.text  = new JTextField();
 			this.label.setHorizontalAlignment(JLabel.RIGHT);
+			this.text  = new JTextField();
 		}
 		
 		public String getText()         {return text.getText();}
@@ -107,17 +107,13 @@ public class InfoPanel extends JPanel
 		homepage.setText(info.author.homepage);
 	}
 	
-	public LevelInfo toLevelInfo()
+	public void toLevelInfo(LevelInfo info)
 	{
-		LevelInfo info = new LevelInfo();
-		
 		info.identity.title    = title.getText();
 		info.identity.subtitle = subtitle.getText();
 		info.author.name       = author.getText();
 		info.author.email      = email.getText();
 		info.author.homepage   = homepage.getText();
-		
-		return info;
 	}
 }
 
