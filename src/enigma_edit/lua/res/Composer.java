@@ -124,7 +124,6 @@ public class Composer extends SourceData implements Resolver
 				target.add(temp, mode);
 			str.delete(0, str.length());
 		}
-		System.out.println();
 	}
 	
 	@Override

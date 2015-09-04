@@ -223,9 +223,14 @@ public class Autotile extends SourceData implements Resolver
 			{
 				final Variable      var   = entry.getValue();
 				final MMSimpleValue value = var.checkSimple();
+				final MMTable       table = var.checkTable();
 				if (value.hasNormal() && value.easy.value.isstring())
 				{
 					ret = ret | substitute(value.easy, var, sub, Mode.NORMAL);
+				}
+				else if (table.hasNormal())
+				{
+					ret = ret | substitute(table.easy, sub);
 				}
 				else
 				{
@@ -233,6 +238,10 @@ public class Autotile extends SourceData implements Resolver
 						ret = ret | substitute(value.easy, var, sub, Mode.EASY);
 					if (value.hasDifficult() && value.difficult.value.isstring())
 						ret = ret | substitute(value.difficult, var, sub, Mode.DIFFICULT);
+					if (table.hasEasy())
+						ret = ret | substitute(table.easy, sub);
+					if (table.hasDifficult())
+						ret = ret | substitute(table.difficult, sub);
 				}
 			}
 		};

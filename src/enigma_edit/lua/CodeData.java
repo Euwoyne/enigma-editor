@@ -346,7 +346,7 @@ public class CodeData implements Iterable<Entry<String, Variable>>
 		if (easyWo == difficultWo)
 			System.out.println(easyWo);
 		else
-			System.out.println("if difficult then\n    " + difficultWo + "\nelse\n    " + easyWo + "\nend\n");
+			System.out.println("if difficult then\n    " + difficultWo + "\nelse\n    " + easyWo + "\nend");
 	}
 }
 

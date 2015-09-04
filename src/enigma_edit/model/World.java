@@ -147,38 +147,35 @@ public class World
 		return true;
 	}
 	
-	private boolean checkCluster(SimpleValue cluster, Tile.Part neighbor, Mode2 mode)
+	private boolean checkCluster(SimpleValue kind, SimpleValue cluster, Tile.Part neighbor, Mode2 mode)
 	{
 		if (!neighbor.has(mode)) return false;
 		final Table table = neighbor.get(mode).checkTable(mode);
-		if (table.exist("cluster"))
-		{
-			final SimpleValue ncluster = table.get("cluster").checkSimple(mode);
-			if (ncluster != null && cluster.value.eq_b(ncluster.value))
-				return true;
-		}
-		return false;
+		if (!table.exist(1, mode) || !table.exist("cluster", mode)) return false;
+		final SimpleValue nkind    = table.get(1).checkSimple(mode);
+		final SimpleValue ncluster = table.get("cluster").checkSimple(mode);
+		return (nkind != null && ncluster != null && cluster.value.eq_b(ncluster.value) && kind.value.eq_b(nkind.value));
 	}
 	
 	private void resolveCluster(ImageTile.Part target, Tile.Part part, int x, int y, Tileset tileset, Mode2 mode) throws LevelLuaException
 	{
 		final Table table = part.get(mode).checkTable(mode);
-		SimpleValue value;
+		final SimpleValue cluster = table.exist("cluster", mode) ? table.get("cluster").checkSimple(mode) : null;
+		final SimpleValue kind    = table.exist(1,         mode) ? table.get(1).checkSimple(mode)         : null;
 		for (VariantImage variant : target)
 		{
 			if (variant instanceof ClusterImage)
 			{
-				if (table.exist("cluster", mode)
-						&& (value = table.get("cluster").checkSimple(mode)) != null)
+				if (cluster != null)
 				{
 					final StringBuffer s = new StringBuffer(4);
-					if (y > 0                   && checkCluster(value, world[x][y-1].tile.st(), mode))
+					if (y > 0                   && checkCluster(kind, cluster, world[x][y-1].tile.st(), mode))
 						s.append('n');
-					if (x < world.length - 1    && checkCluster(value, world[x+1][y].tile.st(), mode))
+					if (x < world.length - 1    && checkCluster(kind, cluster, world[x+1][y].tile.st(), mode))
 						s.append('e');
-					if (y < world[0].length - 1 && checkCluster(value, world[x][y+1].tile.st(), mode))
+					if (y < world[0].length - 1 && checkCluster(kind, cluster, world[x][y+1].tile.st(), mode))
 						s.append('s');
-					if (x > 0                   && checkCluster(value, world[x-1][y].tile.st(), mode))
+					if (x > 0                   && checkCluster(kind, cluster, world[x-1][y].tile.st(), mode))
 						s.append('w');
 					target.indices.add(ClusterImage.getIndex(s.toString()));
 				}

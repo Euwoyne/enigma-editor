@@ -1128,7 +1128,7 @@
         <kind name="st_brownpyramid" oldname="st-stone1" type="st"/>
         
         <!-- Chameleon -->
-        <kind name="st_chameleon" oldname="st-chameleon" type="st"><image file="invisible" text="cham'on"/></kind>
+        <kind name="st_chameleon" oldname="st-chameleon" type="st"><image file="invisible" text="cham"/></kind>
         
         <!-- Charge -->
         <kind name="st_charge" type="st">
@@ -1619,6 +1619,55 @@
                 <variant val="triangle,true, true, EAST"> <image file="st_mirror_movable" pos="1,1"/></variant>
                 <variant val="triangle,true, true, SOUTH"><image file="st_mirror_movable" pos="1,2"/></variant>
                 <variant val="triangle,true, true, WEST"> <image file="st_mirror_movable" pos="1,3"/></variant>
+                
+                <variant val="slab,    false,false,VERTICAL">  <image file="st_mirror_static"  pos="2,0"/></variant>
+                <variant val="slab,    false,false,SLASH">     <image file="st_mirror_static"  pos="2,1"/></variant>
+                <variant val="slab,    false,false,HORIZONTAL"><image file="st_mirror_static"  pos="2,2"/></variant>
+                <variant val="slab,    false,false,BACKSLASH"> <image file="st_mirror_static"  pos="2,3"/></variant>
+                <variant val="slab,    false,true, VERTICAL">  <image file="st_mirror_static"  pos="3,0"/></variant>
+                <variant val="slab,    false,true, SLASH">     <image file="st_mirror_static"  pos="3,1"/></variant>
+                <variant val="slab,    false,true, HORIZONTAL"><image file="st_mirror_static"  pos="3,2"/></variant>
+                <variant val="slab,    false,true, BACKSLASH"> <image file="st_mirror_static"  pos="3,3"/></variant>
+                <variant val="slab,    true, false,VERTICAL">  <image file="st_mirror_movable" pos="2,0"/></variant>
+                <variant val="slab,    true, false,SLASH">     <image file="st_mirror_movable" pos="2,1"/></variant>
+                <variant val="slab,    true, false,HORIZONTAL"><image file="st_mirror_movable" pos="2,2"/></variant>
+                <variant val="slab,    true, false,BACKSLASH"> <image file="st_mirror_movable" pos="2,3"/></variant>
+                <variant val="slab,    true, true, VERTICAL">  <image file="st_mirror_movable" pos="3,0"/></variant>
+                <variant val="slab,    true, true, SLASH">     <image file="st_mirror_movable" pos="3,1"/></variant>
+                <variant val="slab,    true, true, HORIZONTAL"><image file="st_mirror_movable" pos="3,2"/></variant>
+                <variant val="slab,    true, true, BACKSLASH"> <image file="st_mirror_movable" pos="3,3"/></variant>
+                <variant val="sheets,  false,false,VERTICAL">  <image file="st_mirror_static"  pos="4,0"/></variant>
+                <variant val="sheets,  false,false,SLASH">     <image file="st_mirror_static"  pos="4,1"/></variant>
+                <variant val="sheets,  false,false,HORIZONTAL"><image file="st_mirror_static"  pos="4,2"/></variant>
+                <variant val="sheets,  false,false,BACKSLASH"> <image file="st_mirror_static"  pos="4,3"/></variant>
+                <variant val="sheets,  false,true, VERTICAL">  <image file="st_mirror_static"  pos="4,0"/></variant>
+                <variant val="sheets,  false,true, SLASH">     <image file="st_mirror_static"  pos="4,1"/></variant>
+                <variant val="sheets,  false,true, HORIZONTAL"><image file="st_mirror_static"  pos="4,2"/></variant>
+                <variant val="sheets,  false,true, BACKSLASH"> <image file="st_mirror_static"  pos="4,3"/></variant>
+                <variant val="sheets,  true, false,VERTICAL">  <image file="st_mirror_movable" pos="4,0"/></variant>
+                <variant val="sheets,  true, false,SLASH">     <image file="st_mirror_movable" pos="4,1"/></variant>
+                <variant val="sheets,  true, false,HORIZONTAL"><image file="st_mirror_movable" pos="4,2"/></variant>
+                <variant val="sheets,  true, false,BACKSLASH"> <image file="st_mirror_movable" pos="4,3"/></variant>
+                <variant val="sheets,  true, true, VERTICAL">  <image file="st_mirror_movable" pos="4,0"/></variant>
+                <variant val="sheets,  true, true, SLASH">     <image file="st_mirror_movable" pos="4,1"/></variant>
+                <variant val="sheets,  true, true, HORIZONTAL"><image file="st_mirror_movable" pos="4,2"/></variant>
+                <variant val="sheets,  true, true, BACKSLASH"> <image file="st_mirror_movable" pos="4,3"/></variant>
+                <variant val="triangle,false,false,VERTICAL">  <image file="st_mirror_static"  pos="0,0"/></variant>
+                <variant val="triangle,false,false,SLASH">     <image file="st_mirror_static"  pos="0,1"/></variant>
+                <variant val="triangle,false,false,HORIZONTAL"><image file="st_mirror_static"  pos="0,2"/></variant>
+                <variant val="triangle,false,false,BACKSLASH"> <image file="st_mirror_static"  pos="0,3"/></variant>
+                <variant val="triangle,false,true, VERTICAL">  <image file="st_mirror_static"  pos="1,0"/></variant>
+                <variant val="triangle,false,true, SLASH">     <image file="st_mirror_static"  pos="1,1"/></variant>
+                <variant val="triangle,false,true, HORIZONTAL"><image file="st_mirror_static"  pos="1,2"/></variant>
+                <variant val="triangle,false,true, BACKSLASH"> <image file="st_mirror_static"  pos="1,3"/></variant>
+                <variant val="triangle,true, false,VERTICAL">  <image file="st_mirror_movable" pos="0,0"/></variant>
+                <variant val="triangle,true, false,SLASH">     <image file="st_mirror_movable" pos="0,1"/></variant>
+                <variant val="triangle,true, false,HORIZONTAL"><image file="st_mirror_movable" pos="0,2"/></variant>
+                <variant val="triangle,true, false,BACKSLASH"> <image file="st_mirror_movable" pos="0,3"/></variant>
+                <variant val="triangle,true, true, VERTICAL">  <image file="st_mirror_movable" pos="1,0"/></variant>
+                <variant val="triangle,true, true, SLASH">     <image file="st_mirror_movable" pos="1,1"/></variant>
+                <variant val="triangle,true, true, HORIZONTAL"><image file="st_mirror_movable" pos="1,2"/></variant>
+                <variant val="triangle,true, true, BACKSLASH"> <image file="st_mirror_movable" pos="1,3"/></variant>
             </variants>
         </kind>
         
