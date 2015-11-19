@@ -49,7 +49,7 @@ public class TileReference extends FieldReference implements TileDeclPart
 		return tile != null ? tile.getObject(idx, mode) : null;
 	}
 	
-	@Override public MMTileConstruct getObject(int idx)
+	@Override public MMObjectDecl getObject(int idx)
 	{
 		final MMTileDecl tile = this.checkTile();
 		return tile != null ? tile.getObject(idx) : null;
@@ -62,5 +62,8 @@ public class TileReference extends FieldReference implements TileDeclPart
 	@Override public String        typename()                {return "<tile-reference>";}
 	@Override public String        toString()                {return "ti[" + this.key + "]";}
 	@Override public TileReference snapshot()                {return this;}
+	@Override public int           objtype(Mode2 mode)       {final TileDecl   tile = this.checkTile(mode); return tile != null ? tile.objtype(mode)  : 0;} 
+	@Override public int           typeMask()                {final MMTileDecl tile = this.checkTile();     return tile != null ? tile.typeMask()     : 0;} 
+	@Override public int           typeMask(Mode mode)       {final MMTileDecl tile = this.checkTile();     return tile != null ? tile.typeMask(mode) : 0;}
 }
 

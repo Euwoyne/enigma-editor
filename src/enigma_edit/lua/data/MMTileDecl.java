@@ -101,18 +101,41 @@ public class MMTileDecl extends MM<TileDecl>
 	{
 		if (tile.hasNormal())
 		{
-			for (TileDeclPart part : tile.easy.parts)
+			for (TileDeclPart part : tile.easy)
 				this.add(part, mode);
 		}
 		else
 		{
 			if (mode != Mode.DIFFICULT && tile.hasEasy())
-				for (TileDeclPart part : tile.easy.parts)
+				for (TileDeclPart part : tile.easy)
 					this.add(part, Mode.EASY);
 			
 			if (mode != Mode.EASY && tile.hasDifficult())
-				for (TileDeclPart part : tile.difficult.parts)
+				for (TileDeclPart part : tile.difficult)
 					this.add(part, Mode.DIFFICULT);
+		}
+	}
+	
+	public int objtype(Mode2 mode)
+	{
+		return mode == Mode2.EASY ?
+				((easy == null)      ? 0 : easy.objtype(Mode2.EASY)) :
+				((difficult == null) ? 0 : difficult.objtype(Mode2.DIFFICULT));
+	}
+	
+	public int typeMask()
+	{
+		return    (easy == null      ? 0 : easy.objtype(Mode2.EASY))
+				| (difficult == null ? 0 : difficult.objtype(Mode2.DIFFICULT) << TileDeclPart.T_SIZE);
+	}
+	
+	public int typeMask(Mode mode)
+	{
+		switch (mode)
+		{
+		case EASY:      return easy == null      ? 0 : easy.typeMask(mode);
+		case DIFFICULT: return difficult == null ? 0 : difficult.typeMask(mode);
+		default:        return typeMask();
 		}
 	}
 	
@@ -124,12 +147,12 @@ public class MMTileDecl extends MM<TileDecl>
 	 * @param idx   Part index.
 	 * @return      Requested tile part (in both modes).
 	 */
-	public MMTileConstruct getObject(int idx)
+	public MMObjectDecl getObject(int idx)
 	{
 		final ObjectDecl easy = this.easy.getObject(idx, Mode2.EASY); 
 		final ObjectDecl diff = this.difficult.getObject(idx, Mode2.DIFFICULT);
-		if (easy == diff) return new MMTileConstruct(easy);
-		return new MMTileConstruct(easy, diff);
+		if (easy == diff) return new MMObjectDecl(easy);
+		return new MMObjectDecl(easy, diff);
 	}
 	
 	@Override public String typename() {return "tile";}

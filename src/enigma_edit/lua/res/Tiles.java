@@ -23,8 +23,12 @@
 
 package enigma_edit.lua.res;
 
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import enigma_edit.error.LevelLuaException;
+import enigma_edit.lua.RevId;
+import enigma_edit.lua.ReverseInfo;
 import enigma_edit.lua.data.CodeSnippet;
 import enigma_edit.lua.data.Mode;
 import enigma_edit.lua.data.Mode2;
@@ -44,12 +48,12 @@ import enigma_edit.lua.data.Variable;
  * This resolver simply looks up the tile definition in a table provided to the
  * constructor. Note that this is not a resolver in the sense of the lua API,
  * but represents the lua table given as the final sub-resolver.
- * As a consequence, this resolver does not have a constructor. 
+ * As a consequence, this resolver does not have a {@link Constructor}. 
  */
 public class Tiles extends Table implements Resolver
 {
-	private final TreeMap<String, String> easyKeys;
-	private final TreeMap<String, String> difficultKeys;
+	/** reverse id cache */
+	private final TreeMap<String, String> idToKey;
 	
 	/**
 	 * Default constructor.
@@ -57,8 +61,7 @@ public class Tiles extends Table implements Resolver
 	public Tiles()
 	{
 		super(null);
-		this.easyKeys      = new TreeMap<String, String>();
-		this.difficultKeys = new TreeMap<String, String>();
+		idToKey = new TreeMap<String, String>();
 	}
 	
 	/**
@@ -76,33 +79,83 @@ public class Tiles extends Table implements Resolver
 		return tile;
 	}
 	
-	/**
-	 * Reverse tile lookup.
-	 * 
-	 * @param tile  ImageTile to look for.
-	 * @param mode  Difficulty mode to use.
-	 * @return      The key of the given tile, if existent. {@code null} otherwise.
-	 */
 	@Override
-	public String reverse(Tile tile, Mode2 mode)
+	public int reverse(ReverseInfo info)
 	{
-		switch (mode)
+		final Mode mode = info.getMode();
+		
+		// check if the tile exists
+		String key = idToKey.get(mode.toString() + info.reverseId());
+		if (key != null)
 		{
-		case DIFFICULT: return difficultKeys.get(tile.toString());
-		case EASY:      return easyKeys.get(tile.toString());
-		default:        return null;
+			info.setKey(key);
+			return info.typeMask();
 		}
+		
+		// search for tile parts
+		int typeMask = 0;
+		
+		// check each declared tile
+		for (Entry<String, Variable> entry : this)
+		{
+			// get relevant tile declaration
+			final Variable tile = entry.getValue();
+			final TileDecl decl = (TileDecl)tile.get(mode);
+			
+			if (decl == null) continue;
+			if (!tile.isDefined(mode)) continue;
+			
+			// get the declaration's reverse id
+			final RevId declRevId = decl.reverseID(info);
+			if (!idToKey.containsKey("KEY" + entry.getKey()))
+			{
+				idToKey.put("KEY" + entry.getKey(), null);
+				if (declRevId.easy != null)
+					idToKey.put("EASY"      + declRevId.easy,      entry.getKey());
+				if (declRevId.difficult != null)
+					idToKey.put("DIFFICULT" + declRevId.difficult, entry.getKey());
+				if (declRevId.normal != null)
+					idToKey.put("NORMAL"    + declRevId.normal,    entry.getKey());
+			}
+			
+			// check, if the declaration fits the request
+			if (decl.typeMask(mode) == info.typeMask())
+			{
+				info.setKey(entry.getKey());
+				return info.typeMask();
+			}
+			
+			// if the declaration defines part of the tile...
+			if ((decl.typeMask() & info.typeMask()) == decl.typeMask())
+			{
+				// ...and the part declarations match...
+				if (info.reverseId(decl.typeMask()).equals(declRevId))
+				{
+					// ...and the declaration contains more parts than a previously found one...
+					if (Integer.bitCount(typeMask) < Integer.bitCount(decl.typeMask(mode)))	
+					{
+						typeMask = decl.typeMask(mode);
+						key = entry.getKey();
+					}
+				}
+			}
+		}
+		
+		// return best approximation
+		info.setKey(key, typeMask);
+		return typeMask;
 	}
 	
-	@Override public Tiles    snapshot()                {return this;}
-	@Override public Tiles    getTiles(Mode2 mode)      {return this;}
-	@Override public String   typename()                {return "res.ti";}
-	@Override public String   toString()                {return "ti";}
-	@Override public Resolver checkResolver(Mode2 mode) {return this;}
+	@Override public Tiles    snapshot()                 {return this;}
+	@Override public Tiles    getTiles(Mode2 mode)       {return this;}
+	@Override public Resolver getSubresolver(Mode2 mode) {return null;}
+	@Override public String   typename()                 {return "res.ti";}
+	@Override public String   toString()                 {return "ti";}
+	@Override public Resolver checkResolver(Mode2 mode)  {return this;}
 	
 	/**
 	 * Assigns a tile to the given field.
-	 * This overrides {@link Table#assign(String, Source, CodeSnippet, Mode)}
+	 * This overrides {@link Table#assignI(String, Source, CodeSnippet, Mode)}
 	 * to add conversion of the {@code value} to {@link TileDeclPart}. 
 	 * 
 	 * @param key     Name of the field.
@@ -113,6 +166,9 @@ public class Tiles extends Table implements Resolver
 	@Override
 	public Variable assignI(String key, Source value, CodeSnippet assign, Mode mode)
 	{
+		if (this.exist(key))
+			throw new LevelLuaException.Runtime("IllegalTileRedefinition", key, assign);
+		
 		if (value instanceof MultiMode)
 		{
 			if (((MultiMode)value).hasNormal() && mode == Mode.NORMAL)
@@ -128,18 +184,32 @@ public class Tiles extends Table implements Resolver
 		}
 		else
 		{
-			if (mode != Mode.DIFFICULT) easyKeys.put(value.toString(), key);
-			if (mode != Mode.EASY)      difficultKeys.put(value.toString(), key);
+			final Variable ret;
 			
 			if (value instanceof TileDecl)
-				return super.assignI(key, value, assign, mode);
+				ret = super.assignI(key, value, assign, mode);
+			else if (value instanceof TileDeclPart)
+				ret = super.assignI(key, new TileDecl((TileDeclPart)value), assign, mode);
+			else
+				ret = super.assignI(key, new TileDecl(new ObjectDecl(value)), assign, mode);
 			
-			if (value instanceof TileDeclPart)
-				return super.assignI(key, new TileDecl((TileDeclPart)value), assign, mode);
-			
-			return super.assignI(key, new TileDecl(new ObjectDecl(value)), assign, mode);
+			return ret;
 		}
 	}
+	
+	@Override
+	public TileDecl getValueI(String idx, Mode2 mode)
+	{
+		final Variable var = super.getI(idx);
+		if (var == null) return null;
+		return var.checkTile(mode);
+	}
+	
+	@Override
+	public TileDecl getValue(String key, Mode2 mode) {return getValueI('"' + key + '"', mode);}
+	
+	@Override
+	public TileDecl getValue(int idx, Mode2 mode) {return getValueI(Integer.toString(idx), mode);}
 	
 	/**
 	 * Get a reference to the given field (raw index).

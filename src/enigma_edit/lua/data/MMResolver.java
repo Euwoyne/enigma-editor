@@ -23,6 +23,7 @@
 
 package enigma_edit.lua.data;
 
+import enigma_edit.lua.ReverseInfo;
 import enigma_edit.lua.res.Tiles;
 
 /**
@@ -58,10 +59,22 @@ public class MMResolver extends MM<Resolver> implements Resolver
 	}
 	
 	@Override
-	public String reverse(Tile tile, Mode2 mode)
+	public int reverse(ReverseInfo info)
 	{
-		if (mode == Mode2.EASY) return (easy != null) ? easy.reverse(tile, mode) : null;
-		return (difficult != null) ? difficult.reverse(tile, mode) : null;
+		switch (info.getMode())
+		{
+		case EASY:      return (easy      != null)                 ? easy.reverse(info)      : 0;
+		case DIFFICULT: return (difficult != null)                 ? difficult.reverse(info) : 0;
+		case NORMAL:    return (easy == difficult && easy != null) ? easy.reverse(info)      : 0;
+		}
+		return 0;
+	}
+	
+	@Override
+	public Resolver getSubresolver(Mode2 mode)
+	{
+		if (mode == Mode2.EASY) return (easy != null) ? easy.getSubresolver(mode) : null;
+		return (difficult != null) ? difficult.getSubresolver(mode) : null;
 	}
 	
 	@Override

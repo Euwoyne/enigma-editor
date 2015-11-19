@@ -23,6 +23,8 @@
 
 package enigma_edit.view;
 
+import java.awt.Font;
+
 import javax.swing.JEditorPane;
 
 import enigma_edit.model.Level;
@@ -35,6 +37,7 @@ public class CodeEditor extends JEditorPane
 	public void setup()
 	{
 		this.setEditorKit(new EnigmaSyntaxKit());
+		this.setFont(new Font("Ubuntu Mono", 0, 16));
 		//((EnigmaSyntaxKit)this.getEditorKit()).getConfig().put("Style.KEYWORD", "0x000000, 3");
 	}
 	

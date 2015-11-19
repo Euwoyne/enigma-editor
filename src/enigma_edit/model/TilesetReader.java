@@ -116,7 +116,7 @@ public class TilesetReader
 		
 		private Tileset.Group             group;
 		private Tileset.Page              page;
-		private Tileset.Group.Attributes  attrgroup;
+		private Tileset.AttrGroup         attrgroup;
 		private Tileset.Attribute         attr;
 		private Tileset.Kind              kind;
 		private Tileset.Alias             alias;
@@ -295,10 +295,10 @@ public class TilesetReader
 					group = target.createGroup();
 					temp = attrs.getValue("i18n");
 					if (temp != null)
-						group.i18n = temp;
+						group.setI18n(temp);
 					temp = attrs.getValue("icon");
 					if (temp != null)
-						group.icon = temp;
+						group.setIcon(temp);
 					state.to(State.GROUP);
 				}
 				else if (qName.equals("i18n"))
@@ -311,10 +311,8 @@ public class TilesetReader
 			case GROUP:
 				if (qName.equals("attrgroup"))
 				{
-					attrgroup = new Tileset.Group.Attributes();
-					group.attributeGroups.add(attrgroup);
 					temp = attrs.getValue("i18n");
-					if (temp != null) attrgroup.i18n = temp;
+					attrgroup = group.addAttributeGroup(temp);
 					state.to(State.ATTRGROUP);
 				}
 				else if (qName.equals("page"))
@@ -324,7 +322,7 @@ public class TilesetReader
 					if ((temp = attrs.getValue("i18n")) != null) page.i18n = temp;
 					state.to(State.PAGE);
 				}
-				else this.error(new TilesetXMLException("UnexpectedTagGroup", qName, group.i18n, locator));
+				else this.error(new TilesetXMLException("UnexpectedTagGroup", qName, group.getI18n(), locator));
 				break;
 			
 			case ATTRGROUP:
@@ -333,7 +331,7 @@ public class TilesetReader
 					parse_attr(attrs);
 					state.to(State.GATTR);
 				}
-				else this.error(new TilesetXMLException("UnexpectedTagAttrGroup", qName, attrgroup.i18n, locator));
+				else this.error(new TilesetXMLException("UnexpectedTagAttrGroup", qName, attrgroup.getI18n(), locator));
 				break;
 			
 			case PAGE:
@@ -350,13 +348,13 @@ public class TilesetReader
 					if ((temp = attrs.getValue("type")) == null)
 						this.error(new TilesetXMLException("MissingAttribute", "type", qName, locator));
 					if (temp.equalsIgnoreCase("ac"))
-						kind = new Tileset.Kind(id, Tileset.Kind.Type.AC);
+						kind = new Tileset.Kind(id, Tileset.Kind.Type.AC, group);
 					else if (temp.equalsIgnoreCase("fl"))
-						kind = new Tileset.Kind(id, Tileset.Kind.Type.FL);
+						kind = new Tileset.Kind(id, Tileset.Kind.Type.FL, group);
 					else if (temp.equalsIgnoreCase("it"))
-						kind = new Tileset.Kind(id, Tileset.Kind.Type.IT);
+						kind = new Tileset.Kind(id, Tileset.Kind.Type.IT, group);
 					else if (temp.equalsIgnoreCase("st"))
-						kind = new Tileset.Kind(id, Tileset.Kind.Type.ST);
+						kind = new Tileset.Kind(id, Tileset.Kind.Type.ST, group);
 					else
 						this.error(new TilesetXMLException("UnexpectedValueKind", "type", id, locator));
 					page.add(kind);
@@ -601,7 +599,7 @@ public class TilesetReader
 				break;
 				
 			case GATTR:
-				this.error(new TilesetXMLException("UnexpectedTagGroupAttr", qName, attrgroup.i18n, locator));
+				this.error(new TilesetXMLException("UnexpectedTagGroupAttr", qName, attrgroup.getI18n(), locator));
 				
 			case ATTR:
 			case VATTR:
@@ -678,19 +676,19 @@ public class TilesetReader
 				break;
 			case GROUP:
 				if (!qName.equals("group"))
-					this.error(new TilesetXMLException("UnexpectedEndTagGroup", qName, group.i18n, locator));
+					this.error(new TilesetXMLException("UnexpectedEndTagGroup", qName, group.getI18n(), locator));
 				group = null;
 				state.back();
 				break;
 			case ATTRGROUP:
 				if (!qName.equals("attrgroup"))
-					this.error(new TilesetXMLException("UnexpectedEndTagAttrGroup", qName, attrgroup.i18n, locator));
+					this.error(new TilesetXMLException("UnexpectedEndTagAttrGroup", qName, attrgroup.getI18n(), locator));
 				attrgroup = null;
 				state.back();
 				break;
 			case GATTR:
 				if (!qName.equals("attr"))
-					this.error(new TilesetXMLException("UnexpectedEndTagGroupAttr", qName, attrgroup.i18n, locator));
+					this.error(new TilesetXMLException("UnexpectedEndTagGroupAttr", qName, attrgroup.getI18n(), locator));
 				state.back();
 				break;
 			case PAGE:

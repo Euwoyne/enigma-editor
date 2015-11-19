@@ -115,7 +115,7 @@ public final class CodeSnippet implements Comparable<CodeSnippet>
 	/**
 	 * Create a code snippet from line/column pairs given for start- and end-position.
 	 * The real character offsets will be calculated by inspecting the given code string.
-	 *  
+	 * 
 	 * @param code         Code this snippet is referencing.
 	 * @param startLine    Line number of the start position.
 	 * @param startColumn  Column number of the start position.

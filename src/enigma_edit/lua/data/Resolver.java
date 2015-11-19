@@ -25,6 +25,7 @@ package enigma_edit.lua.data;
 
 import java.util.List;
 
+import enigma_edit.lua.ReverseInfo;
 import enigma_edit.lua.res.Tiles;
 import enigma_edit.error.LevelLuaException;
 
@@ -46,15 +47,17 @@ public interface Resolver extends Source
 	public Tile resolve(String key, Mode mode);
 	
 	/**
-	 * Return a key, that would be resolved to the given tile declaration.
-	 * This might return {@code null}, if no such tile can be constructed by
-	 * the resolvers with the current tile repository.    
+	 * Set the appropriate key in the given {@link ReverseInfo} instance.
+	 * If the indicated tile can be constructed by this resolver, the return
+	 * value is equal to the requested types as given by {@link ReverseInfo#typeMask()}.
+	 * Otherwise, a partial resolving is attempted. The key will only be set for
+	 * some of the parts of the requested tile. The return value indicates,
+	 * which parts have been resolved. 
 	 * 
-	 * @param tile  ImageTile to determine the key for.
-	 * @param mode  Difficulty mode to use.
-	 * @return      A key string to be used in the map.
+	 * @param info  Reversal information structure.
+	 * @return      The type-mask of the resolved parts.
 	 */
-	public String reverse(Tile tile, Mode2 mode);
+	public int reverse(ReverseInfo info);
 	
 	/**
 	 * Get the tile repository used by this resolver.
@@ -65,6 +68,16 @@ public interface Resolver extends Source
 	 * @return      ImageTile repository used by this resolver.
 	 */
 	public Tiles getTiles(Mode2 mode);
+	
+	/**
+	 * Get the next resolver in the chain.
+	 * This method might return {@code null}, if this is the final resolver.
+	 * Especially the {@link Tiles} resolver returns {@code null}.
+	 * 
+	 * @param mode  Difficulty mode to use.
+	 * @return      This resolver's subresolver.
+	 */
+	public Resolver getSubresolver(Mode2 mode);
 	
 	/**
 	 * Resolver constructor interface.

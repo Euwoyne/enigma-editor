@@ -85,6 +85,20 @@ public class CodeData implements Iterable<Entry<String, Variable>>
 	}
 	
 	/**
+	 * Return the tile repository {@code ti}.
+	 */
+	public Tiles getTiles()
+	{
+		final Variable tiles = varMap.get("ti");
+		if (tiles == null)      return null;
+		if (!tiles.hasNormal()) return null;
+		if (tiles.easy instanceof Tiles)
+			return (Tiles)tiles.easy;
+		else
+			return null;
+	}
+	
+	/**
 	 * Constructor, that initializes this instance with common values.
 	 * A table {@code wo} and the difficulty constants {@code difficult}
 	 * and {@code wo["IsDifficult"]} (of type {@link SimpleValue} wrapping a lua boolean)

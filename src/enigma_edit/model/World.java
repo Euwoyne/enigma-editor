@@ -35,7 +35,6 @@ import enigma_edit.lua.data.Table;
 import enigma_edit.lua.data.Tile;
 import enigma_edit.lua.data.TileDecl;
 import enigma_edit.lua.data.WoCall;
-import enigma_edit.model.ImageTile;
 import enigma_edit.model.Tileset.VariantImage;
 import enigma_edit.model.Tileset.ClusterImage;
 import enigma_edit.error.LevelLuaException;
@@ -228,14 +227,14 @@ public class World
 		data = CodeAnalyser.analyse(this.code);
 		
 		// prepare world data
-		final WoCall    easyCall    = data.getWorldCall(Mode2.EASY);
-		final WoCall    diffCall    = data.getWorldCall(Mode2.DIFFICULT);
-		final int       easyWidth   = easyCall.getWidth(Mode.EASY);
-		final int       diffWidth   = diffCall.getWidth(Mode.DIFFICULT);
-		final int       easyHeight  = easyCall.getHeight(Mode.EASY);
-		final int       diffHeight  = diffCall.getHeight(Mode.DIFFICULT);
-		final int       width       = easyWidth  >= diffWidth  ? easyWidth  : diffWidth;
-		final int       height      = easyHeight >= diffHeight ? easyHeight : diffHeight;
+		final WoCall easyCall   = data.getWorldCall(Mode2.EASY);
+		final WoCall diffCall   = data.getWorldCall(Mode2.DIFFICULT);
+		final int    easyWidth  = easyCall.getWidth(Mode.EASY);
+		final int    diffWidth  = diffCall.getWidth(Mode.DIFFICULT);
+		final int    easyHeight = easyCall.getHeight(Mode.EASY);
+		final int    diffHeight = diffCall.getHeight(Mode.DIFFICULT);
+		final int    width      = easyWidth  >= diffWidth  ? easyWidth  : diffWidth;
+		final int    height     = easyHeight >= diffHeight ? easyHeight : diffHeight;
 		
 		world = new ImageTile[width][height];
 		defaultTile = Tile.composeMode(easyCall.getDefaultTile(Mode2.EASY), diffCall.getDefaultTile(Mode2.DIFFICULT));

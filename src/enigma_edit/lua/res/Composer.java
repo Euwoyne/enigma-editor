@@ -26,6 +26,7 @@ package enigma_edit.lua.res;
 import java.util.List;
 
 import enigma_edit.error.LevelLuaException;
+import enigma_edit.lua.ReverseInfo;
 import enigma_edit.lua.data.CodeSnippet;
 import enigma_edit.lua.data.MMResolver;
 import enigma_edit.lua.data.MMSimpleValue;
@@ -149,10 +150,16 @@ public class Composer extends SourceData implements Resolver
 	}
 	
 	@Override
-	public String reverse(Tile tile, Mode2 mode)
+	public int reverse(ReverseInfo info)
 	{
 		// TODO: implement reverse tile lookup (for 'res.composer')
-		return subresolver.deref(mode).reverse(tile, mode);
+		return subresolver.reverse(info);
+	}
+	
+	@Override
+	public Resolver getSubresolver(Mode2 mode)
+	{
+		return subresolver.get(mode);
 	}
 	
 	@Override

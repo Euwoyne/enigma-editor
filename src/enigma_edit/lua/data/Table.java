@@ -33,7 +33,7 @@ import java.util.Map.Entry;
  */
 public class Table extends Value implements Indexed, Iterable<Entry<String, Variable>>
 {
-	final TreeMap<String, Variable> fields;
+	private final TreeMap<String, Variable> fields;
 	
 	/**
 	 * Create an empty table.
@@ -248,42 +248,46 @@ public class Table extends Value implements Indexed, Iterable<Entry<String, Vari
 	@Override
 	public String toString()
 	{
-		StringBuilder                    out = new StringBuilder();
-		Iterator<Entry<String,Variable>> i;
-		Entry<String,Variable>           entry;
-		int                              idx = 1, max = 0;
+		return toString(Mode.NORMAL);
+	}
+	
+	public String toString(Mode mode)
+	{
+		StringBuilder out = new StringBuilder();
+		int           idx = 1, max;
 		
 		out.append('{');
 		while (fields.containsKey(Integer.toString(idx)))
 		{
 			if (idx > 1) out.append(", ");
-			out.append(fields.get(Integer.toString(idx)).toString());
+			out.append(fields.get(Integer.toString(idx)).toString(mode));
 			++idx;
 		}
 		max = idx;
 		
-		i = fields.entrySet().iterator();
-		while (i.hasNext())
+		for (Entry<String,Variable> entry : fields.entrySet())
 		{
-			entry = i.next();
-			if (entry.getKey().matches("\"\\w+\""))
+			if (entry.getValue().isDefined(mode))
 			{
-				if (idx > 1) out.append(", ");
-				out.append(entry.getKey().substring(1, entry.getKey().length() - 1));
-				out.append('=');
-				out.append(entry.getValue() == null ? "nil" : entry.getValue().toString());
-				++idx;
-				continue;
+				if (entry.getKey().matches("\"\\w+\""))
+				{
+					if (idx > 1) out.append(", ");
+					out.append(entry.getKey().substring(1, entry.getKey().length() - 1));
+					out.append('=');
+					out.append(entry.getValue() == null ? "nil" : entry.getValue().toString(mode));
+					++idx;
+					continue;
+				}
+				
+				try {
+					if (Integer.parseInt(entry.getKey()) < max) continue;
+				} catch (NumberFormatException e) {}
+				
+				if (idx > 1) out.append(", [");
+				out.append(entry.getKey());
+				out.append("]=");
+				out.append(entry.getValue().toString(mode));
 			}
-			
-			try {
-				if (Integer.parseInt(entry.getKey()) < max) continue;
-			} catch (NumberFormatException e) {}
-			
-			if (idx > 1) out.append(", [");
-			out.append(entry.getKey());
-			out.append("]=");
-			out.append(entry.getValue().toString());
 			++idx;
 		}
 		out.append('}');

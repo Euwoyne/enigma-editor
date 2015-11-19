@@ -23,6 +23,7 @@
 
 package enigma_edit.lua.res;
 
+import enigma_edit.lua.ReverseInfo;
 import enigma_edit.lua.data.CodeSnippet;
 import enigma_edit.lua.data.Mode;
 import enigma_edit.lua.data.Mode2;
@@ -34,7 +35,8 @@ public class Custom extends SourceData implements Resolver
 {
 	public Custom(CodeSnippet code)                            {super(code);}
 	@Override public Tile     resolve(String key,  Mode mode)  {return null;}
-	@Override public String   reverse(Tile   tile, Mode2 mode) {return null;}
+	@Override public int      reverse(ReverseInfo info)        {return 0;}
+	@Override public Resolver getSubresolver(Mode2 mode)       {return null;}
 	@Override public Tiles    getTiles(Mode2 mode)             {return null;}
 	@Override public String   typename()                       {return "res.custom";}
 	@Override public Resolver checkResolver(Mode2 mode)        {return this;}

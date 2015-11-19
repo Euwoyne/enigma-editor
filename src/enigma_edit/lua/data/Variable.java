@@ -185,5 +185,15 @@ public class Variable extends MM<Source> implements Assignable
 			+ (hasDifficult() ? difficult.toString() : "nil") + ", "
 			+ (hasEasy()      ? easy.toString()      : "nil") + ")";
 	}
+	
+	public String toString(Mode mode)
+	{
+		switch (mode)
+		{
+		case EASY:      return hasEasy()      ? easy.toString()      : "nil";
+		case DIFFICULT: return hasDifficult() ? difficult.toString() : "nil";
+		default:        return toString();
+		}
+	}
 }
 

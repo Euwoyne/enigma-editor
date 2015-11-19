@@ -376,7 +376,7 @@ public class CodeAnalyser
 		}
 		
 		/**
-		 * Function calls are jut passed on to an {@link ExpVisitor#visit(org.luaj.vm2.ast.Exp.FuncCall) ExpVisitor}.
+		 * Function calls are just passed on to an {@link ExpVisitor#visit(org.luaj.vm2.ast.Exp.FuncCall) ExpVisitor}.
 		 */
 		public void visit(Stat.FuncCallStat stat)
 		{

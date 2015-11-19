@@ -146,6 +146,9 @@ public interface Constants
 		}
 	}
 	
+	/**
+	 * Attribute {@code state} of the oxyd stone {@code st_oxyd} (values {@code CLOSED/OPEN/OXYDPAIR}).
+	 */
 	public static enum OxydState implements Constants
 	{
 		CLOSED(0), OPEN(1), OXYDPAIR(2);
@@ -166,6 +169,9 @@ public interface Constants
 		}
 	}
 	
+	/**
+	 * Attribute {@code state} of the disco stone {@code st_disco} (values {@code LIGHT/MEDIUM/DARK}).
+	 */
 	public static enum DiscoState implements Constants
 	{
 		LIGHT(0), MEDIUM(1), DARK(2);
@@ -186,6 +192,9 @@ public interface Constants
 		}
 	}
 	
+	/**
+	 * Attribute {@code state} of water {@code fl_water} (values {@code IDLE/FLOODING}).
+	 */
 	public static enum FloodState implements Constants
 	{
 		IDLE(0), FLOODING(1);
@@ -205,6 +214,9 @@ public interface Constants
 		}
 	}
 	
+	/**
+	 * Attribute {@code state} of coins {@code it_coin} (values {@code SMALL/MEDIUM/LARGE}).
+	 */
 	public static enum CoinState implements Constants
 	{
 		SMALL(0), MEDIUM(1), LARGE(2);
@@ -225,6 +237,9 @@ public interface Constants
 		}
 	}
 	
+	/**
+	 * Attribute {@code state} of floor cracks {@code it_crack} (values {@code INVISIBLE/SMALL/MEDIUM/LARGE}).
+	 */
 	public static enum CrackState implements Constants
 	{
 		INVISIBLE(-1), SMALL(0), MEDIUM(1), LARGE(2);
@@ -246,6 +261,9 @@ public interface Constants
 		}
 	}
 	
+	/**
+	 * Attribute {@code state} of the yin-yang floor {@code fl_yinyang} (values {@code YIN/YANG}).
+	 */
 	public static enum YinYangState implements Constants
 	{
 		YIN(0), YANG(1);
@@ -265,6 +283,9 @@ public interface Constants
 		}
 	}
 	
+	/**
+	 * Attribute {@code state} of an extinguisher {@code it_extinguisher} (values {@code EMPTY/MEDIUM/FULL}).
+	 */
 	public static enum ExtinguisherState implements Constants
 	{
 		EMPTY(0), MEDIUM(1), FULL(2);
@@ -285,6 +306,9 @@ public interface Constants
 		}
 	}
 	
+	/**
+	 * Attribute {@code state} of the bottle item {@code it_bottle} (values {@code IDLE/BROKEN}).
+	 */
 	public static enum BottleState implements Constants
 	{
 		IDLE(0), BROKEN(1);
@@ -304,6 +328,9 @@ public interface Constants
 		}
 	}
 	
+	/**
+	 * Attribute {@code state} of the quake stone {@code st_quake} (values {@code IDLE/ACTIVE/BREAKING}).
+	 */
 	public static enum QuakeState implements Constants
 	{
 		IDLE(0), ACTIVE(1), BREAKING(2);
@@ -324,6 +351,9 @@ public interface Constants
 		}
 	}
 	
+	/**
+	 * Attribute {@code state} indicating direction of the rotator stone {@code st_rotator} (values {@code CW/CCW}).
+	 */
 	public static enum RotatorState implements Constants
 	{
 		CW(0), CCW(1);
@@ -343,6 +373,18 @@ public interface Constants
 		}
 	}
 	
+	/**
+	 * Attribute {@code state} of all colored objects ({@code BLACK/WHITE/BLUE/YELLOW/NOCOLOR}).
+	 * Used by
+	 *  {@code it_flag} (uses black and white),
+	 *  {@code it_bomb} (uses black and white),
+	 *  {@code st_chess} (uses black and white),
+	 *  {@code st_jamb} (uses black and white),
+	 *  {@code st_oneway} (uses back, white and nocolor),
+	 *  {@code st_passage} (uses black and white),
+	 *  {@code st_switch} (uses black, white and nocolor) and
+	 *  {@code st_puzzle} (uses blue and yellow).
+	 */
 	public static enum ColorState implements Constants
 	{
 		BLACK(0), WHITE(1), BLUE(2), YELLOW(3), NOCOLOR(-1);

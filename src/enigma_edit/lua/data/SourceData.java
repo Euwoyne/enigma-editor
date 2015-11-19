@@ -34,15 +34,15 @@ public abstract class SourceData extends Data implements Source
 	
 	@Override public CodeSnippet getCode()            {return code;}
 	@Override public String      typename()           {return "<source>";}
-	@Override public String      typename(Mode2 mode) {return "<source>";}
+	@Override public String      typename(Mode2 mode) {return typename();}
 	@Override public SourceData  snapshot()           {return this;}
 
-	@Override public Value       checkValue(Mode2 mode)     {return null;}
-	@Override public Nil         checkNil(Mode2 mode)       {return null;}
-	@Override public SimpleValue checkSimple(Mode2 mode)    {return null;}
-	@Override public Table       checkTable(Mode2 mode)     {return null;}
-	@Override public TileDeclPart    checkTilePart(Mode2 mode)  {return null;}
-	@Override public TileDecl    checkTile(Mode2 mode)      {return null;}
-	@Override public Resolver    checkResolver(Mode2 mode)  {return null;}
+	@Override public Value        checkValue(Mode2 mode)     {return null;}
+	@Override public Nil          checkNil(Mode2 mode)       {return null;}
+	@Override public SimpleValue  checkSimple(Mode2 mode)    {return null;}
+	@Override public Table        checkTable(Mode2 mode)     {return null;}
+	@Override public TileDeclPart checkTilePart(Mode2 mode)  {return null;}
+	@Override public TileDecl     checkTile(Mode2 mode)      {return null;}
+	@Override public Resolver     checkResolver(Mode2 mode)  {return null;}
 }
 

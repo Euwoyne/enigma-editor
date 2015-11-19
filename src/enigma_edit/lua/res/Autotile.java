@@ -31,6 +31,7 @@ import java.util.function.Consumer;
 import org.luaj.vm2.LuaValue;
 
 import enigma_edit.error.LevelLuaException;
+import enigma_edit.lua.ReverseInfo;
 import enigma_edit.lua.data.CodeSnippet;
 import enigma_edit.lua.data.MMResolver;
 import enigma_edit.lua.data.MMSimpleValue;
@@ -58,10 +59,10 @@ public class Autotile extends SourceData implements Resolver
 		int    offset;
 	}
 	
-	private MMResolver      subresolver;
-	private ArrayList<Rule> easyRules;
-	private ArrayList<Rule> difficultRules;
-	private boolean         isNormal;
+	private final MMResolver      subresolver;
+	private final ArrayList<Rule> easyRules;
+	private final ArrayList<Rule> difficultRules;
+	private       boolean         isNormal;
 	
 	@Override public Tiles    getTiles(Mode2 mode)      {return subresolver.deref(mode).getTiles(mode);}
 	@Override public String   typename()                {return "res.autotile";}
@@ -347,10 +348,16 @@ public class Autotile extends SourceData implements Resolver
 	}
 	
 	@Override
-	public String reverse(Tile tile, Mode2 mode)
+	public int reverse(ReverseInfo info)
 	{
 		// TODO: implement reverse tile lookup (for 'res.autotile')
-		return subresolver.deref(mode).reverse(tile,  mode);
+		return subresolver.reverse(info);
+	}
+	
+	@Override
+	public Resolver getSubresolver(Mode2 mode)
+	{
+		return subresolver.get(mode);
 	}
 	
 	@Override public String toString()

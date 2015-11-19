@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import enigma_edit.lua.ReverseIDProvider;
 import enigma_edit.lua.data.Mode2;
-import enigma_edit.lua.data.Table;
 import enigma_edit.lua.data.ObjectDecl;
 import enigma_edit.model.I18N.KeyString;
 import enigma_edit.error.MissingImageException;
@@ -48,7 +48,7 @@ import enigma_edit.error.MissingStringException;
  * description file, that is parsed by an instance of
  * {@link TilesetReader}.
  */
-public class Tileset implements Iterable<Tileset.Group>
+public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 {
 	/**
 	 * Interface for named entities, i.e. kinds, named variants and aliases.
@@ -100,12 +100,6 @@ public class Tileset implements Iterable<Tileset.Group>
 	public static interface AttributeProvider
 	{
 		/**
-		 * Get the parent kind.
-		 * @return  The kind that is parent to this attribute providing structure.
-		 */
-		Kind getKind();
-		
-		/**
 		 * Get the value provided for the given attribute.
 		 * @param attrName  Attribute name.
 		 * @return          The attribute's (most often default) value.
@@ -129,6 +123,12 @@ public class Tileset implements Iterable<Tileset.Group>
 	 */
 	public static interface ObjectProvider extends AttributeProvider
 	{
+		/**
+		 * Get the parent kind.
+		 * @return  The kind that is parent to this attribute providing structure.
+		 */
+		Kind getKind();
+		
 		/**
 		 * Get the name of the object's kind.
 		 * @return  Name of the kind.
@@ -836,6 +836,9 @@ public class Tileset implements Iterable<Tileset.Group>
 		/** user access mode */
 		public enum Access {KIND, ALIAS, HIDDEN};
 		
+		/** parent group */
+		final Group                group;
+		
 		/** object type */
 		Type                       type;
 		
@@ -860,9 +863,10 @@ public class Tileset implements Iterable<Tileset.Group>
 		/** framed floor existence */
 		boolean                    framed;
 		
-		Kind(String name, Type type)
+		Kind(String name, Type type, Group group)
 		{
 			super(name);
+			this.group      = group;
 			this.type       = type;
 			this.alias      = new ArrayList<Alias>();
 			this.stack      = new ArrayList<Variants>();
@@ -871,6 +875,11 @@ public class Tileset implements Iterable<Tileset.Group>
 			this.icon       = null;
 			this.access     = Access.KIND;
 			this.framed     = false;
+		}
+		
+		private Kind(String name, Type type)
+		{
+			this(name, type, null);
 		}
 		
 		@Override public Iterator<Variants> iterator() {return stack.iterator();}
@@ -886,7 +895,6 @@ public class Tileset implements Iterable<Tileset.Group>
 			return stack.get(0).getDefaultVariant().image;
 		}
 		
-		
 		@Override public Kind   getKind()     {return this;}
 		@Override public String getKindName() {return name;}
 		
@@ -894,7 +902,11 @@ public class Tileset implements Iterable<Tileset.Group>
 		public String getAttribute(String attrName)
 		{
 			final Attribute attr = attributes.get(attrName);
-			if (attr == null || attr.defaultValue == null) return "nil";
+			if (attr == null || attr.defaultValue == null)
+			{
+				if (group == null) return "nil";
+				return group.getAttribute(attrName); 
+			}
 			return attr.defaultValue;
 		}
 		
@@ -902,7 +914,9 @@ public class Tileset implements Iterable<Tileset.Group>
 		public boolean hasAttribute(String attrName)
 		{
 			final Attribute attr = attributes.get(attrName);
-			return (attr != null && attr.defaultValue != null);
+			if (attr != null && attr.defaultValue != null)
+				return true;
+			return (group != null && group.hasAttribute(attrName));
 		}
 		
 		@Override
@@ -958,34 +972,91 @@ public class Tileset implements Iterable<Tileset.Group>
 	}
 	
 	/**
-	 * Kind group.
-	 * As collection of pages.
+	 * Attribute group.
+	 * This is a set of attributes shared by all objects of this group.
 	 */
-	public static class Group extends LinkedList<Page>
+	public static class AttrGroup implements Iterable<Attribute>
 	{
-		/**
-		 * Attribute group.
-		 * This is a set of attributes shared by all objects of this group.
-		 */
-		public static class Attributes extends ArrayList<Attribute>
+		private ArrayList<Attribute> attributes;
+		private String               i18n;
+		
+		AttrGroup(String i18n)
 		{
-			private static final long serialVersionUID = 1L;
-			String i18n;
-		}
-		
-		private static final long serialVersionUID = 1L;
-		
-		String                i18n;
-		String                icon;
-		ArrayList<Attributes> attributeGroups;
-		
-		public Group()
-		{
-			attributeGroups = new ArrayList<Attributes>();
+			attributes = new ArrayList<Attribute>();
+			this.i18n = i18n;
 		}
 		
 		public String getI18n() {return i18n;}
+		
+		void add(Attribute attr)
+		{
+			attributes.add(attr);
+		}
+		
+		@Override
+		public Iterator<Attribute> iterator()
+		{
+			return attributes.iterator();
+		}
+	}
+	
+	/**
+	 * Kind group.
+	 * As collection of pages.
+	 */
+	public static class Group extends LinkedList<Page> implements AttributeProvider
+	{
+		private static final long serialVersionUID = 1L;
+		
+		private String                     i18n;
+		private String                     icon;
+		private TreeMap<String, Attribute> attributes;
+		private ArrayList<AttrGroup>       attributeGroups;
+		
+		public Group()
+		{
+			attributes      = new TreeMap<String, Attribute>();
+			attributeGroups = new ArrayList<AttrGroup>();
+		}
+		
+		void setI18n(String i18n) {this.i18n = i18n;}
+		void setIcon(String icon) {this.icon = icon;}
+		
+		public String getI18n() {return i18n;}
 		public String getIcon() {return icon;}
+		
+		Iterator<AttrGroup> getAttrGroups()
+		{
+			return attributeGroups.iterator();
+		}
+		
+		AttrGroup addAttributeGroup(String i18n)
+		{
+			final AttrGroup grp = new AttrGroup(i18n);
+			attributeGroups.add(grp);
+			return grp;
+		}
+		
+		void addAttribute(Attribute attr)
+		{
+			attributeGroups.get(attributeGroups.size() - 1).add(attr);
+			attributes.put(attr.name, attr);
+		}
+		
+		@Override
+		public String getAttribute(String attrName)
+		{
+			final Attribute attr = attributes.get(attrName);
+			if (attr == null || attr.defaultValue == null) return "nil";
+			return attr.defaultValue;
+		}
+		
+		@Override
+		public boolean hasAttribute(String attrName)
+		{
+			final Attribute attr = attributes.get(attrName);
+			return (attr != null && attr.defaultValue != null);
+		}
 	}
 	
 	/**
@@ -1071,7 +1142,7 @@ public class Tileset implements Iterable<Tileset.Group>
 			return kindMap.containsKey(name) || aliasMap.containsKey(name) || variantMap.containsKey(name);
 		}
 		
-		AttributeProvider get(String name)
+		ObjectProvider get(String name)
 		{
 			return kindMap.containsKey(name) ? kindMap.get(name) : (aliasMap.containsKey(name) ? aliasMap.get(name) : variantMap.get(name));
 		}
@@ -1128,8 +1199,8 @@ public class Tileset implements Iterable<Tileset.Group>
 	public String     getEnigmaVersion()    {return enigmaVer;}
 	public I18N       getI18n()             {return i18n;}
 	
-	public boolean           has(String id) {return names.has(id);}
-	public AttributeProvider get(String id) {return names.get(id);}
+	public boolean        has(String id)    {return names.has(id);}
+	public ObjectProvider get(String id)    {return names.get(id);}
 	
 	public boolean    hasKind(String id)    {return names.isKind(id);}
 	public Kind       getKind(String id)    {return names.getKind(id);}
@@ -1243,7 +1314,7 @@ public class Tileset implements Iterable<Tileset.Group>
 			if (!i18n.exists(group.i18n))
 				throw new MissingStringException(group.i18n, "group");
 			
-			for (Group.Attributes attrgroup : group.attributeGroups)
+			for (AttrGroup attrgroup : group.attributeGroups)
 			{
 				if (!i18n.exists(attrgroup.i18n))
 					throw new MissingStringException(attrgroup.i18n, "attrgroup");
@@ -1276,18 +1347,27 @@ public class Tileset implements Iterable<Tileset.Group>
 	}
 	
 	/**
-	 * Resolves a {@link Table lua table} to the {@link Variant} as declared by this tileset.
+	 * Resolves an {@link ObjectDecl object declaration} to the {@link TilePart} as declared by this tileset.
 	 * 
-	 * @param construct  Tile constructor to be resolved.
-	 * @param mode       Mode to use for resolving.
-	 * @return           The corresponding variant (or stack of variants).
+	 * @param decl   Object declaration to be resolved.
+	 * @param mode   Mode to use for resolving.
+	 * @return       The corresponding tile part.
 	 */
-	public TilePart resolve(ObjectDecl construct, Mode2 mode)
+	public TilePart resolve(ObjectDecl decl, Mode2 mode)
 	{
-		final TilePart part = new TilePart(construct.checkTable(mode), this, mode);
+		final TilePart part = new TilePart(decl.checkTable(mode), this, mode);
 		if (part.objdef == null)
 			System.err.println("Error: unable to resolve kind '" + part.kindName + "'");
 		return part;
+	}
+	
+	@Override
+	public String getReverseID(ObjectDecl decl, Mode2 mode)
+	{
+		final TilePart part = new TilePart(decl.checkTable(mode), this, mode);
+		if (part.objdef == null)
+			return part.table.toString(mode.mode());
+		return part.canonical();
 	}
 	
 	/**
@@ -1306,7 +1386,7 @@ public class Tileset implements Iterable<Tileset.Group>
 				throw new MissingStringException(group.i18n, "group");
 			System.out.println("GROUP " + group.i18n + " (" + i18n.english(group.i18n) + ")");
 			
-			for (Group.Attributes attrgroup : group.attributeGroups)
+			for (AttrGroup attrgroup : group.attributeGroups)
 			{
 				if (!i18n.exists(attrgroup.i18n))
 					throw new MissingStringException(attrgroup.i18n, "attrgroup");

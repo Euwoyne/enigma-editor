@@ -27,13 +27,18 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
+import enigma_edit.lua.RevId;
+import enigma_edit.lua.ReverseIDProvider;
+
 /**
  * A tile declaration.
  * This is essentially a stack of tables or references to tables.
  */
-public class TileDecl extends Value implements Iterable<MMTileConstruct>
+public class TileDecl extends Value implements Iterable<TileDeclPart>
 {
-	public LinkedList<TileDeclPart> parts;
+	private LinkedList<TileDeclPart> parts;
+	private int                      type;
+	private RevId                    revId;
 	
 	/**
 	 * Copy constructor.
@@ -44,6 +49,8 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	{
 		super(tile.code);
 		this.parts = new LinkedList<TileDeclPart>();
+		this.type = tile.type;
+		this.revId = new RevId(tile.revId);
 		for (TileDeclPart part : tile.parts)
 			this.parts.add(part.snapshot());
 	}
@@ -56,6 +63,8 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	{
 		super(CodeSnippet.NONE);
 		this.parts = new LinkedList<TileDeclPart>();
+		this.type = 0;
+		this.revId = new RevId();
 	}
 	
 	/**
@@ -69,6 +78,8 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 		super(part.getCode());
 		this.parts = new LinkedList<TileDeclPart>();
 		this.parts.add(part);
+		this.type = part.typeMask();
+		this.revId = new RevId();
 	}
 	
 	/**
@@ -79,8 +90,10 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	 */
 	public void add(TileDeclPart part)
 	{
-		this.parts.add(part);
 		this.code = this.code.extend(part.getCode());
+		this.parts.add(part);
+		this.type |= part.typeMask();
+		this.revId.clear();
 	}
 	
 	/**
@@ -113,12 +126,12 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	 * @param idx   Part index.
 	 * @return      Requested tile part (in both modes).
 	 */
-	public MMTileConstruct getObject(int idx)
+	public MMObjectDecl getObject(int idx)
 	{
 		final ObjectDecl easy = this.getObject(idx, Mode2.EASY); 
 		final ObjectDecl diff = this.getObject(idx, Mode2.DIFFICULT);
-		if (easy == diff) return new MMTileConstruct(easy);
-		return new MMTileConstruct(easy, diff);
+		if (easy == diff) return new MMObjectDecl(easy);
+		return new MMObjectDecl(easy, diff);
 	}
 	
 	/**
@@ -133,6 +146,105 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 		for (TileDeclPart part : parts)
 			cnt += part.objectCount(mode);
 		return cnt;
+	}
+	
+	/**
+	 * Return the type mask.
+	 * That is the types of all parts for the given mode bitwise or'd.
+	 * @see TileDeclPart#objtype(Mode2)
+	 * 
+	 * @param mode  Mode to get the types for.
+	 * @return      This object's types.
+	 */
+	public int objtype(Mode2 mode)
+	{
+		return mode == Mode2.EASY ? type & TileDeclPart.T_MASK : type >> TileDeclPart.T_SIZE;
+	}
+	
+	/**
+	 * Return the type mask.
+	 * That is the types of all parts bitwise or'd.
+	 * @see TileDeclPart#typeMask()
+	 * 
+	 * @return  This object's types.
+	 */
+	public int typeMask()
+	{
+		return type;
+	}
+	
+	/**
+	 * Return the type mask (masked for given mode).
+	 * That is the types of all parts bitwise or'd.
+	 * @see TileDeclPart#typeMask(Mode)
+	 * 
+	 * @return  This object's types.
+	 */
+	public int typeMask(Mode mode)
+	{
+		switch(mode)
+		{
+		case EASY:      return type & TileDeclPart.T_MASK;
+		case DIFFICULT: return type & ~TileDeclPart.T_MASK;
+		default:        return type;
+		}
+	}
+	
+	/**
+	 * Helper function that calculates the reverse ID for a given mode.
+	 * 
+	 * @param prorid  Provider of {@link ObjectDecl} reverse IDs.
+	 * @param mode    Mode to use for value gathering.
+	 * @return        This declaration's reverse ID.
+	 */
+	private String calculateRevId(ReverseIDProvider prorid, Mode2 mode)
+	{
+		ObjectDecl fl = null, it = null, ac = null, st = null, obj;
+		String kind;
+		for (Iterator<ObjectDecl> objIt = constructIterator(mode); objIt.hasNext(); )
+		{
+			obj = objIt.next();
+			kind = obj.getKind(mode);
+			if (kind.startsWith("#")) kind = kind.substring(1);
+			if (kind.length() < 2) continue;
+			switch (kind.substring(0, 2))
+			{
+			case "fl": fl = obj; break;
+			case "it": it = obj; break;
+			case "ac": ac = obj; break;
+			case "st": st = obj; break;
+			}
+		}
+		StringBuilder out = new StringBuilder();
+		out.append((fl != null) ? prorid.getReverseID(fl, mode) : "nil");
+		out.append(';');
+		out.append((it != null) ? prorid.getReverseID(it, mode) : "nil");
+		out.append(';');
+		out.append((ac != null) ? prorid.getReverseID(ac, mode) : "nil");
+		out.append(';');
+		out.append((st != null) ? prorid.getReverseID(st, mode) : "nil");
+		return out.toString();
+	}
+	
+	/**
+	 * Return the reverse IDs.
+	 * That is a string uniquely identifying the tile (being the same for every
+	 * equivalent declaration; i.e. declarations yielding the same floor-item-
+	 * actor-stone quadruple).
+	 * 
+	 * @param prorid  Provider of {@link ObjectDecl} reverse IDs.
+	 * @return        This declaration's reverse ID.
+	 */
+	public RevId reverseID(ReverseIDProvider prorid)
+	{
+		if (revId.empty())
+		{
+			revId.easy      = calculateRevId(prorid, Mode2.EASY);
+			revId.difficult = calculateRevId(prorid, Mode2.DIFFICULT);
+			if (revId.easy.equals(revId.difficult)) revId.normal = revId.difficult = revId.easy;
+			else revId.normal = null;
+		};
+		return revId;
 	}
 	
 	@Override public String   typename()            {return "tile";}
@@ -158,9 +270,14 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 	}
 	
 	@Override
-	public Iterator<MMTileConstruct> iterator()
+	public Iterator<TileDeclPart> iterator()
 	{
-		return new Iterator<MMTileConstruct>()
+		return parts.iterator();
+	}
+	
+	public Iterator<MMObjectDecl> constructIterator()
+	{
+		return new Iterator<MMObjectDecl>()
 		{
 			private final int easyCount = objectCount(Mode2.EASY);
 			private final int diffCount = objectCount(Mode2.DIFFICULT);
@@ -173,11 +290,34 @@ public class TileDecl extends Value implements Iterable<MMTileConstruct>
 			}
 			
 			@Override
-			public MMTileConstruct next()
+			public MMObjectDecl next()
 			{
 				if (index >= easyCount && index >= diffCount)
 					throw new NoSuchElementException();
 				return getObject(index++);
+			}
+		};
+	}
+	
+	public Iterator<ObjectDecl> constructIterator(Mode2 mode)
+	{
+		return new Iterator<ObjectDecl>()
+		{
+			private final int count = objectCount(mode);
+			private int       index = 0;
+			
+			@Override
+			public boolean hasNext()
+			{
+				return index < count;
+			}
+			
+			@Override
+			public ObjectDecl next()
+			{
+				if (index >= count)
+					throw new NoSuchElementException();
+				return getObject(index++, mode);
 			}
 		};
 	}

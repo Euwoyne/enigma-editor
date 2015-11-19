@@ -29,13 +29,14 @@ import java.util.List;
 import org.luaj.vm2.LuaValue;
 
 import enigma_edit.error.LevelLuaException;
+import enigma_edit.lua.ReverseInfo;
 import enigma_edit.lua.data.*;
 
 public class Puzzle extends SourceData implements Resolver
 {
-	private MMResolver      subresolver;
-	private HashSet<String> easyKeys;
-	private HashSet<String> difficultKeys;
+	private final MMResolver      subresolver;
+	private final HashSet<String> easyKeys;
+	private final HashSet<String> difficultKeys;
 	
 	@Override public Tiles    getTiles(Mode2 mode)      {return subresolver.deref(mode).getTiles(mode);}
 	@Override public String   typename()                {return "res.puzzle";}
@@ -192,10 +193,16 @@ public class Puzzle extends SourceData implements Resolver
 	}
 
 	@Override
-	public String reverse(Tile tile, Mode2 mode)
+	public int reverse(ReverseInfo info)
 	{
 		// TODO: implement reverse tile lookup (for 'res.puzzle')
-		return null;
+		return subresolver.reverse(info);
+	}
+	
+	@Override
+	public Resolver getSubresolver(Mode2 mode)
+	{
+		return subresolver.get(mode);
 	}
 	
 	@Override public String toString()

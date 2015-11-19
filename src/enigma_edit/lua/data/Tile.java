@@ -1,5 +1,7 @@
 package enigma_edit.lua.data;
 
+import java.util.Iterator;
+
 public class Tile
 {
 	public interface Part
@@ -20,9 +22,9 @@ public class Tile
 	
 	protected class Part_private implements Part
 	{
-		public String    easyKey;
+		public String     easyKey;
 		public ObjectDecl easy;
-		public String    difficultKey;
+		public String     difficultKey;
 		public ObjectDecl difficult;
 		
 		public Part_private() {easy = null; difficult = null;}
@@ -173,9 +175,11 @@ public class Tile
 	
 	public void add(String key, TileDecl decl, Mode mode)
 	{
-		MMTable     table;
-		for (MMTileConstruct part : decl)
+		MMTable         table;
+		MMObjectDecl part;
+		for (Iterator<MMObjectDecl> it = decl.constructIterator(); it.hasNext(); )
 		{
+			part = it.next();
 			table = part.checkTable(mode);
 			if (table.isNull(mode)) continue;
 			if (table.hasNormal() && table.easy.isNormal())

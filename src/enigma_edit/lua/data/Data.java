@@ -82,7 +82,7 @@ public abstract class Data implements Typed
 		{
 		case EASY:      return hasEasy();
 		case DIFFICULT: return hasDifficult();
-		case NORMAL:    return hasNormal();
+		case NORMAL:    return isComplete();
 		default:        return false;
 		}
 	}

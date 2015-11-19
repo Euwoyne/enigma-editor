@@ -58,6 +58,18 @@ abstract class MM<T extends Source> extends Data implements Dereferencable
 		this.difficult = difficult;
 	}
 	
+	/**
+	 * Split mode constructor.
+	 * 
+	 * @param easy       Value for easy mode.
+	 * @param difficult  Value for difficult mode.
+	 */
+	MM(MM<T> easy, MM<T> difficult)
+	{
+		this.easy = easy.easy;
+		this.difficult = difficult.difficult;
+	}
+	
 	/** Check if this is undefined in the given mode. */
 	public boolean isNull(Mode mode)
 	{
@@ -127,6 +139,17 @@ abstract class MM<T extends Source> extends Data implements Dereferencable
 		return "cond(wo[\"isDifficult\"], " + difficult.toString() + ", " + easy.toString() + ")";
 	}
 	
+	public String toString(Mode mode)
+	{
+		if (easy == difficult) return (easy != null) ? easy.toString() : "null";
+		switch (mode)
+		{
+		case EASY:      return (easy      != null) ? easy.toString()      : "null";
+		case DIFFICULT: return (difficult != null) ? difficult.toString() : "null";
+		default:        return toString();
+		}
+	}
+	
 	@Override public MMNil         checkNil()                 {return new MMNil(        checkNil(      Mode2.EASY), checkNil(      Mode2.DIFFICULT));}
 	@Override public MMSimpleValue checkSimple()              {return new MMSimpleValue(checkSimple(   Mode2.EASY), checkSimple(   Mode2.DIFFICULT));}
 	@Override public MMTable       checkTable()               {return new MMTable(      checkTable(    Mode2.EASY), checkTable(    Mode2.DIFFICULT));}
@@ -151,7 +174,7 @@ abstract class MM<T extends Source> extends Data implements Dereferencable
 	@Override public Nil           checkNil(Mode2 mode)       {final T val = deref(mode); return (val != null) ? val.checkNil(mode)       : null;}
 	@Override public SimpleValue   checkSimple(Mode2 mode)    {final T val = deref(mode); return (val != null) ? val.checkSimple(mode)    : null;}
 	@Override public Table         checkTable(Mode2 mode)     {final T val = deref(mode); return (val != null) ? val.checkTable(mode)     : null;}
-	@Override public TileDeclPart      checkTilePart(Mode2 mode)  {final T val = deref(mode); return (val != null) ? val.checkTilePart(mode)  : null;}
+	@Override public TileDeclPart  checkTilePart(Mode2 mode)  {final T val = deref(mode); return (val != null) ? val.checkTilePart(mode)  : null;}
 	@Override public TileDecl      checkTile(Mode2 mode)      {final T val = deref(mode); return (val != null) ? val.checkTile(mode)      : null;}
 	@Override public Resolver      checkResolver(Mode2 mode)  {final T val = deref(mode); return (val != null) ? val.checkResolver(mode)  : null;}
 }
