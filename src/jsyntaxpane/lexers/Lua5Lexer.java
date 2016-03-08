@@ -25,6 +25,7 @@ package jsyntaxpane.lexers;
 
 import jsyntaxpane.Token;
 import jsyntaxpane.TokenType;
+import jsyntaxpane.lexers.DefaultJFlexLexer;
 
 
 /**
