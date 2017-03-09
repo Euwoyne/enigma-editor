@@ -194,7 +194,7 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	 * Stack of {@link Image images}.
 	 * This is, what a resolved variant will be represented as. 
 	 */
-	public static class VariantImage implements Renderable, Iterable<Image>
+	public static class VariantImage implements ResizeRenderable, Iterable<Image>
 	{
 		ArrayList<Image> images;
 		Sprite           sprite;
@@ -206,14 +206,14 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		
 		public Sprite getSprite() {return sprite;}
 		
-		@Override public void draw(RenderingAgent renderer, int x, int y)
-		{
-			renderer.draw(sprite, x, y);
-		}
-		
 		@Override public Iterator<Image> iterator()
 		{
 			return images.iterator();
+		}
+		
+		@Override public void draw(RenderingAgent renderer, int x, int y, int size) throws MissingImageException
+		{
+			sprite.draw(renderer, x, y, size);
 		}
 	}
 	
@@ -943,7 +943,7 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 			for (Variants variants : stack)
 			{
 				final Variant variant = variants.getDefaultVariant();
-				if (variant != null);
+				if (variant != null)
 					list.add(variant.image);
 			}
 			return list;
@@ -955,7 +955,7 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 			for (Variants variants : stack)
 			{
 				final Variant variant = variants.getVariant(obj);
-				if (variant != null);
+				if (variant != null)
 					list.add(variant.image);
 			}
 			return list;
@@ -968,7 +968,11 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	public static class Page extends LinkedList<Kind>
 	{
 		private static final long serialVersionUID = 1L;
-		String i18n;
+		private final String i18n;
+		
+		Page(String i18n) {this.i18n = i18n;}
+		
+		public String getI18n() {return i18n;}
 	}
 	
 	/**
@@ -977,8 +981,8 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	 */
 	public static class AttrGroup implements Iterable<Attribute>
 	{
-		private ArrayList<Attribute> attributes;
-		private String               i18n;
+		private final ArrayList<Attribute> attributes;
+		private final String               i18n;
 		
 		AttrGroup(String i18n)
 		{

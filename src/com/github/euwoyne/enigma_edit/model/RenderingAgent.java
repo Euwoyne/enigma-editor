@@ -25,6 +25,6 @@ package com.github.euwoyne.enigma_edit.model;
 
 public interface RenderingAgent
 {
-	void draw(Sprite sprite, int x, int y);
+	void draw(Sprite.Image image, int x, int y);
 }
 

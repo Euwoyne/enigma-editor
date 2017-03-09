@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.imageio.IIOException;
-
 import com.github.euwoyne.enigma_edit.error.MissingImageException;
 import com.github.euwoyne.enigma_edit.lua.data.Mode;
 import com.github.euwoyne.enigma_edit.lua.data.Mode2;
@@ -41,14 +39,14 @@ import com.github.euwoyne.enigma_edit.model.Tileset.VariantImage;
 
 public class ImageTile
 {
-	public static class Part implements Iterable<VariantImage>, Renderable, ObjectProvider
+	public static class Part implements Iterable<VariantImage>, ResizeRenderable, ObjectProvider
 	{
 		TilePart           part;
 		List<Variant>      variants;
 		List<VariantImage> images;
 		List<Integer>      indices;
 		
-		Part(TilePart tilepart)
+		public Part(TilePart tilepart)
 		{
 			part     = tilepart;
 			variants = tilepart.getVariant();
@@ -93,10 +91,10 @@ public class ImageTile
 		public java.util.Iterator<Integer>      idxIterator() {return indices.iterator();}
 		
 		@Override
-		public void draw(RenderingAgent renderer, int x, int y) throws MissingImageException, IIOException
+		public void draw(RenderingAgent renderer, int x, int y, int size) throws MissingImageException
 		{
 			for (VariantImage image : this)
-				image.draw(renderer, x, y);
+				image.draw(renderer, x, y, size);
 		}
 		
 		@Override public Kind    getKind()                      {return part.getKind();}
@@ -231,36 +229,36 @@ public class ImageTile
 		}
 	}
 	
-	public void draw_fl(RenderingAgent renderer, int x, int y, Mode mode)
+	public void draw_fl(RenderingAgent renderer, int x, int y, int size, Mode mode) throws MissingImageException
 	{
 		Part part = floor.get(mode);
 		if (part == null) return;
 		for (VariantImage image : part)
-			image.draw(renderer, x, y);
+			image.draw(renderer, x, y, size);
 	}
 	
-	public void draw_it(RenderingAgent renderer, int x, int y, Mode mode)
+	public void draw_it(RenderingAgent renderer, int x, int y, int size, Mode mode) throws MissingImageException
 	{
 		Part part = item.get(mode);
 		if (part == null) return;
 		for (VariantImage image : part)
-			image.draw(renderer, x, y);
+			image.draw(renderer, x, y, size);
 	}
 	
-	public void draw_ac(RenderingAgent renderer, int x, int y, Mode mode)
+	public void draw_ac(RenderingAgent renderer, int x, int y, int size, Mode mode) throws MissingImageException
 	{
 		Part part = actor.get(mode);
 		if (part == null) return;
 		for (VariantImage image : part)
-			image.draw(renderer, x, y);
+			image.draw(renderer, x, y, size);
 	}
 	
-	public void draw_st(RenderingAgent renderer, int x, int y, Mode mode)
+	public void draw_st(RenderingAgent renderer, int x, int y, int size, Mode mode) throws MissingImageException
 	{
 		Part part = stone.get(mode);
 		if (part == null) return;
 		for (VariantImage image : part)
-			image.draw(renderer, x, y);
+			image.draw(renderer, x, y, size);
 	}
 }
 

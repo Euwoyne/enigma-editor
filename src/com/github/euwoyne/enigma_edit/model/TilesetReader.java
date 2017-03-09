@@ -317,9 +317,8 @@ public class TilesetReader
 				}
 				else if (qName.equals("page"))
 				{
-					page = new Tileset.Page();
+					page = new Tileset.Page(attrs.getValue("i18n"));
 					group.add(page);
-					if ((temp = attrs.getValue("i18n")) != null) page.i18n = temp;
 					state.to(State.PAGE);
 				}
 				else this.error(new TilesetXMLException("UnexpectedTagGroup", qName, group.getI18n(), locator));
@@ -380,7 +379,7 @@ public class TilesetReader
 					
 					state.to(State.KIND);
 				}
-				else this.error(new TilesetXMLException("UnexpectedTagPage", qName, page.i18n, locator));
+				else this.error(new TilesetXMLException("UnexpectedTagPage", qName, page.getI18n(), locator));
 				break;
 			
 			case KIND:
@@ -693,7 +692,7 @@ public class TilesetReader
 				break;
 			case PAGE:
 				if (!qName.equals("page"))
-					this.error(new TilesetXMLException("UnexpectedEndTagPage", qName, page.i18n, locator));
+					this.error(new TilesetXMLException("UnexpectedEndTagPage", qName, page.getI18n(), locator));
 				page = null;
 				state.back();
 				break;

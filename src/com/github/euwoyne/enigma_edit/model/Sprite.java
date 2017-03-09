@@ -25,9 +25,9 @@ package com.github.euwoyne.enigma_edit.model;
 
 import com.github.euwoyne.enigma_edit.error.MissingImageException;
 
-public interface Sprite extends Renderable
+public interface Sprite extends ResizeRenderable
 {
-	public interface Image
+	public interface Image extends Renderable
 	{
 		public int getSize();
 	}
