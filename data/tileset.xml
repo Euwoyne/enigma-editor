@@ -39,7 +39,7 @@
     <page i18n="page_normal">
         
         <!-- Normal Floors -->
-        <kind name="fl_dummy"        oldname="fl-dummy"       type="fl" access="hidden"/>
+        <kind name="fl_dummy"        oldname="fl-dummy"       type="fl" access="hidden"><image file="fl-dummy"/></kind>
         <kind name="fl_adhesionless" oldname="fl-nomouse"     type="fl"/>
         <kind name="fl_aquamarine"   oldname="fl-bluegreenx"  type="fl" framed="true"><image count="2"/></kind>
         <kind name="fl_bast"         oldname="fl-floor_001"   type="fl" framed="true"/>
@@ -616,6 +616,8 @@
             <message name="explode"/><message name="ignite"/><message name="heat"/>
             <alias name="it_bomb_black" oldname="it-blackbomb"><attr name="color" val="BLACK"/></alias>
             <alias name="it_bomb_white" oldname="it-whitebomb"><attr name="color" val="WHITE"/></alias>
+            <alias name="it_bomb_black_burning"><attr name="color" val="BLACK"/><attr name="state" val="ACTIVE"/></alias>
+            <alias name="it_bomb_white_burning"><attr name="color" val="WHITE"/><attr name="state" val="ACTIVE"/></alias>
             <variants attrs="state,color">
                 <variant val="IDLE,BLACK">  <image pos="0,0"/></variant>
                 <variant val="IDLE,WHITE">  <image pos="1,0"/></variant>
@@ -625,7 +627,7 @@
         </kind>
         
         <!-- Brake -->
-        <kind name="it_brake" oldname="it-brake" type="it" access="hidden"/>
+        <kind name="it_brake" oldname="it-brake" type="it" access="hidden"><image file="st_brake" text="item"/></kind>
         
         <!-- Burnable -->
         <kind name="it_burnable" type="it">
@@ -1186,8 +1188,9 @@
         <!-- Dark Glass -->
         <kind name="st_darkglass" oldname="st-glass2" type="st">
             <variants default="st_darkglass_hollow">
-                <variant name="st_darkglass_hollow"  oldname="st-glass2_hole"><image file="st_darkglass" text="hole"/></variant>
-                <variant name="st_darkglass_movable" oldname="st-glass2_move"><image file="st_darkglass" text="move"/></variant>
+                <variant name="st_darkglass"         oldname="st-glass2"      i18n="var_normal"/>
+                <variant name="st_darkglass_hollow"  oldname="st-glass2_hole" i18n="var_hollow" ><image file="st_darkglass" text="hole"/></variant>
+                <variant name="st_darkglass_movable" oldname="st-glass2_move" i18n="var_movable"><image file="st_darkglass" text="move"/></variant>
             </variants>
         </kind>
         
@@ -1571,6 +1574,22 @@
             <alias name="st_mirror_triangle_wtm" oldname="st-mirror-3&lt;tm"><attr name="flavor" val="triangle"/><attr name="orientation" val="WEST"/> <attr name="transparent" val="true"/><attr name="movable" val="true"/></alias>
             
             <variants attrs="flavor,movable,transparent,orientation">
+                <variant val="plane,   false,false,NORTH"><image file="st_mirror_static"  pos="2,0"/></variant>
+                <variant val="plane,   false,false,EAST"> <image file="st_mirror_static"  pos="2,1"/></variant>
+                <variant val="plane,   false,false,SOUTH"><image file="st_mirror_static"  pos="2,2"/></variant>
+                <variant val="plane,   false,false,WEST"> <image file="st_mirror_static"  pos="2,3"/></variant>
+                <variant val="plane,   false,true, NORTH"><image file="st_mirror_static"  pos="3,0"/></variant>
+                <variant val="plane,   false,true, EAST"> <image file="st_mirror_static"  pos="3,1"/></variant>
+                <variant val="plane,   false,true, SOUTH"><image file="st_mirror_static"  pos="3,2"/></variant>
+                <variant val="plane,   false,true, WEST"> <image file="st_mirror_static"  pos="3,3"/></variant>
+                <variant val="plane,   true, false,NORTH"><image file="st_mirror_movable" pos="2,0"/></variant>
+                <variant val="plane,   true, false,EAST"> <image file="st_mirror_movable" pos="2,1"/></variant>
+                <variant val="plane,   true, false,SOUTH"><image file="st_mirror_movable" pos="2,2"/></variant>
+                <variant val="plane,   true, false,WEST"> <image file="st_mirror_movable" pos="2,3"/></variant>
+                <variant val="plane,   true, true, NORTH"><image file="st_mirror_movable" pos="3,0"/></variant>
+                <variant val="plane,   true, true, EAST"> <image file="st_mirror_movable" pos="3,1"/></variant>
+                <variant val="plane,   true, true, SOUTH"><image file="st_mirror_movable" pos="3,2"/></variant>
+                <variant val="plane,   true, true, WEST"> <image file="st_mirror_movable" pos="3,3"/></variant>
                 <variant val="slab,    false,false,NORTH"><image file="st_mirror_static"  pos="2,0"/></variant>
                 <variant val="slab,    false,false,EAST"> <image file="st_mirror_static"  pos="2,1"/></variant>
                 <variant val="slab,    false,false,SOUTH"><image file="st_mirror_static"  pos="2,2"/></variant>
@@ -1620,6 +1639,22 @@
                 <variant val="triangle,true, true, SOUTH"><image file="st_mirror_movable" pos="1,2"/></variant>
                 <variant val="triangle,true, true, WEST"> <image file="st_mirror_movable" pos="1,3"/></variant>
                 
+                <variant val="plane,   false,false,VERTICAL">  <image file="st_mirror_static"  pos="2,0"/></variant>
+                <variant val="plane,   false,false,SLASH">     <image file="st_mirror_static"  pos="2,1"/></variant>
+                <variant val="plane,   false,false,HORIZONTAL"><image file="st_mirror_static"  pos="2,2"/></variant>
+                <variant val="plane,   false,false,BACKSLASH"> <image file="st_mirror_static"  pos="2,3"/></variant>
+                <variant val="plane,   false,true, VERTICAL">  <image file="st_mirror_static"  pos="3,0"/></variant>
+                <variant val="plane,   false,true, SLASH">     <image file="st_mirror_static"  pos="3,1"/></variant>
+                <variant val="plane,   false,true, HORIZONTAL"><image file="st_mirror_static"  pos="3,2"/></variant>
+                <variant val="plane,   false,true, BACKSLASH"> <image file="st_mirror_static"  pos="3,3"/></variant>
+                <variant val="plane,   true, false,VERTICAL">  <image file="st_mirror_movable" pos="2,0"/></variant>
+                <variant val="plane,   true, false,SLASH">     <image file="st_mirror_movable" pos="2,1"/></variant>
+                <variant val="plane,   true, false,HORIZONTAL"><image file="st_mirror_movable" pos="2,2"/></variant>
+                <variant val="plane,   true, false,BACKSLASH"> <image file="st_mirror_movable" pos="2,3"/></variant>
+                <variant val="plane,   true, true, VERTICAL">  <image file="st_mirror_movable" pos="3,0"/></variant>
+                <variant val="plane,   true, true, SLASH">     <image file="st_mirror_movable" pos="3,1"/></variant>
+                <variant val="plane,   true, true, HORIZONTAL"><image file="st_mirror_movable" pos="3,2"/></variant>
+                <variant val="plane,   true, true, BACKSLASH"> <image file="st_mirror_movable" pos="3,3"/></variant>
                 <variant val="slab,    false,false,VERTICAL">  <image file="st_mirror_static"  pos="2,0"/></variant>
                 <variant val="slab,    false,false,SLASH">     <image file="st_mirror_static"  pos="2,1"/></variant>
                 <variant val="slab,    false,false,HORIZONTAL"><image file="st_mirror_static"  pos="2,2"/></variant>
