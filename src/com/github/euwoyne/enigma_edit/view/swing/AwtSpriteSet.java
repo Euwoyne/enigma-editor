@@ -24,21 +24,21 @@
 package com.github.euwoyne.enigma_edit.view.swing;
 
 import java.awt.Font;
-import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.github.euwoyne.enigma_edit.model.Sprite;
+import com.github.euwoyne.enigma_edit.model.SpriteFolder;
 import com.github.euwoyne.enigma_edit.model.SpriteSet;
 import com.github.euwoyne.enigma_edit.model.Tileset.VariantImage;
 
 public class AwtSpriteSet implements SpriteSet
 {
-	private Path                         gfxPath;
-	private Font                         font;
-	private Map<VariantImage, AwtSprite> sprites;
+	private final SpriteFolder                 gfxPath;
+	private final Font                         font;
+	private final Map<VariantImage, AwtSprite> sprites;
 	
-	public AwtSpriteSet(Path gfxPath, Font font)
+	public AwtSpriteSet(SpriteFolder gfxPath, Font font)
 	{
 		this.gfxPath = gfxPath;
 		this.font    = font;
