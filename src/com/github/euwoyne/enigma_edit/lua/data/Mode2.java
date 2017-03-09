@@ -25,7 +25,7 @@ package com.github.euwoyne.enigma_edit.lua.data;
 
 /**
  * Two-value mode type.
- * Without the {@code NORMAL} mode value.
+ * Without the {@link Mode#NORMAL} mode value.
  */
 public enum Mode2
 {

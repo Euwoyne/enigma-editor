@@ -111,38 +111,6 @@ public class Tile
 	public Part ac() {return actor;}
 	public Part st() {return stone;}
 	
-	public void set_fl(Tile tile)
-	{
-		this.floor.easy         = tile.floor.easy;
-		this.floor.easyKey      = tile.floor.easyKey;
-		this.floor.difficult    = tile.floor.difficult;
-		this.floor.difficultKey = tile.floor.difficultKey;
-	}
-	
-	public void set_it(Tile tile)
-	{
-		this.item.easy         = tile.item.easy;
-		this.item.easyKey      = tile.item.easyKey;
-		this.item.difficult    = tile.item.difficult;
-		this.item.difficultKey = tile.item.difficultKey;
-	}
-	
-	public void set_ac(Tile tile)
-	{
-		this.actor.easy         = tile.actor.easy;
-		this.actor.easyKey      = tile.actor.easyKey;
-		this.actor.difficult    = tile.actor.difficult;
-		this.actor.difficultKey = tile.actor.difficultKey;
-	}
-	
-	public void set_st(Tile tile)
-	{
-		this.stone.easy         = tile.stone.easy;
-		this.stone.easyKey      = tile.stone.easyKey;
-		this.stone.difficult    = tile.stone.difficult;
-		this.stone.difficultKey = tile.stone.difficultKey;
-	}
-	
 	private void add(String key, ObjectDecl part, String kind, Mode mode)
 	{
 		if (kind.startsWith("#")) kind = kind.substring(1);
@@ -175,7 +143,7 @@ public class Tile
 	
 	public void add(String key, TileDecl decl, Mode mode)
 	{
-		MMTable         table;
+		MMTable      table;
 		MMObjectDecl part;
 		for (Iterator<MMObjectDecl> it = decl.constructIterator(); it.hasNext(); )
 		{

@@ -120,7 +120,7 @@ public class Puzzle extends SourceData implements Resolver
 		{
 			table.assign("cluster", new SimpleValue(LuaValue.valueOf((int)(c - '0')), CodeSnippet.NONE), CodeSnippet.NONE, mode);
 			table.assign("connections", new Nil(CodeSnippet.NONE), CodeSnippet.NONE, mode);
-		    table.assign("hollow",  new SimpleValue(LuaValue.valueOf(c > '4'), CodeSnippet.NONE), CodeSnippet.NONE, mode);
+			table.assign("hollow",  new SimpleValue(LuaValue.valueOf(c > '4'), CodeSnippet.NONE), CodeSnippet.NONE, mode);
 		}
 		else if (c >= 'a' && c <= 'o' || c >= 'A' && c <= 'O')
 		{
@@ -143,19 +143,19 @@ public class Puzzle extends SourceData implements Resolver
 			case 'n': case 'N': table.assign("connections", new SimpleValue(LuaValue.valueOf("nes"),  CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
 			case 'o': case 'O': table.assign("connections", new SimpleValue(LuaValue.valueOf("nesw"), CodeSnippet.NONE), CodeSnippet.NONE, mode); break;
 			}
-		    table.assign("hollow",  new SimpleValue(LuaValue.valueOf(c < 'a'), CodeSnippet.NONE), CodeSnippet.NONE, mode);
+			table.assign("hollow",  new SimpleValue(LuaValue.valueOf(c < 'a'), CodeSnippet.NONE), CodeSnippet.NONE, mode);
 		}
 		else if (c >= 'p' && c <= 'z')
 		{
 			table.assign("cluster", new SimpleValue(LuaValue.valueOf((int)(c - 'p') + 10), CodeSnippet.NONE), CodeSnippet.NONE, mode);
 			table.assign("connections", new Nil(CodeSnippet.NONE), CodeSnippet.NONE, mode);
-		    table.assign("hollow",  new SimpleValue(LuaValue.valueOf(false), CodeSnippet.NONE), CodeSnippet.NONE, mode);
+			table.assign("hollow",  new SimpleValue(LuaValue.valueOf(false), CodeSnippet.NONE), CodeSnippet.NONE, mode);
 		}
 		else if (c >= 'P' && c <= 'Z')
 		{
 			table.assign("cluster", new SimpleValue(LuaValue.valueOf((int)(c - 'P') + 10), CodeSnippet.NONE), CodeSnippet.NONE, mode);
 			table.assign("connections", new Nil(CodeSnippet.NONE), CodeSnippet.NONE, mode);
-		    table.assign("hollow",  new SimpleValue(LuaValue.valueOf(true), CodeSnippet.NONE), CodeSnippet.NONE, mode);
+			table.assign("hollow",  new SimpleValue(LuaValue.valueOf(true), CodeSnippet.NONE), CodeSnippet.NONE, mode);
 		}
 		
 		// set new stone

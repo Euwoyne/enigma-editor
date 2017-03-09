@@ -33,6 +33,7 @@ public class MultiMode extends SourceData implements Dereferencable
 	
 	/** Difficult-mode value */
 	private Source difficult;
+	
 	/**
 	 * Create from an already multi-mode valued dereferencable.
 	 * This is used to wrap an instance of {@link MM} into a
@@ -110,7 +111,7 @@ public class MultiMode extends SourceData implements Dereferencable
 	@Override public Nil           checkNil(Mode2 mode)       {final Source val = deref(mode); return (val != null) ? val.checkNil(mode)       : null;}
 	@Override public SimpleValue   checkSimple(Mode2 mode)    {final Source val = deref(mode); return (val != null) ? val.checkSimple(mode)    : null;}
 	@Override public Table         checkTable(Mode2 mode)     {final Source val = deref(mode); return (val != null) ? val.checkTable(mode)     : null;}
-	@Override public TileDeclPart      checkTilePart(Mode2 mode)  {final Source val = deref(mode); return (val != null) ? val.checkTilePart(mode)  : null;}
+	@Override public TileDeclPart  checkTilePart(Mode2 mode)  {final Source val = deref(mode); return (val != null) ? val.checkTilePart(mode)  : null;}
 	@Override public TileDecl      checkTile(Mode2 mode)      {final Source val = deref(mode); return (val != null) ? val.checkTile(mode)      : null;}
 	@Override public Resolver      checkResolver(Mode2 mode)  {final Source val = deref(mode); return (val != null) ? val.checkResolver(mode)  : null;}
 }
