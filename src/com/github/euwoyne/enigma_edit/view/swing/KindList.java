@@ -23,115 +23,136 @@
 
 package com.github.euwoyne.enigma_edit.view.swing;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
-import javax.swing.DefaultListModel;
+import javax.swing.AbstractAction;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
+import javax.swing.JButton;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
+import com.github.euwoyne.enigma_edit.control.KindSelectionListener;
 import com.github.euwoyne.enigma_edit.error.MissingAttributeException;
 import com.github.euwoyne.enigma_edit.error.MissingImageException;
-import com.github.euwoyne.enigma_edit.model.I18N;
 import com.github.euwoyne.enigma_edit.model.Tileset;
 import com.github.euwoyne.enigma_edit.model.Tileset.VariantImage;
 
-public class KindList extends JTabbedPane implements MouseListener 
+@SuppressWarnings("serial")
+public class KindList extends JPanel 
 {
-	private static final long serialVersionUID = 1L;
-	private static final int  ICONSIZE         = 16;
+	private static final int ICONSIZE = 16;
 	
-	private class Kind
+	private class KindAction extends AbstractAction
 	{
-		I18N.KeyString      label;
-		ArrayList<VariantImage> image;
+		private final Tileset.Kind kind;
 		
-		Kind(Tileset.Kind kind) throws MissingAttributeException
+		KindAction(Tileset.Kind kind, String label, Icon icon)
 		{
-			label = tileset.getString(kind.getI18n());
-			image = kind.getImage();
+			super(label, icon);
+			this.kind = kind;
 		}
 		
-		Kind(Tileset.Alias alias)
+		@Override
+		public void actionPerformed(ActionEvent e)
 		{
-			label = tileset.getString(alias.getName());
-			image = alias.getImage();
+			for (KindSelectionListener l : listeners)
+				l.kindSelected(kind);
 		}
 	}
 	
-	private class Group
+	private class PageMenu extends JMenu
 	{
-		I18N.KeyString          label;
-		ImageIcon               icon;
-		DefaultListModel<Kind>  kinds;
-		
-		Group(Tileset.Group group) throws MissingAttributeException, MissingImageException
+		PageMenu(Tileset.Page page, String label)
 		{
-			label = tileset.getString(group.getI18n());
+			super(label);
+			super.getPopupMenu().setLayout(new java.awt.GridLayout(0,3));
 			
-			final Tileset.Kind iconsrc = tileset.getKind(group.getIcon());
-			if (iconsrc != null)
-				icon = new ImageIcon(((AwtSprite)iconsrc.getIcon().getSprite()).getImage(ICONSIZE));
-			kinds = new DefaultListModel<Kind>();
-		}
-	}
-	
-	private Tileset tileset;
-	private int     displaySize;
-	
-	private ArrayList<Group>       groups;
-	private ArrayList<JList<Kind>> kindLists;
-	private TileRenderer           renderer;
-	
-	private void setupGroups() throws MissingAttributeException, MissingImageException
-	{
-		Group icongroup;
-		for (Tileset.Group group : tileset)
-		{
-			groups.add(new Group(group));
-			icongroup = groups.get(groups.size() - 1);
-			for (Tileset.Page page : group)
+			for (Tileset.Kind kind : page)
 			{
-				for (Tileset.Kind kind : page)
-				{
-					if (kind.isHidden()) continue;
-					
-					if (!kind.showAliases())
-						icongroup.kinds.addElement(new Kind(kind));
-					else
-						for (Tileset.Alias alias : kind.getAliases())
-							icongroup.kinds.addElement(new Kind(alias));
-				}
+				this.add(new JMenuItem(new KindAction(kind, tileset.getString(kind.getI18n()).get(lang), KindList.this.getIcon(kind))));
 			}
 		}
 	}
 	
-	private void setupJLists()
+	private class GroupButton extends JButton
 	{
-		for (Group g : groups)
+		GroupButton(Tileset.Group group, String label, Icon icon)
 		{
-			JList<Kind> jlist = new JList<Kind>(g.kinds);
-			jlist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			jlist.addMouseListener(this);
-			jlist.setDoubleBuffered(true);
-			jlist.setVisibleRowCount(-1);
-			jlist.setCellRenderer(renderer);
-			jlist.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-			jlist.setOpaque(true);
-			kindLists.add(jlist);
+			super(label, icon);
+			
+			JPopupMenu popup = new JPopupMenu();
+			if (group.size() == 1)
+			{
+				for (Tileset.Kind kind : group.get(0))
+				{
+					popup.add(new JMenuItem(new KindAction(kind, tileset.getString(kind.getI18n()).get(lang), KindList.this.getIcon(kind))));
+				}
+			}
+			else
+			{
+				for (Tileset.Page page : group)
+				{
+					final String i18n = page.getI18n();
+					popup.add(new PageMenu(page, i18n != null ? tileset.getString(page.getI18n()).get(lang) : "..."));
+				}
+			}
+			
+			this.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					popup.show(GroupButton.this, getWidth(), 0);
+				}
+			});
 		}
+	}
+	
+	private final Tileset tileset;
+	private final String  lang;
+	private final int     displaySize;
+	
+	private ArrayList<KindSelectionListener> listeners;
+	
+	private ImageIcon getIcon(Tileset.Kind kind, int size)
+	{
+		try
+		{
+			AwtSprite.Image sprite = null;
+			final ArrayList<VariantImage> images = kind.getImage();
+			if (images.size() == 1)
+			{
+				sprite = ((AwtSprite)images.get(0).getSprite()).getImage(size);
+			}
+			else
+			{
+				for (VariantImage image : images)
+				{
+					if (sprite == null)
+						sprite = ((AwtSprite)image.getSprite()).new Image(size);
+					sprite.draw(image);
+				}
+			}
+			return new ImageIcon(sprite);
+		}
+		catch (MissingImageException e)
+		{
+			return null;
+		}
+	}
+	
+	private ImageIcon getIcon(Tileset.Kind kind) {return getIcon(kind, displaySize);}
+	
+	private ImageIcon getIcon(Tileset.Group group)
+	{
+		Tileset.Kind kind = tileset.getKind(group.getIcon());
+		return (kind == null) ? null : getIcon(kind, ICONSIZE);
 	}
 	
 	public KindList(Tileset tileset, int size) throws MissingAttributeException, MissingImageException
@@ -142,115 +163,33 @@ public class KindList extends JTabbedPane implements MouseListener
 	public KindList(Tileset tileset, int size, Locale locale) throws MissingAttributeException, MissingImageException
 	{
 		this.tileset     = tileset;
+		this.lang        = locale.getLanguage();
 		this.displaySize = size;
-		this.groups      = new ArrayList<Group>();
-		this.kindLists   = new ArrayList<JList<Kind>>();
-		this.renderer    = new TileRenderer(locale);
+		this.listeners   = new ArrayList<KindSelectionListener>();
 		
-		setupGroups();
-		setupJLists();
+		this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 		
-		this.setTabPlacement(JTabbedPane.LEFT);
-		for (int i = 0; i < groups.size(); ++i)
+		for (Tileset.Group group : tileset)
 		{
-			this.addTab(groups.get(i).label.get(locale.getLanguage()), groups.get(i).icon, new JScrollPane(kindLists.get(i)));
-			this.getComponent(this.getComponentCount()-1).setPreferredSize(new Dimension(-1, (int)(1.5 * displaySize)));
+			this.add(new GroupButton(group, tileset.getString(group.getI18n()).get(lang), getIcon(group)));
 		}
 	}
 	
-	public int getIndexByLabel(String i18n)
+	public void addKindSelectionListener(KindSelectionListener l)
+	{
+		listeners.add(l);
+	}
+	
+	public Icon getGroupIcon(String i18n)
 	{
 		int i = 0;
 		for (Tileset.Group group : tileset)
 		{
 			if (group.getI18n().equals(i18n))
-				return i;
+				return ((GroupButton)this.getComponents()[i]).getIcon();
 			++i;
 		}
-		return -1;
+		return null;
 	}
-	
-	private class TileRenderer extends JLabel implements ListCellRenderer<Kind>
-	{
-		private static final long serialVersionUID = 1L;
-		
-		private String                   lang;
-		private Map<Kind, BufferedImage> sprites;
-		
-		public TileRenderer(Locale locale)
-		{
-			this.lang = locale.getLanguage();
-			this.sprites = new HashMap<Kind, BufferedImage>();
-			
-			//this.setOpaque(false);
-			//this.setBackground(null);
-			this.setHorizontalTextPosition(JLabel.CENTER);
-			this.setVerticalTextPosition(JLabel.BOTTOM);
-			this.setHorizontalAlignment(JLabel.CENTER);
-		}
-		
-		@Override
-		public Component getListCellRendererComponent(JList<? extends Kind> list,
-				                                      Kind                  kind,
-				                                      int                   index,
-				                                      boolean               isSelected,
-				                                      boolean               cellHasFocus)
-		{
-			try
-			{
-				if (!sprites.containsKey(kind))
-				{
-					if (kind.image.size() == 1)
-					{
-						sprites.put(kind, ((AwtSprite)kind.image.get(0).getSprite()).getImage(KindList.this.displaySize));
-					}
-					else
-					{
-						AwtSprite.Image buffer = null;
-						for (VariantImage image : kind.image)
-						{
-							if (buffer == null)
-								buffer = ((AwtSprite)image.getSprite()).new Image(KindList.this.displaySize);
-							buffer.draw(image);
-						}
-						sprites.put(kind, buffer);
-					}
-				}
-				
-				this.setText(kind.label.get(lang));
-				this.setIcon(new ImageIcon(sprites.get(kind)));
-			}
-			catch (MissingImageException err)
-			{
-				err.showDialog(null, true);
-			}
-			return this;
-			
-		}
-	}
-	
-	@Override
-	public void mouseClicked(MouseEvent e)
-	{
-		try
-		{
-			if (!(e.getSource() instanceof JList)) return;
-			Kind kind = (Kind)((JList<?>)e.getSource()).getSelectedValue();
-			javax.swing.JFrame frame = new javax.swing.JFrame();
-			frame.setTitle(kind.label.english);
-			frame.add(new JLabel(kind.label.english, new ImageIcon(((AwtSprite)kind.image.get(0).getSprite()).getImage(64)), JLabel.CENTER));
-			frame.pack();
-			frame.setVisible(true);
-		}
-		catch (MissingImageException err)
-		{
-			err.showDialog(null, false);
-		}
-	}
-	
-	@Override public void mousePressed(MouseEvent e) {}
-	@Override public void mouseReleased(MouseEvent e) {}
-	@Override public void mouseEntered(MouseEvent e) {}
-	@Override public void mouseExited(MouseEvent e) {}
 }
 

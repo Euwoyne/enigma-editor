@@ -5,11 +5,13 @@ import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 
 import com.github.euwoyne.enigma_edit.Resources;
 import com.github.euwoyne.enigma_edit.model.LevelInfo;
 
-public class InfoPanel extends JPanel
+public class MetaPanel extends JPanel
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -37,14 +39,14 @@ public class InfoPanel extends JPanel
 		public void   setText(String s) {text.setText(s);}
 	}
 	
-	public InfoPanel()
+	public MetaPanel()
 	{
 		// setup components
-		title    = new LabeledText("Title:");
-		subtitle = new LabeledText("Subtitle:");
-		author   = new LabeledText("Author:");
-		email    = new LabeledText("Mail:");
-		homepage = new LabeledText("Homepage:");
+		title    = new LabeledText(Resources.uiText.getString("LevelInfo.title")    + ":");
+		subtitle = new LabeledText(Resources.uiText.getString("LevelInfo.subtitle") + ":");
+		author   = new LabeledText(Resources.uiText.getString("LevelInfo.author")   + ":");
+		email    = new LabeledText(Resources.uiText.getString("LevelInfo.mail")     + ":");
+		homepage = new LabeledText(Resources.uiText.getString("LevelInfo.homepage") + ":");
 		
 		// setup layout
 		this.setLayout(new GroupLayout(this));
@@ -95,7 +97,10 @@ public class InfoPanel extends JPanel
 				);
 			
 		this.setLayout(layout);
-		this.setBorder(BorderFactory.createTitledBorder(Resources.uiText.getString("LevelInfo.defaultTitle")));
+		this.setBorder(new CompoundBorder(
+				new EmptyBorder(5, 5, 5, 5),
+				BorderFactory.createTitledBorder(
+						Resources.uiText.getString("LevelInfo.caption"))));
 	}
 	
 	public void fromLevelInfo(LevelInfo info)

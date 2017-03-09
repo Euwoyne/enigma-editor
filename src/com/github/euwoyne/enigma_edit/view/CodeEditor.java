@@ -27,8 +27,6 @@ import java.awt.Font;
 
 import javax.swing.JEditorPane;
 
-import com.github.euwoyne.enigma_edit.model.Level;
-
 import jsyntaxpane.syntaxkits.EnigmaSyntaxKit;
 
 public class CodeEditor extends JEditorPane
@@ -40,12 +38,6 @@ public class CodeEditor extends JEditorPane
 		this.setEditorKit(new EnigmaSyntaxKit());
 		this.setFont(new Font("Ubuntu Mono", 0, 16));
 		//((EnigmaSyntaxKit)this.getEditorKit()).getConfig().put("Style.KEYWORD", "0x000000, 3");
-	}
-	
-	public void setLevel(Level level)
-	{
-		this.setText(level.luamain);
-		this.repaint();
 	}
 }
 

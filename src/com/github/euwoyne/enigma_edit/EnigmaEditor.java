@@ -23,52 +23,23 @@
 
 package com.github.euwoyne.enigma_edit;
 
-import java.awt.Font;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Paths;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
-import com.github.euwoyne.enigma_edit.model.Tileset;
-import com.github.euwoyne.enigma_edit.model.TilesetReader;
-import com.github.euwoyne.enigma_edit.view.swing.MainWnd;
-import com.github.euwoyne.enigma_edit.view.swing.AwtSpriteSet;
-
-import jsyntaxpane.syntaxkits.EnigmaSyntaxKit;
+import com.github.euwoyne.enigma_edit.control.Controller;
 
 class EnigmaEditor
 {
-	public static void main(String[] argv) throws FileNotFoundException, IOException 
-    {
-		try
-		{
-			// setup options
-			Options  options   = new Options();
-			options.binaryPath = Paths.get("/usr/local/bin/enigma");
-			options.enigmaPath = Paths.get("/usr/local/share/enigma");
-			options.userPath   = Paths.get(System.getProperty("user.home")).resolve(".enigma");
-			
-			// setup sprites
-			AwtSpriteSet spriteset = new AwtSpriteSet(options.enigmaPath, new Font("normal", Font.PLAIN, 10));
-			
-			// setup tileset
-			TilesetReader reader = new TilesetReader();
-			Tileset tileset = reader.parse("data/tileset.xml");
-			reader.addI18n("data/tileset_de.xml", tileset);
-			tileset.loadSprites(spriteset);
-			tileset.dump();
-			
-			// setup user interface
-			EnigmaSyntaxKit.initKit();
-			new MainWnd(tileset, options);
-		}
-		catch (IOException | ParserConfigurationException | SAXException e)
-		{
-			e.printStackTrace();
-		}
+	public static void main(String[] argv) 
+	{
+		// setup options
+		System.out.print("Setup options...");
+		Options  options   = new Options();
+		options.binaryPath = Paths.get("/usr/local/bin/enigma");
+		options.enigmaPath = Paths.get("/usr/local/share/enigma");
+		options.userPath   = Paths.get(System.getProperty("user.home")).resolve(".enigma");
+		System.out.println("DONE");
+		
+		// start controller
+		new Controller(options);
     }
 }
 

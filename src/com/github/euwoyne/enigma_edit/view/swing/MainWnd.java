@@ -23,25 +23,22 @@
 
 package com.github.euwoyne.enigma_edit.view.swing;
 
+import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.nio.file.Path;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -51,36 +48,61 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.luaj.vm2.parser.ParseException;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
 import com.github.euwoyne.enigma_edit.Options;
 import com.github.euwoyne.enigma_edit.Resources;
 import com.github.euwoyne.enigma_edit.control.Action;
-import com.github.euwoyne.enigma_edit.control.NullAction;
-import com.github.euwoyne.enigma_edit.control.ToggleAction;
-import com.github.euwoyne.enigma_edit.error.LevelLuaException;
-import com.github.euwoyne.enigma_edit.error.LevelXMLException;
+import com.github.euwoyne.enigma_edit.control.CodeChangeListener;
+import com.github.euwoyne.enigma_edit.control.Controller;
+import com.github.euwoyne.enigma_edit.control.KindSelectionListener;
+import com.github.euwoyne.enigma_edit.control.LevelClickListener;
 import com.github.euwoyne.enigma_edit.error.MissingAttributeException;
+import com.github.euwoyne.enigma_edit.error.MissingImageException;
+import com.github.euwoyne.enigma_edit.lua.data.CodeSnippet;
 import com.github.euwoyne.enigma_edit.lua.data.Mode;
 import com.github.euwoyne.enigma_edit.model.Level;
-import com.github.euwoyne.enigma_edit.model.LevelReader;
 import com.github.euwoyne.enigma_edit.model.Tileset;
 import com.github.euwoyne.enigma_edit.view.CodeEditor;
 
 public class MainWnd extends JFrame implements WindowListener
 {
-	private static final long serialVersionUID = 1L;
-	private static final int  LEVELTAB         = 0;
-	private static final int  CODETAB          = 1;
+	private static final long   serialVersionUID = 1L;
+	private static final int    LEVELTAB         = 0;
+	private static final int    CODETAB          = 1;
+	private static final String OBJECTPANEL      = "objectPanel";
+	private static final String TILEPANEL        = "tilePanel";
+	private static final String METAPANEL        = "metaPanel";
 	
-	private Tileset     tileset;
-	private Level       level;
+	private static final String strTitleLong       = Resources.uiText.getString("MainWnd.title.long");
+	private static final String strFileMenu        = Resources.uiText.getString("MainWnd.fileMenu");
+	private static final String strFileMenu_new    = Resources.uiText.getString("MainWnd.fileMenu.new");
+	private static final String strFileMenu_open   = Resources.uiText.getString("MainWnd.fileMenu.open");
+	private static final String strFileMenu_save   = Resources.uiText.getString("MainWnd.fileMenu.save");
+	private static final String strFileMenu_saveAs = Resources.uiText.getString("MainWnd.fileMenu.saveAs");
+	private static final String strFileMenu_exit   = Resources.uiText.getString("MainWnd.fileMenu.exit");
+	private static final String strLevelMenu       = Resources.uiText.getString("MainWnd.levelMenu");
+	private static final String strLevelMenu_info  = Resources.uiText.getString("MainWnd.levelMenu.info");
+	private static final String strViewMenu        = Resources.uiText.getString("MainWnd.viewMenu");
+	private static final String strViewMenu_items  = Resources.uiText.getString("MainWnd.viewMenu.items");
+	private static final String strViewMenu_actors = Resources.uiText.getString("MainWnd.viewMenu.actors");
+	private static final String strViewMenu_stones = Resources.uiText.getString("MainWnd.viewMenu.stones");
+	private static final String strModeMenu_easy      = Resources.uiText.getString("MainWnd.modeMenu.easy");
+	private static final String strModeMenu_difficult = Resources.uiText.getString("MainWnd.modeMenu.difficult");
+	
+	private static final String strLevelTab  = Resources.uiText.getString("MainWnd.levelTab");
+	private static final String strCodeTab   = Resources.uiText.getString("MainWnd.codeTab");
+	
+	private static final Icon   icoFile      = UIManager.getIcon("FileView.fileIcon");
+	private static final Icon   icoDirectory = UIManager.getIcon("FileView.directoryIcon");
+	private static final Icon   icoFloppy    = UIManager.getIcon("FileView.floppyDriveIcon");
+	
+	private Controller  controller;
+	
 	private LevelView   levelView;
-	private InfoPanel   infoPanel;
+	private CardLayout  infoLayout;
+	private JPanel      infoPanel;
+	private ObjectPanel objectPanel;
+	private TilePanel   tilePanel;
+	private MetaPanel   metaPanel;
 	private CodeEditor  codeEditor;
 	private JTabbedPane editTabs;
 	private KindList    kindList;
@@ -112,7 +134,7 @@ public class MainWnd extends JFrame implements WindowListener
 		return new ImageIcon(scaled);
 	}
 	
-	public MainWnd(Tileset tileset, Options options) throws MissingAttributeException, IOException
+	public MainWnd(Controller ctrl, Tileset tileset, Options options) throws MissingAttributeException, MissingImageException
 	{
 		// setup window
 		super(Resources.uiText.getString("MainWnd.title.long"));
@@ -121,11 +143,16 @@ public class MainWnd extends JFrame implements WindowListener
 		this.setSize(1024, 786);
 		this.setMinimumSize(new Dimension(640, 480));
 		
-		levelView   = new LevelView(tileset, 32);
-		infoPanel   = new InfoPanel();
+		// setup widgets
+		levelView   = new LevelView(32);
+		infoLayout  = new CardLayout();
+		infoPanel   = new JPanel(infoLayout);
+		objectPanel = new ObjectPanel();
+		tilePanel   = new TilePanel();
+		metaPanel   = new MetaPanel();
 		codeEditor  = new CodeEditor();
 		editTabs    = new JTabbedPane();
-		kindList    = new KindList(tileset, 40);
+		kindList    = new KindList(tileset, 24);
 		menuBar     = new JMenuBar();
 		toolBar     = new ToolBar("Editor Tools");
 		
@@ -134,34 +161,34 @@ public class MainWnd extends JFrame implements WindowListener
 		JScrollPane   codeScroll  = new JScrollPane(codeEditor);
 		JScrollPane   levelScroll = new JScrollPane(levelView);
 		
+		// prepare icons
+		final Icon icoEasy      = loadIcon(options.enigmaPath.resolve("gfx/completed-easy.png").toString(), 19);
+		final Icon icoDifficult = loadIcon(options.enigmaPath.resolve("gfx/completed.png").toString(), 19);
+		final Icon icoItems     = kindList.getGroupIcon("grp_items");
+		final Icon icoActors    = kindList.getGroupIcon("grp_actors");
+		final Icon icoStones    = kindList.getGroupIcon("grp_stones");
+		
+		final Icon icoLevelTab  = new ImageIcon(((AwtSprite)tileset.getKind("fl_lawn").getIcon().getSprite())
+				.getImage(16));
+		
+		final Icon icoCodeTab   = new ImageIcon(((AwtSprite)tileset.getKind("it_document").getIcon().getSprite())
+				.getImage(32).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+		
 		// setup actions
-		final Action newAction    = new NullAction(Resources.uiText.getString("MainWnd.fileMenu.new"),  UIManager.getIcon("FileView.fileIcon"));
-		final Action openAction   = new FileOpenAction(Resources.uiText.getString("MainWnd.fileMenu.open"), UIManager.getIcon("FileView.directoryIcon"), options.enigmaPath, options.userPath);
-		final Action saveAction   = new NullAction(Resources.uiText.getString("MainWnd.fileMenu.save"), UIManager.getIcon("FileView.floppyDriveIcon"));
-		final Action saveAsAction = new NullAction(Resources.uiText.getString("MainWnd.fileMenu.saveAs"));
-		@SuppressWarnings("serial")
-		final Action exitAction   = new Action(0, Resources.uiText.getString("MainWnd.fileMenu.exit")) {
-			public void actionPerformed(ActionEvent e) {MainWnd.this.dispose();}};
-		final Action easyAction   = new ModeAction(ModeAction.EASY,      loadIcon(options.enigmaPath.resolve("gfx/completed-easy.png").toString(), 19));
-		final Action diffAction   = new ModeAction(ModeAction.DIFFICULT, loadIcon(options.enigmaPath.resolve("gfx/completed.png").toString(), 19));
-		final Action itemsAction  = new VisibilityAction(VisibilityAction.ITEMS,  kindList.getIconAt(kindList.getIndexByLabel("grp_items")));
-		final Action actorsAction = new VisibilityAction(VisibilityAction.ACTORS, kindList.getIconAt(kindList.getIndexByLabel("grp_actors")));
-		final Action stonesAction = new VisibilityAction(VisibilityAction.STONES, kindList.getIconAt(kindList.getIndexByLabel("grp_stones")));
+		controller = ctrl;
+		final Action newAction    = ctrl.newNewLevelAction  (strFileMenu_new, icoFile);
+		final Action openAction   = ctrl.newFileOpenAction  (strFileMenu_open, icoDirectory);
+		final Action saveAction   = ctrl.newFileSaveAction  (strFileMenu_save, icoFloppy);
+		final Action saveAsAction = ctrl.newFileSaveAsAction(strFileMenu_saveAs, null);
+		final Action exitAction   = ctrl.newExitAction      (strFileMenu_exit, null);
+		final Action metaAction   = ctrl.newShowMetaAction  (strLevelMenu_info, null);
 		
-		// setup default level
-		try
-		{
-			this.tileset = tileset;
-			level = Level.getEmpty(System.getProperty("user.name"));
-			level.analyse(tileset);
-		}
-		catch (ParseException | LevelLuaException e)
-		{
-			// this should never occur
-			System.err.println("FATAL ERROR: caught error in default level code");
-			e.printStackTrace();
-		}
+		final Action easyAction   = ctrl.newModeAction(Mode.EASY,      strModeMenu_easy,      icoEasy);
+		final Action diffAction   = ctrl.newModeAction(Mode.DIFFICULT, strModeMenu_difficult, icoDifficult);
 		
+		final Action itemsAction  = ctrl.newVisibilityAction(Tileset.Kind.Type.IT, strViewMenu_items,  icoItems);
+		final Action actorsAction = ctrl.newVisibilityAction(Tileset.Kind.Type.AC, strViewMenu_actors, icoActors);
+		final Action stonesAction = ctrl.newVisibilityAction(Tileset.Kind.Type.ST, strViewMenu_stones, icoStones);
 		
 		// setup toolbar
 		toolBar.addButton(newAction);
@@ -177,32 +204,27 @@ public class MainWnd extends JFrame implements WindowListener
 		ButtonGroup group = new ButtonGroup();
 		group.add(toolBar.addToggle(easyAction));
 		group.add(toolBar.addToggle(diffAction));
-		this.add(toolBar, java.awt.BorderLayout.PAGE_START);
+		this.add(toolBar, java.awt.BorderLayout.NORTH);
 		
 		// setup code editor
 		codeEditor.setup();
-		codeEditor.setText(level.luamain);
-		
-		// setup level editor
-		if (!level.worlds.isEmpty())
-			levelView.load(level.worlds.getFirst());
 		
 		// setup tabs
-		editTabs.addTab(Resources.uiText.getString("MainWnd.levelTab"),
-		                new ImageIcon(((AwtSprite)tileset.getKind("fl_lawn").getIcon().getSprite()).getImage(16)),
-		                levelScroll);
-		editTabs.addTab(Resources.uiText.getString("MainWnd.codeTab"),
-		                new ImageIcon(((AwtSprite)tileset.getKind("it_document").getIcon().getSprite()).getImage(32).getScaledInstance(16, 16, Image.SCALE_SMOOTH)),
-		                codeScroll);
+		editTabs.addTab(strLevelTab, icoLevelTab, levelScroll);
+		editTabs.addTab(strCodeTab,  icoCodeTab,  codeScroll);
 		editTabs.setTabPlacement(JTabbedPane.TOP);
-		editTabs.addChangeListener(new TabChangeAction());
-
+		
+		// setup info panel
+		infoPanel.add(objectPanel, OBJECTPANEL);
+		infoPanel.add(tilePanel,   TILEPANEL);
+		infoPanel.add(metaPanel,   METAPANEL);
+		
 		// setup main pane
 		this.add(kindPane, java.awt.BorderLayout.CENTER);
 		
 		// setup menu
 		MainMenu menu;
-		menu = new MainMenu(Resources.uiText.getString("MainWnd.fileMenu"));
+		menu = new MainMenu(strFileMenu);
 		menu.addItem(newAction)   .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
 		menu.addItem(openAction)  .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
 		menu.addItem(saveAction)  .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
@@ -210,7 +232,10 @@ public class MainWnd extends JFrame implements WindowListener
 		menu.addSeparator();
 		menu.addItem(exitAction);
 		menuBar.add(menu);
-		menu = new MainMenu(Resources.uiText.getString("MainWnd.viewMenu"));
+		menu = new MainMenu(strLevelMenu);
+		menu.addItem(metaAction)  .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
+		menuBar.add(menu);
+		menu = new MainMenu(strViewMenu);
 		menu.addCheckBox(itemsAction) .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.SHIFT_MASK | InputEvent.ALT_MASK));
 		menu.addCheckBox(actorsAction).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.SHIFT_MASK | InputEvent.ALT_MASK));
 		menu.addCheckBox(stonesAction).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK | InputEvent.ALT_MASK));
@@ -226,181 +251,90 @@ public class MainWnd extends JFrame implements WindowListener
 		editorPane.setOneTouchExpandable(true);
 		editorPane.setDividerSize(10);
 		this.pack();
+		infoLayout.show(infoPanel, METAPANEL);
 		this.setVisible(true);
 	}
 	
-	private boolean analyse()
+	public void setWorld(Level level, int worldIndex)
 	{
-		try
-		{
-			level.analyse(tileset);
-			if (level.worlds.isEmpty()) return false;
-			levelView.load(level.worlds.getFirst());
-			return true;
-		}
-		catch (ParseException e)
-		{
-			editTabs.setSelectedIndex(CODETAB);
-			JOptionPane.showMessageDialog(
-					MainWnd.this,
-					e.currentToken.beginLine + ":" + e.currentToken.beginColumn + ": ERROR: " + e.getLocalizedMessage(),
-					"Level XML Error",
-					JOptionPane.ERROR_MESSAGE);
-			codeEditor.requestFocus();
-		}
-		catch (LevelLuaException e)
-		{
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(
-					MainWnd.this,
-					(e.code.isNone() ? "" : e.code.startString() + ": ")+ "ERROR: " + e.getLocalizedMessage(),
-					"Level Lua Error",
-					JOptionPane.ERROR_MESSAGE);
-			editTabs.setSelectedIndex(CODETAB);
-			System.err.println(e.code.startString() + ": ERROR:" + e.getLocalizedMessage());
-			if (!e.code.isNone())
-			{
-				System.err.println("    " + e.code.getLine(level.luamain));
-				for (int i = 0; i < 3 + e.code.getBeginColumn(); ++i)
-					System.err.print(' ');
-				System.err.println('^');
-				codeEditor.setCaretPosition(e.code.getBeginPos());
-			}
-			codeEditor.requestFocus();
-		}
-		return false;
+		this.setTitle(strTitleLong + " \u2012 " + level.info.identity.title);
+		levelView.load(level.worlds.get(worldIndex));
+		codeEditor.setText(level.luamain);
+		metaPanel.fromLevelInfo(level.info);
+		if (editTabs.getSelectedIndex() != LEVELTAB)
+			editTabs.setSelectedIndex(LEVELTAB);
+		else
+			controller.scheduleUpdate(levelView);
 	}
 	
-	class TabChangeAction implements ChangeListener
+	public void setCode(Level level, int worldIndex)
 	{
-		@Override
-		public void stateChanged(ChangeEvent event)
-		{
-			if (((JTabbedPane)event.getSource()).getSelectedIndex() == LEVELTAB)
-			{
-				level.luamain = codeEditor.getText();
-				analyse();
-				//levelEditor.view.repaint();
-			}
-		}
+		levelView.load(level.worlds.get(worldIndex));
+		codeEditor.setText(level.luamain);
+		metaPanel.fromLevelInfo(level.info);
+		editTabs.setSelectedIndex(CODETAB);
+		codeEditor.requestFocus();
 	}
 	
-	private static final String[] visibilityUiText = {"MainWnd.viewMenu.floors", "MainWnd.viewMenu.items", "MainWnd.viewMenu.actors", "MainWnd.viewMenu.stones"};
-	
-	private class VisibilityAction extends ToggleAction
+	public void setVisibility(Tileset.Kind.Type type, boolean visible)
 	{
-		private static final long serialVersionUID = 1L;
-		public  static final int  FLOORS = 0;
-		public  static final int  ITEMS  = 1;
-		public  static final int  ACTORS = 2;
-		public  static final int  STONES = 3;
-		
-		public VisibilityAction(int id, Icon icon)
+		switch (type)
 		{
-			super(id, Resources.uiText.getString(visibilityUiText[id]), icon);
-			putValue(Action.SELECTED_KEY, true);
+		case FL: levelView.setFloorVisibility(visible); break;
+		case IT: levelView.setItemVisibility(visible);  break;
+		case AC: levelView.setActorVisibility(visible); break;
+		case ST: levelView.setStoneVisibility(visible); break;
 		}
-		
-		@Override
-		public void actionPerformed(ActionEvent event)
-		{
-			super.actionPerformed(event);
-			switch (this.getId())
-			{
-			case FLOORS: MainWnd.this.levelView.setFloorVisibility((boolean)this.getValue(Action.SELECTED_KEY)); break;
-			case ITEMS:  MainWnd.this.levelView.setItemVisibility ((boolean)this.getValue(Action.SELECTED_KEY)); break;
-			case ACTORS: MainWnd.this.levelView.setActorVisibility((boolean)this.getValue(Action.SELECTED_KEY)); break;
-			case STONES: MainWnd.this.levelView.setStoneVisibility((boolean)this.getValue(Action.SELECTED_KEY)); break;
-			}
-		}
+		controller.scheduleUpdate(levelView);
 	}
 	
-	private static final String[] modeUiText = {"MainWnd.modeMenu.easy", "MainWnd.modeMenu.difficult"};
-	
-	private class ModeAction extends ToggleAction
+	public void setMode(Mode mode)
 	{
-		private static final long serialVersionUID = 1L;
-		public  static final int  EASY = 0;
-		public  static final int  DIFFICULT  = 1;
-		
-		public ModeAction(int id, Icon icon)
-		{
-			super(id, Resources.uiText.getString(modeUiText[id]), icon);
-			putValue(Action.SELECTED_KEY, false);
-		}
-		
-		@Override
-		public void actionPerformed(ActionEvent event)
-		{
-			super.actionPerformed(event);
-			switch (this.getId())
-			{
-			case EASY:      MainWnd.this.levelView.setMode(Mode.EASY); break;
-			case DIFFICULT: MainWnd.this.levelView.setMode(Mode.DIFFICULT); break;
-			}
-		}
+		levelView.setMode(mode);
+		controller.scheduleUpdate(levelView);
 	}
 	
-	class FileOpenAction extends Action
+	public void redrawWorld()
 	{
-		private static final long serialVersionUID = 1L;
-		
-		private final FileOpenDialog dialog;
-		
-		public FileOpenAction(String text, Icon icon, Path enigmaPath, Path userPath)
-		{
-			super(0, text, icon);
-			dialog = new FileOpenDialog(enigmaPath, userPath);
-		}
-		
-		@Override
-		public void actionPerformed(ActionEvent event)
-		{
-			if (dialog.showOpenDialog(MainWnd.this) == JFileChooser.APPROVE_OPTION)
-			{
-				Level target = new Level();
-				try
-				{
-					System.out.println("Loading level '" + dialog.getSelectedFile().getName() + "'...");
-					LevelReader reader = new LevelReader();
-					reader.setTarget(target);
-					reader.parse(dialog.getSelectedFile().getCanonicalPath());
-					MainWnd.this.level = target;
-					MainWnd.this.setTitle(Resources.uiText.getString("MainWnd.title.long") + " \u2012 " + level.info.identity.title);
-					codeEditor.setText(level.luamain);
-					infoPanel.fromLevelInfo(level.info);
-					MainWnd.this.analyse();
-					System.out.println("Loading level '" + dialog.getSelectedFile().getName() + "'... SUCCESS!");
-				}
-				catch (LevelXMLException e)
-				{
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(
-							MainWnd.this,
-							e.getLineNumber() + ":" + e.getColumnNumber() + ": ERROR: " + e.getLocalizedMessage(),
-							"Level XML Error",
-							JOptionPane.ERROR_MESSAGE);
-				}
-				catch (ParserConfigurationException | SAXException e)
-				{
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(
-							MainWnd.this,
-							dialog.getSelectedFile().getName() + ": ERROR: " + e.getLocalizedMessage(),
-							"Parser Configuration Error",
-							JOptionPane.ERROR_MESSAGE);
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(
-							MainWnd.this,
-							dialog.getSelectedFile().getName() + ": ERROR: " + e.getLocalizedMessage(),
-							"I/O Error",
-							JOptionPane.ERROR_MESSAGE);
-				}
-			};
-		}		
+		levelView.revalidate();
+		levelView.repaint();
+	}
+	
+	public void moveCursorToSnippet(CodeSnippet code)
+	{
+		codeEditor.setCaretPosition(code.getBeginPos());
+	}
+	
+	public void showKindInfo(Tileset.Kind kind)
+	{
+		objectPanel.show(kind);
+		infoLayout.show(infoPanel, OBJECTPANEL);
+		controller.scheduleUpdate(objectPanel);
+	}
+	
+	public void showMetaInfo()
+	{
+		infoLayout.show(infoPanel, METAPANEL);
+	}
+	
+	public void addCodeChangeListener(CodeChangeListener l)
+	{
+		editTabs.addChangeListener(new ChangeListener() {
+			@Override public void stateChanged(ChangeEvent e) {
+				if (((JTabbedPane)e.getSource()).getSelectedIndex() == LEVELTAB)
+					l.codeChanged(codeEditor.getText());
+			}
+		});
+	}
+	
+	public void addLevelClickListener(LevelClickListener l)
+	{
+		levelView.addLevelClickListener(l);
+	}
+	
+	public void addKindSelectionListener(KindSelectionListener l)
+	{
+		kindList.addKindSelectionListener(l);
 	}
 	
 	@Override

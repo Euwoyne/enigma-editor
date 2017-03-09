@@ -27,19 +27,21 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
+import com.github.euwoyne.enigma_edit.control.LevelClickListener;
+import com.github.euwoyne.enigma_edit.control.Updateable;
 import com.github.euwoyne.enigma_edit.error.MissingImageException;
 import com.github.euwoyne.enigma_edit.lua.data.Mode;
-import com.github.euwoyne.enigma_edit.lua.data.Mode2;
 import com.github.euwoyne.enigma_edit.lua.data.Tile;
 import com.github.euwoyne.enigma_edit.model.ImageTile;
 import com.github.euwoyne.enigma_edit.model.RenderingAgent;
-import com.github.euwoyne.enigma_edit.model.Tileset;
+import com.github.euwoyne.enigma_edit.model.Sprite;
 import com.github.euwoyne.enigma_edit.model.World;
 
-public class LevelView extends JPanel implements MouseListener
+public class LevelView extends JPanel implements MouseListener, Updateable
 {
 	private static final long serialVersionUID = 1L;
 	private static final byte FLAG_FLOORS      = 0x1;
@@ -47,28 +49,31 @@ public class LevelView extends JPanel implements MouseListener
 	private static final byte FLAG_ACTORS      = 0x4;
 	private static final byte FLAG_STONES      = 0x8;
 	
-	World         world;
-	Tileset       tileset;
-	int           displaySize;
-	BufferedImage buffer;
+	private World         world;
+	private int           displaySize;
+	private BufferedImage buffer;
+	private boolean       dirty;
 	
-	Mode          mode;
-	byte          visibility;
+	private Mode          mode;
+	private byte          visibility;
 	
-	public void setFloorVisibility(boolean b) {if (b) visibility |= FLAG_FLOORS; else visibility &= ~FLAG_FLOORS; drawBuffer(); this.repaint();}
-	public void setItemVisibility (boolean b) {if (b) visibility |= FLAG_ITEMS;  else visibility &= ~FLAG_ITEMS;  drawBuffer(); this.repaint();}
-	public void setActorVisibility(boolean b) {if (b) visibility |= FLAG_ACTORS; else visibility &= ~FLAG_ACTORS; drawBuffer(); this.repaint();}
-	public void setStoneVisibility(boolean b) {if (b) visibility |= FLAG_STONES; else visibility &= ~FLAG_STONES; drawBuffer(); this.repaint();}
-	public void setMode           (Mode mode) {this.mode = mode; drawBuffer(); this.repaint();}
+	private ArrayList<LevelClickListener> listeners;
 	
-	LevelView(Tileset tileset, int size)
+	public void setFloorVisibility(boolean b) {if (b) visibility |= FLAG_FLOORS; else visibility &= ~FLAG_FLOORS; dirty = true;}
+	public void setItemVisibility (boolean b) {if (b) visibility |= FLAG_ITEMS;  else visibility &= ~FLAG_ITEMS;  dirty = true;}
+	public void setActorVisibility(boolean b) {if (b) visibility |= FLAG_ACTORS; else visibility &= ~FLAG_ACTORS; dirty = true;}
+	public void setStoneVisibility(boolean b) {if (b) visibility |= FLAG_STONES; else visibility &= ~FLAG_STONES; dirty = true;}
+	public void setMode           (Mode mode) {this.mode = mode; dirty = true;}
+	
+	LevelView(int size)
 	{
 		this.world       = null;
-		this.tileset     = tileset;
 		this.displaySize = size;
 		this.buffer      = null;
+		this.dirty       = false;
 		this.mode        = Mode.DIFFICULT;
 		this.visibility  = 0xf;
+		this.listeners   = new ArrayList<LevelClickListener>();
 		this.addMouseListener(this);
 	}
 	
@@ -78,8 +83,6 @@ public class LevelView extends JPanel implements MouseListener
 		if (world == null || !world.isAnalysed()) return;
 		this.setPreferredSize(new java.awt.Dimension(world.getWidth() * displaySize, world.getHeight() * displaySize));
 		this.buffer = null;
-		this.revalidate();
-		this.repaint();
 	}
 	
 	private void drawBuffer()
@@ -89,16 +92,9 @@ public class LevelView extends JPanel implements MouseListener
 		RenderingAgent render = new RenderingAgent()
 		{
 			@Override
-			public void draw(com.github.euwoyne.enigma_edit.model.Sprite sprite, int x, int y)
+			public void draw(Sprite.Image sprite, int x, int y)
 			{
-				try
-				{
-					g.drawImage(((AwtSprite)sprite).getImage(displaySize), x * displaySize, y * displaySize, null);
-				}
-				catch(MissingImageException e)
-				{
-					System.err.println(e);
-				}
+				g.drawImage((AwtSprite.Image)sprite, x * displaySize, y * displaySize, null);
 			}
 		};
 		
@@ -109,10 +105,29 @@ public class LevelView extends JPanel implements MouseListener
 			{
 				tile = world.getTile(x, y);
 				if (tile == null) continue;
-				if ((visibility & FLAG_FLOORS) != 0) tile.draw_fl(render, x-1, y-1, mode);
-				if ((visibility & FLAG_ITEMS)  != 0) tile.draw_it(render, x-1, y-1, mode);
-				if ((visibility & FLAG_ACTORS) != 0) tile.draw_ac(render, x-1, y-1, mode);
-				if ((visibility & FLAG_STONES) != 0) tile.draw_st(render, x-1, y-1, mode);
+				if ((visibility & FLAG_FLOORS) != 0) try
+				{
+					tile.draw_fl(render, x-1, y-1, displaySize, mode);
+				}
+				catch (MissingImageException e) {System.err.println(e.getLocalizedMessage());}
+				
+				if ((visibility & FLAG_ITEMS)  != 0) try
+				{
+					tile.draw_it(render, x-1, y-1, displaySize, mode);
+				}
+				catch (MissingImageException e) {System.err.println(e.getLocalizedMessage());}
+				
+				if ((visibility & FLAG_ACTORS) != 0) try
+				{
+					tile.draw_ac(render, x-1, y-1, displaySize, mode);
+				}
+				catch (MissingImageException e) {System.err.println(e.getLocalizedMessage());}
+				
+				if ((visibility & FLAG_STONES) != 0) try
+				{
+					tile.draw_st(render, x-1, y-1, displaySize, mode);
+				}
+				catch (MissingImageException e) {System.err.println(e.getLocalizedMessage());};
 			}
 		}
 	}
@@ -127,22 +142,23 @@ public class LevelView extends JPanel implements MouseListener
 			buffer = new BufferedImage(world.getWidth() * displaySize, world.getHeight() * displaySize, BufferedImage.TYPE_INT_ARGB);
 			drawBuffer();
 		}
+		else if (dirty)
+		{
+			drawBuffer();
+		}
 		g.drawImage(buffer, 0, 0, null);
 	}
-
-	private static void print(String label, Tile.Part part)
+	
+	@Override
+	public void update()
 	{
-		if (part.hasNormal() && part.get(Mode.NORMAL).isNormal())
-		{
-			System.out.println(label + ": " + part.get(Mode.NORMAL).checkTable(Mode2.EASY));
-		}
-		else
-		{
-			if (part.hasEasy())
-				System.out.println(label + "[easy]: " + part.get(Mode.EASY).checkTable(Mode2.EASY));
-			if (part.hasDifficult())
-				System.out.println(label + "[diff]: " + part.get(Mode.DIFFICULT).checkTable(Mode2.DIFFICULT));
-		}
+		this.invalidate();
+		this.repaint();
+	}
+	
+	public void addLevelClickListener(LevelClickListener l)
+	{
+		listeners.add(l);
 	}
 	
 	@Override
@@ -153,10 +169,8 @@ public class LevelView extends JPanel implements MouseListener
 		if (x > 0 && y > 0 && x <= world.getWidth() && y <= world.getHeight())
 		{
 			final Tile tile = world.getTile(x, y).tile();
-			if (tile.has_fl()) print(String.format("%d:%d:floor", x, y), tile.fl());
-			if (tile.has_st()) print(String.format("%d:%d:stone", x, y), tile.st());
-			if (tile.has_it()) print(String.format("%d:%d:item",  x, y), tile.it());
-			if (tile.has_ac()) print(String.format("%d:%d:actor", x, y), tile.ac());
+			for (LevelClickListener listener : listeners)
+				listener.levelClicked(x, y, tile);
 		}
 	}
 
