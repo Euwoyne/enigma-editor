@@ -1,11 +1,13 @@
 package com.github.euwoyne.enigma_edit.view.swing;
 
 import java.awt.Color;
+import java.util.Locale;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import com.github.euwoyne.enigma_edit.control.Updateable;
 import com.github.euwoyne.enigma_edit.error.MissingImageException;
@@ -28,49 +30,73 @@ public class ObjectPanel extends JPanel implements Updateable
 		
 		IconPanel()
 		{
-			final java.awt.Dimension iconSize = new java.awt.Dimension(ICONSIZE + 8, ICONSIZE + 8);
+			final java.awt.Dimension iconSize = new java.awt.Dimension(ICONSIZE + 2, ICONSIZE + 2);
 			this.setMaximumSize(iconSize);
 			this.setPreferredSize(iconSize);
 			this.setMinimumSize(iconSize);
+			this.setBorder(BorderFactory.createLineBorder(Color.black));
 			this.setVisible(true);
-			this.setBackground(Color.WHITE);
 		}
 		
 		@Override
 		public void paintComponent(java.awt.Graphics g)
 		{
-			g.drawImage(image, 4, 4, null);
+			super.paintComponent(g);
+			g.drawImage(image, 1, 1, null);
 		}
 		
 		@Override
 		public void draw(Sprite.Image image, int x, int y)
 		{
-			this.image = ((AwtSprite.Image)image);
+			this.image = ((AwtSprite.AwtImage)image);
 		}
 	}
 	
+	private final Tileset     tileset;
+	private final String      lang;
 	private final BoxLayout   layout;
-	private final JTextField  txtCanon;
+	private final JLabel      lblTitle;
+	private final JLabel      lblName;
 	private final IconPanel   imgIcon;
 	
-	public ObjectPanel()
+	public ObjectPanel(Tileset tileset)
 	{
-		txtCanon = new JTextField("blubb");
-		imgIcon = new IconPanel();
+		this(tileset, Locale.getDefault());
+	}
+	
+	public ObjectPanel(Tileset tileset, Locale locale)
+	{
+		this.tileset = tileset;
+		this.lang = locale.getLanguage();
+		this.lblTitle = new JLabel();
+		this.lblName = new JLabel();
+		this.imgIcon = new IconPanel();
 		
-		layout = new BoxLayout(this, BoxLayout.Y_AXIS);
+		JPanel pnlHeader = new JPanel();
+		JPanel pnlNames  = new JPanel();
+		BoxLayout header = new BoxLayout(pnlHeader, BoxLayout.X_AXIS);
+		BoxLayout names  = new BoxLayout(pnlNames, BoxLayout.Y_AXIS);
+		pnlHeader.setLayout(header);
+		pnlHeader.add(imgIcon);
+		pnlNames.setLayout(names);
+		pnlNames.add(lblTitle);
+		pnlNames.add(lblName);
+		pnlHeader.add(pnlNames);
+		
+		this.layout = new BoxLayout(this, BoxLayout.Y_AXIS);
 		this.setLayout(layout);
-		this.add(imgIcon);
+		this.add(pnlHeader);
 		this.add(Box.createVerticalGlue());
-		this.setBackground(Color.BLUE);
 		this.setVisible(true);
 	}
 	
 	public void show(TilePart part)
 	{
-		txtCanon.setText(part.canonical());
-		ImageTile.Part imgTile = new ImageTile.Part(part);
+		lblTitle.setText(tileset.getString(part.getKind().getI18n()).get(lang));
+		lblName.setText(part.getKindName());
+		
 		try {
+			ImageTile.Part imgTile = new ImageTile.Part(part);
 			imgTile.draw(imgIcon, 0, 0, ICONSIZE);
 		} catch (MissingImageException e) {
 			imgIcon.image = new java.awt.image.BufferedImage(ICONSIZE,ICONSIZE,java.awt.image.BufferedImage.TYPE_BYTE_GRAY);
@@ -79,7 +105,9 @@ public class ObjectPanel extends JPanel implements Updateable
 	
 	public void show(Tileset.Kind kind)
 	{
-		txtCanon.setText(kind.getKindName());
+		lblTitle.setText(tileset.getString(kind.getI18n()).get(lang));
+		lblName.setText(kind.getName());
+		
 		try {
 			kind.getIcon().draw(imgIcon, 0, 0, ICONSIZE);
 		} catch (MissingImageException e) {

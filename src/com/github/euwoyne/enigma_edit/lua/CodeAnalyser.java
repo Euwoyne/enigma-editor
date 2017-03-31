@@ -69,34 +69,7 @@ public class CodeAnalyser
 	 */
 	public static CodeData analyse(String code) throws ParseException, LevelLuaException
 	{
-		return new CodeAnalyser(code).analyse();
-	}
-	
-	/*
-	 * Private data.
-	 */
-	private final String   code;	// lua source code
-	private final Chunk    chunk;	// parse tree of the code
-	private final CodeData data;	// data constructed by the analyser
-	
-	// Log
-	private Log log;
-	
-	
-	/**
-	 * Private constructor.
-	 * On construction the given {@param code} will be parsed.
-	 * 
-	 * @param code             the level's lua code (i.e. the content of the {@code <luamain>} tag)
-	 * @throws ParseException  This indicates an lua syntax error.
-	 */
-	private CodeAnalyser(String code) throws ParseException
-	{
-		this.code  = code;
-		this.chunk = new LuaParser(new StringReader(code)).Chunk();
-		this.data  = new CodeData();
-		this.log   = Log.nullLog;
-		this.log = new Log()
+		return new CodeAnalyser(code, new Log()
 		{
 			@Override
 			public void log(Msg msg)
@@ -119,7 +92,33 @@ public class CodeAnalyser
 					s.println('^');
 				}
 			}
-		};
+		}).analyse();
+	}
+	
+	/*
+	 * Private data.
+	 */
+	private final String   code;	// lua source code
+	private final Chunk    chunk;	// parse tree of the code
+	private final CodeData data;	// data constructed by the analyser
+	
+	// Log
+	private Log log;
+	
+	
+	/**
+	 * Private constructor.
+	 * On construction the given {@param code} will be parsed.
+	 * 
+	 * @param code             the level's lua code (i.e. the content of the {@code <luamain>} tag)
+	 * @throws ParseException  This indicates an lua syntax error.
+	 */
+	private CodeAnalyser(String code, Log log) throws ParseException
+	{
+		this.code  = code;
+		this.chunk = new LuaParser(new StringReader(code)).Chunk();
+		this.data  = new CodeData();
+		this.log   = log;
 	}
 	
 	/**
@@ -151,12 +150,6 @@ public class CodeAnalyser
 			throw new LevelLuaException(e);
 		}
 	}
-	
-	/**
-	 * Use the given log for warnings issued by the analyser.
-	 * @param log  Log instance to be used.
-	 */
-	void setLog(Log log) {this.log = log;}
 	
 	/**
 	 * A visitor that overwrites the default implementation with 

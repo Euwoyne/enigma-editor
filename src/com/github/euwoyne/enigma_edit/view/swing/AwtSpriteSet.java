@@ -32,16 +32,13 @@ import com.github.euwoyne.enigma_edit.model.SpriteFolder;
 import com.github.euwoyne.enigma_edit.model.SpriteSet;
 import com.github.euwoyne.enigma_edit.model.Tileset.VariantImage;
 
-public class AwtSpriteSet implements SpriteSet
+public class AwtSpriteSet extends AwtSpriteBase implements SpriteSet
 {
-	private final SpriteFolder                 gfxPath;
-	private final Font                         font;
 	private final Map<VariantImage, AwtSprite> sprites;
 	
 	public AwtSpriteSet(SpriteFolder gfxPath, Font font)
 	{
-		this.gfxPath = gfxPath;
-		this.font    = font;
+		super(gfxPath, font);
 		this.sprites = new LinkedHashMap<VariantImage, AwtSprite>();
 	}
 	
@@ -52,7 +49,7 @@ public class AwtSpriteSet implements SpriteSet
 		if (sprite == null)
 		{
 			sprite = new AwtSprite(image, gfxPath, font);
-			sprites.put(image,  sprite);
+			sprites.put(image, sprite);
 		}
 		return sprite;
 	}

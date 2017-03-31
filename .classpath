@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="jar"/>
 	<classpathentry kind="lib" path="jar/jsyntaxpane-0.9.5-b29.jar"/>
 	<classpathentry kind="lib" path="jar/luaj-jse-3.0.jar"/>
 	<classpathentry kind="lib" path="jar/swt-4.430.jar"/>

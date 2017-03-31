@@ -23,87 +23,99 @@
 
 package com.github.euwoyne.enigma_edit.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.github.euwoyne.enigma_edit.error.MissingImageException;
 import com.github.euwoyne.enigma_edit.lua.data.Mode;
 import com.github.euwoyne.enigma_edit.lua.data.Mode2;
+import com.github.euwoyne.enigma_edit.lua.data.SimpleValue;
+import com.github.euwoyne.enigma_edit.lua.data.Table;
 import com.github.euwoyne.enigma_edit.lua.data.Tile;
-import com.github.euwoyne.enigma_edit.model.Tileset.ClusterImage;
-import com.github.euwoyne.enigma_edit.model.Tileset.Kind;
-import com.github.euwoyne.enigma_edit.model.Tileset.ObjectProvider;
-import com.github.euwoyne.enigma_edit.model.Tileset.Variant;
-import com.github.euwoyne.enigma_edit.model.Tileset.VariantImage;
+import com.github.euwoyne.enigma_edit.model.Tileset.*;
 
 public class ImageTile
 {
-	public static class Part implements Iterable<VariantImage>, ResizeRenderable, ObjectProvider
+	public static class Part implements Renderable
 	{
-		TilePart           part;
-		List<Variant>      variants;
-		List<VariantImage> images;
-		List<Integer>      indices;
+		TilePart       part;
+		List<Variant>  variants;
+		SpriteStack    sprites;
 		
 		public Part(TilePart tilepart)
 		{
 			part     = tilepart;
 			variants = tilepart.getVariant();
-			images   = tilepart.getImage();
-			indices  = new ArrayList<Integer>();
+			sprites  = tilepart.getImage();
 		}
 		
-		public boolean isEmpty()   {return images.isEmpty();}
-		public boolean isCluster() {return !indices.isEmpty();}
+		public boolean isEmpty()   {return sprites.isEmpty();}
 		
-		private class Iterator implements java.util.Iterator<VariantImage>
+		public boolean checkCluster()
 		{
-			private java.util.ListIterator<VariantImage> vIt;
-			private java.util.ListIterator<Integer>  iIt;
-			
-			private Iterator()
+			for (Variant variant : variants)
 			{
-				vIt = images.listIterator();
-				iIt = indices.listIterator();
+				if (variant.image.isClusterImage())
+					return true;
 			}
-			
-			@Override public boolean hasNext()
+			return false;
+		}
+		
+		private static boolean checkCluster(SimpleValue kind, SimpleValue cluster, Tile.Part neighbor, Mode2 mode)
+		{
+			if (!neighbor.has(mode)) return false;
+			final Table table = neighbor.get(mode).checkTable(mode);
+			if (!table.exist(1, mode) || !table.exist("cluster", mode)) return false;
+			final SimpleValue nkind    = table.get(1).checkSimple(mode);
+			final SimpleValue ncluster = table.get("cluster").checkSimple(mode);
+			return (nkind != null && ncluster != null && cluster.value.eq_b(ncluster.value) && kind.value.eq_b(nkind.value));
+		}
+		
+		public void resolveCluster(Mode2 mode, Tile.Part tilePart, Tile.Part nPart, Tile.Part ePart, Tile.Part sPart, Tile.Part wPart)
+		{
+			final Table table = tilePart.get(mode).checkTable(mode);
+			final SimpleValue cluster = table.exist("cluster", mode) ? table.get("cluster").checkSimple(mode) : null;
+			final SimpleValue kind    = table.exist(1,         mode) ? table.get(1).checkSimple(mode)         : null;
+			int vIdx = 0;
+			for (Variant variant : variants)
 			{
-				return vIt.hasNext();
-			}
-			
-			@Override public VariantImage next()
-			{
-				final VariantImage v = vIt.next();
-				if (v == null) {
-					System.err.println("Got null variant");
-					return null;}
-				if (!(v instanceof ClusterImage) || !iIt.hasNext()) return v;
-				return ((ClusterImage)v).connect[iIt.next()];
+				if (variant.image.isClusterImage())
+				{
+					if (cluster != null)
+					{
+						final StringBuffer s = new StringBuffer(4);
+						if (nPart != null && checkCluster(kind, cluster, nPart, mode))
+							s.append('n');
+						if (ePart != null && checkCluster(kind, cluster, ePart, mode))
+							s.append('e');
+						if (sPart != null && checkCluster(kind, cluster, sPart, mode))
+							s.append('s');
+						if (wPart != null && checkCluster(kind, cluster, wPart, mode))
+							s.append('w');
+						sprites.set(vIdx, ((Tileset.ClusterImage)variant.image).get(s.toString()).sprite);
+					}
+					else if (table.exist("connections"))
+					{
+						final SimpleValue conn = table.get("connections").checkSimple(mode);
+						if (conn != null)
+							sprites.set(vIdx, ((Tileset.ClusterImage)variant.image).get(conn.toString_noquote()).sprite);
+					}
+					else if (part.hasAttribute("connections"))
+					{
+						sprites.set(vIdx, ((Tileset.ClusterImage)variant.image).get(part.getAttribute("connections")).sprite);
+					}
+				}
+				++vIdx;
 			}
 		}
 		
-		@Override public Iterator iterator() {return new Iterator();}
-		
-		public java.util.Iterator<Variant>      varIterator() {return variants.iterator();}
-		public java.util.Iterator<VariantImage> imgIterator() {return images.iterator();}
-		public java.util.Iterator<Integer>      idxIterator() {return indices.iterator();}
+		public java.util.Iterator<Variant> varIterator() {return variants.iterator();}
+		public java.util.Iterator<Sprite>  imgIterator() {return sprites.iterator();}
 		
 		@Override
 		public void draw(RenderingAgent renderer, int x, int y, int size) throws MissingImageException
 		{
-			for (VariantImage image : this)
-				image.draw(renderer, x, y, size);
+			sprites.draw(renderer, x, y, size);
 		}
-		
-		@Override public Kind    getKind()                      {return part.getKind();}
-		@Override public String  getAttribute(String attrName)  {return part.getAttribute(attrName);}
-		@Override public boolean hasAttribute(String attrName)  {return part.hasAttribute(attrName);}
-		@Override public String  getKindName()                  {return part.getKindName();}
-		
-		@Override public List<Variant>      getVariant() {return Collections.unmodifiableList(variants);}
-		@Override public List<VariantImage> getImage()   {return Collections.unmodifiableList(images);}
 	}
 	
 	public static class MMPart
@@ -151,10 +163,56 @@ public class ImageTile
 		{
 			return mode == Mode2.EASY ? easy != null : difficult != null;
 		}
+		
+		
+		void resolvePart(Tile.Part tilePart, Tileset tileset, Tile defaultTile)
+		{
+			if (!tilePart.isNull())
+			{
+				if (tilePart.hasEasy())
+					easy = new Part(tileset.resolve(tilePart.get(Mode.EASY), Mode2.EASY));
+				else
+					easy = new Part(tileset.resolve(defaultTile.fl().get(Mode.EASY), Mode2.EASY));
+				
+				if (tilePart.hasNormal())
+					difficult = easy;
+				else if (tilePart.hasDifficult())
+					difficult = new Part(tileset.resolve(tilePart.get(Mode.DIFFICULT), Mode2.DIFFICULT));
+				else
+					difficult = new Part(tileset.resolve(defaultTile.fl().get(Mode.DIFFICULT), Mode2.DIFFICULT));
+			}
+			else
+			{
+				easy = new Part(tileset.resolve(defaultTile.fl().get(Mode.EASY), Mode2.EASY));
+				difficult = new Part(tileset.resolve(defaultTile.fl().get(Mode.DIFFICULT), Mode2.DIFFICULT));
+			}
+		}
+		
+		void resolvePart(Tile.Part tilePart, Tileset tileset)
+		{
+			if (!tilePart.isNull())
+			{
+				if (tilePart.hasEasy())
+					easy = new Part(tileset.resolve(tilePart.get(Mode.EASY), Mode2.EASY));
+				
+				if (tilePart.hasNormal())
+					difficult = easy;
+				else if (tilePart.hasDifficult())
+					difficult = new Part(tileset.resolve(tilePart.get(Mode.DIFFICULT), Mode2.DIFFICULT));
+			}
+		}
+		
+		void resolveCluster(Tile.Part tilePart, Tile.Part nPart, Tile.Part ePart, Tile.Part sPart, Tile.Part wPart)
+		{
+			if (easy != null)
+				easy.resolveCluster(Mode2.EASY, tilePart, nPart, ePart, sPart, wPart);
+			if (difficult != null)
+				difficult.resolveCluster(Mode2.DIFFICULT, tilePart, nPart, ePart, sPart, wPart);
+		}
 	}
 	
-	Tile   tile;
-	MMPart floor, item, actor, stone;
+	private Tile   tile;
+	private MMPart floor, item, actor, stone;
 	
 	ImageTile(Tile tile)
 	{
@@ -173,92 +231,69 @@ public class ImageTile
 	
 	void resolveTile(Tileset tileset, Tile defaultTile)
 	{
-		// get variants
-		// * floor
+		floor.resolvePart(tile.fl(), tileset, defaultTile);
+		item .resolvePart(tile.it(), tileset);
+		actor.resolvePart(tile.ac(), tileset);
+		stone.resolvePart(tile.st(), tileset);
+	}
+	
+	void resolveCluster(ImageTile nTile, ImageTile eTile, ImageTile sTile, ImageTile wTile)
+	{
 		if (tile.has_fl())
-		{
-			if (tile.fl().hasEasy())
-				floor.easy = new Part(tileset.resolve(tile.fl().get(Mode.EASY), Mode2.EASY));
-			else
-				floor.easy = new Part(tileset.resolve(defaultTile.fl().get(Mode.EASY), Mode2.EASY));
-			
-			if (tile.fl().hasNormal())
-				floor.difficult = floor.easy;
-			else if (tile.fl().hasDifficult())
-				floor.difficult = new Part(tileset.resolve(tile.fl().get(Mode.DIFFICULT), Mode2.DIFFICULT));
-			else
-				floor.difficult = new Part(tileset.resolve(defaultTile.fl().get(Mode.DIFFICULT), Mode2.DIFFICULT));
-		}
-		else
-		{
-			floor.easy = new Part(tileset.resolve(defaultTile.fl().get(Mode.EASY), Mode2.EASY));
-			floor.difficult = new Part(tileset.resolve(defaultTile.fl().get(Mode.DIFFICULT), Mode2.DIFFICULT));
-		}
+			floor.resolveCluster(tile.fl(),
+				nTile != null ? nTile.tile.fl() : null,
+				eTile != null ? eTile.tile.fl() : null,
+				sTile != null ? sTile.tile.fl() : null,
+				wTile != null ? wTile.tile.fl() : null);
 		
-		// * item
 		if (tile.has_it())
-		{
-			if (tile.it().hasEasy())
-				item.easy = new Part(tileset.resolve(tile.it().get(Mode.EASY), Mode2.EASY));
-			if (tile.it().hasNormal())
-				item.difficult = item.easy;
-			else if (tile.it().hasDifficult())
-				item.difficult = new Part(tileset.resolve(tile.it().get(Mode.DIFFICULT), Mode2.DIFFICULT));
-		}
+			item .resolveCluster(tile.it(),
+				nTile != null ? nTile.tile.it() : null,
+				eTile != null ? eTile.tile.it() : null,
+				sTile != null ? sTile.tile.it() : null,
+				wTile != null ? wTile.tile.it() : null);
 		
-		// * actor
 		if (tile.has_ac())
-		{
-			if (tile.ac().hasEasy())
-				actor.easy = new Part(tileset.resolve(tile.ac().get(Mode.EASY), Mode2.EASY));
-			if (tile.ac().hasNormal())
-				actor.difficult = actor.easy;
-			else if (tile.ac().hasDifficult())
-				actor.difficult = new Part(tileset.resolve(tile.ac().get(Mode.DIFFICULT), Mode2.DIFFICULT));
-		}
-		
-		// * stone
+			actor.resolveCluster(tile.ac(),
+				nTile != null ? nTile.tile.ac() : null,
+				eTile != null ? eTile.tile.ac() : null,
+				sTile != null ? sTile.tile.ac() : null,
+				wTile != null ? wTile.tile.ac() : null);
+					
 		if (tile.has_st())
-		{
-			if (tile.st().hasEasy())
-				stone.easy = new Part(tileset.resolve(tile.st().get(Mode.EASY), Mode2.EASY));
-			if (tile.st().hasNormal())
-				stone.difficult = stone.easy;
-			else if (tile.st().hasDifficult())
-				stone.difficult = new Part(tileset.resolve(tile.st().get(Mode.DIFFICULT), Mode2.DIFFICULT));
-		}
+			stone.resolveCluster(tile.st(),
+				nTile != null ? nTile.tile.st() : null,
+				eTile != null ? eTile.tile.st() : null,
+				sTile != null ? sTile.tile.st() : null,
+				wTile != null ? wTile.tile.st() : null);
 	}
 	
 	public void draw_fl(RenderingAgent renderer, int x, int y, int size, Mode mode) throws MissingImageException
 	{
-		Part part = floor.get(mode);
-		if (part == null) return;
-		for (VariantImage image : part)
-			image.draw(renderer, x, y, size);
+		final Part part = floor.get(mode);
+		if (part != null)
+			part.sprites.draw(renderer, x, y, size);
 	}
 	
 	public void draw_it(RenderingAgent renderer, int x, int y, int size, Mode mode) throws MissingImageException
 	{
-		Part part = item.get(mode);
-		if (part == null) return;
-		for (VariantImage image : part)
-			image.draw(renderer, x, y, size);
+		final Part part = item.get(mode);
+		if (part != null)
+			part.sprites.draw(renderer, x, y, size);
 	}
 	
 	public void draw_ac(RenderingAgent renderer, int x, int y, int size, Mode mode) throws MissingImageException
 	{
-		Part part = actor.get(mode);
-		if (part == null) return;
-		for (VariantImage image : part)
-			image.draw(renderer, x, y, size);
+		final Part part = actor.get(mode);
+		if (part != null)
+			part.sprites.draw(renderer, x, y, size);
 	}
 	
 	public void draw_st(RenderingAgent renderer, int x, int y, int size, Mode mode) throws MissingImageException
 	{
-		Part part = stone.get(mode);
-		if (part == null) return;
-		for (VariantImage image : part)
-			image.draw(renderer, x, y, size);
+		final Part part = stone.get(mode);
+		if (part != null)
+			part.sprites.draw(renderer, x, y, size);
 	}
 }
 

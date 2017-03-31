@@ -45,12 +45,12 @@ public class Controller implements CodeChangeListener, LevelClickListener, KindS
 	
 	public Controller(Options options)
 	{
-			this.options = options;
-			loadTileset();
-			loadDefaultLevel();
-			setupLookAndFeel();
-			startUpdater();
-			setupUI();
+		this.options = options;
+		loadTileset();
+		loadDefaultLevel();
+		setupLookAndFeel();
+		startUpdater();
+		setupUI();
 	}
 	
 	private void loadTileset()
@@ -81,6 +81,7 @@ public class Controller implements CodeChangeListener, LevelClickListener, KindS
 			reader.addI18n("data/tileset_de.xml", tileset);
 			tileset.loadSprites(spriteset);
 			System.out.println("DONE");
+			tileset.dump();
 		}
 		catch (ParserConfigurationException e)
 		{
@@ -209,7 +210,7 @@ public class Controller implements CodeChangeListener, LevelClickListener, KindS
 					"Level Lua Error",
 					JOptionPane.ERROR_MESSAGE);
 			mainWnd.setCode(level, 0);
-			System.err.println(e.code.startString() + ": ERROR:" + e.getLocalizedMessage());
+			System.err.println(e.code.startString() + ": ERROR: " + e.getLocalizedMessage());
 			if (!e.code.isNone())
 			{
 				System.err.println("    " + e.code.getLine(level.luamain));
@@ -342,6 +343,7 @@ public class Controller implements CodeChangeListener, LevelClickListener, KindS
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
+				updater.stop();
 				mainWnd.dispose();
 			}
 		};

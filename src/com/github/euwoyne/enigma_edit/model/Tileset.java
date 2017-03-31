@@ -135,8 +135,8 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		 */
 		String getKindName();
 		
-		List<Variant>      getVariant();
-		List<VariantImage> getImage();
+		List<Variant>   getVariant();
+		SpriteStack getImage();
 	}
 	
 	/**
@@ -194,7 +194,7 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	 * Stack of {@link Image images}.
 	 * This is, what a resolved variant will be represented as. 
 	 */
-	public static class VariantImage implements ResizeRenderable, Iterable<Image>
+	public static class VariantImage implements Renderable, Iterable<Image>
 	{
 		ArrayList<Image> images;
 		Sprite           sprite;
@@ -204,14 +204,26 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 			images = new ArrayList<Image>();
 		}
 		
+		/**
+		 * Variant image type check.
+		 * @return  Check, if this image hosts special cluster variants.
+		 * @see ClusterImage, VariantImage
+		 */
+		public boolean isClusterImage()
+		{
+			return false;
+		}
+		
 		public Sprite getSprite() {return sprite;}
 		
-		@Override public Iterator<Image> iterator()
+		@Override
+		public Iterator<Image> iterator()
 		{
 			return images.iterator();
 		}
 		
-		@Override public void draw(RenderingAgent renderer, int x, int y, int size) throws MissingImageException
+		@Override
+		public void draw(RenderingAgent renderer, int x, int y, int size) throws MissingImageException
 		{
 			sprite.draw(renderer, x, y, size);
 		}
@@ -234,7 +246,7 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		 * @param connections  value of the {@code connections} attribute.
 		 * @return             index of the corresponding image in the {@link connect} array.
 		 */
-		public static int getIndex(String connections)
+		static int getIndex(String connections)
 		{
 			int idx = 0;
 			for (int i = 0; i < connections.length(); ++i)
@@ -284,6 +296,12 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		{
 			return connect[getIndex(connections)];
 		}
+		
+		@Override
+		public boolean isClusterImage()
+		{
+			return true;
+		}
 	}
 	
 	/**
@@ -292,7 +310,7 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	 * Furthermore each variant may alter the default values of the kind's
 	 * attributes.
 	 */
-	public static abstract class Variant implements ObjectProvider
+	public static abstract class Variant implements ObjectProvider, Renderable
 	{
 		/** parent kind */
 		final Kind kind;
@@ -336,9 +354,15 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 			return attributes.containsKey(attrName) || kind.hasAttribute(attrName);
 		}
 		
-		@Override public String                  getKindName() {return kind.getName();}
-		@Override public ArrayList<Variant>      getVariant()  {return kind.getVariant(this);}
-		@Override public ArrayList<VariantImage> getImage()    {return kind.getImage(this);}
+		@Override public String             getKindName() {return kind.getName();}
+		@Override public ArrayList<Variant> getVariant()  {return kind.getVariant(this);}
+		@Override public SpriteStack        getImage()    {return kind.getImage(this);}
+		
+		@Override
+		public void draw(RenderingAgent renderer, int x, int y, int size) throws MissingImageException
+		{
+			image.sprite.draw(renderer, x, y, size);
+		}
 	}
 	
 	/**
@@ -411,11 +435,11 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	 * Variant list base class.
 	 * This only contains the {@code showAll} flag, which is shared by both variant types.
 	 */
-	public static abstract class Variants
+	public static abstract class VariantSet
 	{
 		boolean showAll;
 		
-		Variants()
+		VariantSet()
 		{
 			showAll = false;
 		}
@@ -443,12 +467,12 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	/**
 	 * Variant list intermediary template.
 	 */
-	private static abstract class VariantsT<T extends Variant> extends Variants implements Collection<T>
+	private static abstract class VariantSetT<T extends Variant> extends VariantSet implements Collection<T>
 	{
 		ArrayList<T>       variants;
 		TreeMap<String, T> variantMap;
 		
-		VariantsT()
+		VariantSetT()
 		{
 			variants = new ArrayList<T>();
 			variantMap = new TreeMap<String, T>();
@@ -484,15 +508,15 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	
 	/**
 	 * List of named variants.
-	 * All contained variants are {@link NamedVariants} and a default variant
+	 * All contained variants are {@link NamedVariant}s and a default variant
 	 * name is provided.
 	 */
-	public static class NamedVariants extends VariantsT<NamedVariant>
+	public static class NamedVariantSet extends VariantSetT<NamedVariant>
 	{
 		/** name of the default variant */
 		String defaultName;
 		
-		NamedVariants(String defaultName)
+		NamedVariantSet(String defaultName)
 		{
 			this.defaultName = defaultName;
 		}
@@ -500,7 +524,8 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		public boolean add(NamedVariant variant)
 		{
 			if (!variants.isEmpty() && variant.kind != variants.get(0).kind)
-				throw new IllegalArgumentException("Unable to add variant for kind '" + variant.kind.getName() + "' to kind '" + this.get(0).kind.getName() + "'");
+				throw new IllegalArgumentException("Unable to add variant for kind '" + variant.kind.getName()
+				                                   + "' to kind '" + this.get(0).kind.getName() + "'");
 			
 			if (variant.hasName())
 				variantMap.put(variant.getName(), variant);
@@ -539,7 +564,7 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	/**
 	 * Variant list base class.
 	 */
-	public static class AttributeVariants extends VariantsT<AttributeVariant>
+	public static class AttributeVariantSet extends VariantSetT<AttributeVariant>
 	{
 		ArrayList<String> attrs;
 		boolean           hasCompare;
@@ -548,7 +573,7 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		 * Constructs a variant set for the specified kind.
 		 * @param parent  The variants parent kind. The default variant name will be initialized to the kind's name.
 		 */
-		public AttributeVariants()
+		public AttributeVariantSet()
 		{
 			attrs      = new ArrayList<String>();
 			hasCompare = false;
@@ -557,7 +582,8 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		public boolean add(AttributeVariant variant)
 		{
 			if (!this.isEmpty() && variant.kind != this.get(0).kind)
-				throw new IllegalArgumentException("Unable to add variant for kind '" + variant.kind.getName() + "' to kind '" + this.get(0).kind.getName() + "'");
+				throw new IllegalArgumentException("Unable to add variant for kind '" + variant.kind.getName()
+				                                   + "' to kind '" + this.get(0).kind.getName() + "'");
 			
 			variantMap.put(String.join(",", variant.val), variant);
 			hasCompare |= variant.hasCompare;
@@ -641,10 +667,22 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 						{
 							switch (val.get(i).charAt(0))
 							{
-							case '<': if (Double.parseDouble(values.get(i)) >= Double.parseDouble(val.get(i).substring(1))) out = null; break;
-							case '>': if (Double.parseDouble(values.get(i)) <= Double.parseDouble(val.get(i).substring(1))) out = null; break;
-							case '=': if (!val.get(i).regionMatches(1, values.get(i), 0, values.get(i).length())) out = null; break;
-							default:  if (!val.get(i).equals(values.get(i))) out = null; break;
+							case '<':
+								if (Double.parseDouble(values.get(i)) >= Double.parseDouble(val.get(i).substring(1)))
+									out = null;
+								break;
+							case '>':
+								if (Double.parseDouble(values.get(i)) <= Double.parseDouble(val.get(i).substring(1)))
+									out = null;
+								break;
+							case '=':
+								if (!val.get(i).regionMatches(1, values.get(i), 0, values.get(i).length()))
+									out = null;
+								break;
+							default:
+								if (!val.get(i).equals(values.get(i)))
+									out = null;
+								break;
 							}
 						}
 						catch (NumberFormatException e)
@@ -658,7 +696,8 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 			}
 			
 			if (out == null)
-				System.err.println("Unable to resolve variant '" + String.join(",", values) + "' for kind '" + this.get(0).kind.getName() + "'");
+				System.err.println("Unable to resolve variant '" + String.join(",", values)
+				                   + "' for kind '" + this.get(0).kind.getName() + "'");
 			
 			return out;
 		}
@@ -702,9 +741,9 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 			return attributes.containsKey(attrName) || kind.hasAttribute(attrName);
 		}
 		
-		@Override public String                  getKindName() {return kind.getName();}
-		@Override public ArrayList<Variant>      getVariant()  {return kind.getVariant(this);}
-		@Override public ArrayList<VariantImage> getImage()    {return kind.getImage(this);}
+		@Override public String             getKindName() {return kind.getName();}
+		@Override public ArrayList<Variant> getVariant()  {return kind.getVariant(this);}
+		@Override public SpriteStack    getImage()    {return kind.getImage(this);}
 	}
 	
 	/**
@@ -828,7 +867,7 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	/**
 	 * Enigma object kind.
 	 */
-	public static class Kind extends Name implements Iterable<Variants>, ObjectProvider
+	public static class Kind extends Name implements Iterable<VariantSet>, ObjectProvider
 	{
 		/** object type enumeration */
 		public enum Type {AC, FL, IT, ST};
@@ -846,7 +885,7 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		ArrayList<Alias>           alias;
 		
 		/** variant stack */
-		ArrayList<Variants>        stack;
+		ArrayList<VariantSet>      stack;
 		
 		/** attribute declarations */
 		TreeMap<String, Attribute> attributes;
@@ -869,7 +908,7 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 			this.group      = group;
 			this.type       = type;
 			this.alias      = new ArrayList<Alias>();
-			this.stack      = new ArrayList<Variants>();
+			this.stack      = new ArrayList<VariantSet>();
 			this.attributes = new TreeMap<String, Attribute>();
 			this.messages   = new TreeSet<String>();
 			this.icon       = null;
@@ -882,18 +921,13 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 			this(name, type, null);
 		}
 		
-		@Override public Iterator<Variants> iterator() {return stack.iterator();}
+		@Override public Iterator<VariantSet> iterator() {return stack.iterator();}
 		
 		public List<Alias>  getAliases()  {return Collections.unmodifiableList(alias);}
 		public Type         getType()     {return type;}
 		public boolean      isHidden()    {return access == Access.HIDDEN;}
 		public boolean      showAliases() {return access == Access.ALIAS;}
 		public boolean      hasIcon()     {return icon != null;}
-		public VariantImage getIcon()
-		{
-			if (icon != null) return icon;
-			return stack.get(0).getDefaultVariant().image;
-		}
 		
 		@Override public Kind   getKind()     {return this;}
 		@Override public String getKindName() {return name;}
@@ -923,7 +957,7 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		public ArrayList<Variant> getVariant()
 		{
 			final ArrayList<Variant> list = new ArrayList<Variant>();
-			for (Variants variants : stack)
+			for (VariantSet variants : stack)
 				list.add(variants.getDefaultVariant());
 			return list;
 		}
@@ -931,34 +965,45 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		public ArrayList<Variant> getVariant(ObjectProvider obj)
 		{
 			final ArrayList<Variant> list = new ArrayList<Variant>();
-			for (Variants variants : stack)
+			for (VariantSet variants : stack)
 				list.add(variants.getVariant(obj));
 			return list;
 		}
 		
 		@Override
-		public ArrayList<VariantImage> getImage()
+		public SpriteStack getImage()
 		{
-			final ArrayList<VariantImage> list = new ArrayList<VariantImage>();
-			for (Variants variants : stack)
+			final SpriteStack list = new SpriteStack();
+			for (VariantSet variants : stack)
 			{
 				final Variant variant = variants.getDefaultVariant();
 				if (variant != null)
-					list.add(variant.image);
+					list.add(variant.image.sprite);
 			}
 			return list;
 		}
 		
-		public ArrayList<VariantImage> getImage(ObjectProvider obj)
+		public SpriteStack getImage(ObjectProvider obj)
 		{
-			final ArrayList<VariantImage> list = new ArrayList<VariantImage>();
-			for (Variants variants : stack)
+			final SpriteStack list = new SpriteStack();
+			for (VariantSet variants : stack)
 			{
 				final Variant variant = variants.getVariant(obj);
 				if (variant != null)
-					list.add(variant.image);
+					list.add(variant.image.sprite);
 			}
 			return list;
+		}
+		
+		public SpriteStack getIcon()
+		{
+			if (icon != null)
+			{
+				final SpriteStack list = new SpriteStack();
+				list.add(icon.sprite);
+				return list;
+			}
+			else return getImage();
 		}
 	}
 	
@@ -1181,6 +1226,9 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	/** internationalization strings */
 	private I18N             i18n;
 	
+	/** loaded spriteset */
+	private SpriteSet        spriteset;
+	
 	/**
 	 * Default constructor.
 	 */
@@ -1188,9 +1236,10 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	{
 		this.editorVer = editorVer;
 		this.enigmaVer = enigmaVer;
-		this.groups = new ArrayList<Group>();
-		this.names  = new NameMap();
-		this.i18n   = new I18N();
+		this.groups    = new ArrayList<Group>();
+		this.names     = new NameMap();
+		this.i18n      = new I18N();
+		this.spriteset = null;
 		
 		Kind nil; 
 		names.add(nil = new Kind("fl_nil", Kind.Type.FL)); nil.access = Kind.Access.HIDDEN;
@@ -1248,11 +1297,11 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 				for (Kind kind : page)
 				{
 					names.add(kind);
-					for (Variants variants : kind)
+					for (VariantSet variants : kind)
 					{
-						if (variants instanceof NamedVariants)
+						if (variants instanceof NamedVariantSet)
 						{
-							for (NamedVariant variant : (NamedVariants)variants)
+							for (NamedVariant variant : (NamedVariantSet)variants)
 							{
 								names.add(variant);
 							}
@@ -1272,13 +1321,14 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	 */
 	public void loadSprites(SpriteSet spriteset) throws MissingImageException
 	{
+		this.spriteset = null;
 		for (Group group : groups)
 		{
 			for (Page page : group)
 			{
 				for (Kind kind : page)
 				{
-					for (Variants variants : kind.stack)
+					for (VariantSet variants : kind.stack)
 					{
 						for (Iterator<Variant> vIt = variants.viterator(); vIt.hasNext();)
 						{
@@ -1294,9 +1344,33 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 							}
 						}
 					}
+					if (kind.icon != null && kind.icon.sprite == null)
+						kind.icon.sprite = spriteset.get(kind.icon);
 				}
 			}
 		}
+		this.spriteset = spriteset;
+	}
+	
+	/**
+	 * Check, if the sprites have been loaded.
+	 * 
+	 * @return  {@code true}, if there has been a successful call to {@link #loadSprites}.
+	 */
+	public boolean isLoaded()
+	{
+		return spriteset != null;
+	}
+	
+	/**
+	 * Get the {@link SpriteSet} used as source for the tiles' sprites.
+	 * This is the instance passed to the last successful call to {@link #loadSprites}.
+	 * 
+	 * @return  The {@link SpriteSet} used by this {@link Tileset}.
+	 */
+	public SpriteSet getSpriteset()
+	{
+		return spriteset;
 	}
 	
 	/**
@@ -1311,7 +1385,7 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	 *             missing from the {@code <i18n>} section of the
 	 *             tile-set description file.
 	 */
-	public void check() throws MissingStringException
+	public void checkI18n() throws MissingStringException
 	{
 		for (Group group : groups)
 		{
@@ -1400,7 +1474,8 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 				{
 					if (!i18n.exists(attribute.i18n))
 						throw new MissingStringException(attribute.i18n, attribute.name, "attribute");
-					System.out.print("\t\tATTR " + attribute.name + " (" + i18n.english(attribute.i18n) + ") : " + attribute.type);
+					System.out.print("\t\tATTR " + attribute.name + " (" + i18n.english(attribute.i18n) + ") : "
+					                             + attribute.type);
 					if (attribute.defaultValue != null)
 						System.out.print(" = " + attribute.defaultValue);
 					System.out.println();
@@ -1420,7 +1495,8 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 				{
 					if (!kind.isHidden() && !i18n.exists(kind.i18n))
 						throw new MissingStringException(kind.i18n, kind.name, "kind");
-					System.out.print("\t\tKIND " + kind.name + (kind.oldname != null ? "[" + kind.oldname + "] " : " ") + "(" + i18n.english(kind.i18n) + ")");
+					System.out.print("\t\tKIND " + kind.name + (kind.oldname != null ? "[" + kind.oldname + "] " : " ")
+					                                         + "(" + i18n.english(kind.i18n) + ")");
 					System.out.println(kind.isHidden() ? " HIDDEN" : "");
 					
 					for (Attribute attribute : kind.attributes.values())
@@ -1429,7 +1505,8 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 						{
 							if (!i18n.exists(attribute.i18n))
 								throw new MissingStringException(attribute.i18n, attribute.name, kind.name, "kindattr");
-							System.out.print("\t\t\tATTR " + attribute.name + " (" + i18n.english(attribute.i18n) + "): " + attribute.type);
+							System.out.print("\t\t\tATTR " + attribute.name + " (" + i18n.english(attribute.i18n) + ")"
+							                                                + ": " + attribute.type);
 						}
 						else System.out.print("\t\t\tATTR " + attribute.name + ": " + attribute.type);
 						if (attribute.defaultValue != null)
@@ -1445,12 +1522,20 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 						System.out.println();
 					}
 					
-					for (Variants variants : kind.stack)
+					for (VariantSet variants : kind.stack)
 					{
-						if (variants instanceof NamedVariants)
-							System.out.println("\t\t\tVARIANTS" + ((((NamedVariants)variants).defaultName != null) ? (" <" + ((NamedVariants)variants).defaultName + ">:") : ":"));
-						else if (variants instanceof AttributeVariants)
-							System.out.println("\t\t\tVARIANTS <" + String.join(", ", ((AttributeVariants)variants).attrs) + ">:");
+						if (variants instanceof NamedVariantSet)
+						{
+							System.out.println("\t\t\tVARIANTS" +
+									((((NamedVariantSet)variants).defaultName != null)
+											? (" <" + ((NamedVariantSet)variants).defaultName + ">:")
+											: ":"));
+						}
+						else if (variants instanceof AttributeVariantSet)
+						{
+							System.out.println("\t\t\tVARIANTS <"
+									+ String.join(", ", ((AttributeVariantSet)variants).attrs) + ">:");
+						}
 						
 						for (Iterator<Variant> vIt = variants.viterator(); vIt.hasNext();)
 						{

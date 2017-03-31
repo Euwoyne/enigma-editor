@@ -25,8 +25,8 @@ package com.github.euwoyne.enigma_edit.model;
 
 public interface SpriteSet
 {
-	public Sprite get(Tileset.VariantImage image);
-	public void   free(int size);
-	public void   free();
+	Sprite get(Tileset.VariantImage image);
+	void   free(int size);
+	void   free();
 }
 

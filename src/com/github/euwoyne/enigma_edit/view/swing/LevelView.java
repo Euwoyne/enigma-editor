@@ -94,7 +94,7 @@ public class LevelView extends JPanel implements MouseListener, Updateable
 			@Override
 			public void draw(Sprite.Image sprite, int x, int y)
 			{
-				g.drawImage((AwtSprite.Image)sprite, x * displaySize, y * displaySize, null);
+				g.drawImage((AwtSprite.AwtImage)sprite, x * displaySize, y * displaySize, null);
 			}
 		};
 		

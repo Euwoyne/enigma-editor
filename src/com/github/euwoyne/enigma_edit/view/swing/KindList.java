@@ -39,10 +39,11 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import com.github.euwoyne.enigma_edit.control.KindSelectionListener;
+import com.github.euwoyne.enigma_edit.error.InternalError;
 import com.github.euwoyne.enigma_edit.error.MissingAttributeException;
 import com.github.euwoyne.enigma_edit.error.MissingImageException;
+import com.github.euwoyne.enigma_edit.model.SpriteStack;
 import com.github.euwoyne.enigma_edit.model.Tileset;
-import com.github.euwoyne.enigma_edit.model.Tileset.VariantImage;
 
 @SuppressWarnings("serial")
 public class KindList extends JPanel 
@@ -124,22 +125,17 @@ public class KindList extends JPanel
 	{
 		try
 		{
-			AwtSprite.Image sprite = null;
-			final ArrayList<VariantImage> images = kind.getImage();
-			if (images.size() == 1)
-			{
-				sprite = ((AwtSprite)images.get(0).getSprite()).getImage(size);
-			}
-			else
-			{
-				for (VariantImage image : images)
-				{
-					if (sprite == null)
-						sprite = ((AwtSprite)image.getSprite()).new Image(size);
-					sprite.draw(image);
-				}
-			}
+			final SpriteStack        images = kind.getImage();
+			final AwtSprite.AwtImage sprite = (images.size() == 1) ?
+					((AwtSprite)images.get(0)).getImage(size) :
+					AwtSprite.create((AwtSpriteSet)tileset.getSpriteset(), images, size);
 			return new ImageIcon(sprite);
+		}
+		catch (ClassCastException e)
+		{
+			throw new InternalError("FrontendMismatch",
+					AwtSprite.AwtImage.class.getName(),
+					tileset.getSpriteset().getClass().getName());
 		}
 		catch (MissingImageException e)
 		{
@@ -147,7 +143,10 @@ public class KindList extends JPanel
 		}
 	}
 	
-	private ImageIcon getIcon(Tileset.Kind kind) {return getIcon(kind, displaySize);}
+	private ImageIcon getIcon(Tileset.Kind kind)
+	{
+		return getIcon(kind, displaySize);
+	}
 	
 	private ImageIcon getIcon(Tileset.Group group)
 	{
@@ -155,12 +154,12 @@ public class KindList extends JPanel
 		return (kind == null) ? null : getIcon(kind, ICONSIZE);
 	}
 	
-	public KindList(Tileset tileset, int size) throws MissingAttributeException, MissingImageException
+	public KindList(Tileset tileset, int size) throws MissingAttributeException, MissingImageException, InternalError
 	{
 		this(tileset, size, Locale.getDefault());
 	}
 	
-	public KindList(Tileset tileset, int size, Locale locale) throws MissingAttributeException, MissingImageException
+	public KindList(Tileset tileset, int size, Locale locale) throws MissingAttributeException, MissingImageException, InternalError
 	{
 		this.tileset     = tileset;
 		this.lang        = locale.getLanguage();

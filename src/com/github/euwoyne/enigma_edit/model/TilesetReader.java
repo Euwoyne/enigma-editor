@@ -72,7 +72,7 @@ public class TilesetReader
 		parser.getXMLReader().setContentHandler(new TilesetParser());
 		parser.getXMLReader().parse(convertToFileURL(filename));
 		((TilesetParser)parser.getXMLReader().getContentHandler()).target.registerNames();
-		((TilesetParser)parser.getXMLReader().getContentHandler()).target.check();
+		((TilesetParser)parser.getXMLReader().getContentHandler()).target.checkI18n();
 		return ((TilesetParser)parser.getXMLReader().getContentHandler()).target;
 	}
 	
@@ -120,8 +120,8 @@ public class TilesetReader
 		private Tileset.Attribute         attr;
 		private Tileset.Kind              kind;
 		private Tileset.Alias             alias;
-		private Tileset.NamedVariants     nvariants;
-		private Tileset.AttributeVariants avariants;
+		private Tileset.NamedVariantSet     nvariants;
+		private Tileset.AttributeVariantSet avariants;
 		private Tileset.Variant           variant;
 		private Tileset.NamedVariant      nvariant;
 		private Tileset.AttributeVariant  avariant;
@@ -395,7 +395,7 @@ public class TilesetReader
 				else if (qName.equals("image"))
 				{
 					if (kind.stack.isEmpty())
-						kind.stack.add(nvariants = new Tileset.NamedVariants(kind.name));
+						kind.stack.add(nvariants = new Tileset.NamedVariantSet(kind.name));
 					if (kind.stack.size() > 1 || nvariants == null)
 						this.error(new TilesetXMLException("UnexpectedImage", id, locator));
 					nvariant = new Tileset.NamedVariant(kind.name, kind);
@@ -410,7 +410,7 @@ public class TilesetReader
 				else if (qName.equals("cluster"))
 				{
 					if (kind.stack.isEmpty())
-						kind.stack.add(nvariants = new Tileset.NamedVariants(kind.name));
+						kind.stack.add(nvariants = new Tileset.NamedVariantSet(kind.name));
 					if (kind.stack.size() > 1 || nvariants == null)
 						this.error(new TilesetXMLException("UnexpectedImage", id, locator));
 					nvariant = new Tileset.NamedVariant(kind.name, kind);
@@ -449,7 +449,7 @@ public class TilesetReader
 					avariants = null;
 					if ((temp = attrs.getValue("attrs")) != null)
 					{
-						avariants = new Tileset.AttributeVariants();
+						avariants = new Tileset.AttributeVariantSet();
 						parse_list(temp, avariants.attrs);
 						kind.stack.add(avariants);
 						state.to(State.AVARIANTS);
@@ -458,13 +458,13 @@ public class TilesetReader
 					{
 						if (avariants != null)
 							this.error(new TilesetXMLException("IllegalVariants", id, locator)); 
-						nvariants = new Tileset.NamedVariants(temp);
+						nvariants = new Tileset.NamedVariantSet(temp);
 						kind.stack.add(nvariants);
 						state.to(State.NVARIANTS);
 					}
 					else if (avariants == null)
 					{
-						nvariants = new Tileset.NamedVariants(kind.name);
+						nvariants = new Tileset.NamedVariantSet(kind.name);
 						kind.stack.add(nvariants);
 						state.to(State.NVARIANTS);
 					}
@@ -498,7 +498,7 @@ public class TilesetReader
 			case STACK:
 				if (qName.equals("variants"))
 				{
-					avariants = new Tileset.AttributeVariants();
+					avariants = new Tileset.AttributeVariantSet();
 					nvariants = null;
 					kind.stack.add(avariants);
 					if ((attrs.getValue("default")) != null) 
@@ -701,7 +701,7 @@ public class TilesetReader
 					this.error(new TilesetXMLException("UnexpectedEndTagKind", qName, kind.name, locator));
 				if (kind.stack.isEmpty())
 				{
-					nvariants = new Tileset.NamedVariants(kind.name);
+					nvariants = new Tileset.NamedVariantSet(kind.name);
 					nvariant = new Tileset.NamedVariant(kind.name, kind);
 					nvariant.name.oldname = kind.oldname;
 					nvariant.image.images.add(new Tileset.Image(kind.name));

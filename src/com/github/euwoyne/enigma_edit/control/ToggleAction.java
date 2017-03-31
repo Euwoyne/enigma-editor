@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.Icon;
 
-public class ToggleAction extends Action
+class ToggleAction extends Action
 {
 	private static final long serialVersionUID = 1L;
 	

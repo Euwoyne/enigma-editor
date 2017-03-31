@@ -35,7 +35,6 @@ import com.github.euwoyne.enigma_edit.model.Tileset.Alias;
 import com.github.euwoyne.enigma_edit.model.Tileset.Kind;
 import com.github.euwoyne.enigma_edit.model.Tileset.ObjectProvider;
 import com.github.euwoyne.enigma_edit.model.Tileset.Variant;
-import com.github.euwoyne.enigma_edit.model.Tileset.VariantImage;
 
 public class TilePart implements ObjectProvider
 {
@@ -63,9 +62,9 @@ public class TilePart implements ObjectProvider
 	}
 	
 	@Override
-	public ArrayList<VariantImage> getImage()
+	public SpriteStack getImage()
 	{
-		return objdef != null ? objdef.getKind().getImage(this) : new ArrayList<VariantImage>(0);
+		return objdef != null ? objdef.getKind().getImage(this) : new SpriteStack();
 	}
 	
 	@Override public Kind   getKind()     {return objdef.getKind();}

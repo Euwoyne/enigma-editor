@@ -37,6 +37,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -134,6 +135,7 @@ public class MainWnd extends JFrame implements WindowListener
 		return new ImageIcon(scaled);
 	}
 	
+	@SuppressWarnings("serial")
 	public MainWnd(Controller ctrl, Tileset tileset, Options options) throws MissingAttributeException, MissingImageException
 	{
 		// setup window
@@ -147,11 +149,23 @@ public class MainWnd extends JFrame implements WindowListener
 		levelView   = new LevelView(32);
 		infoLayout  = new CardLayout();
 		infoPanel   = new JPanel(infoLayout);
-		objectPanel = new ObjectPanel();
+		objectPanel = new ObjectPanel(tileset);
 		tilePanel   = new TilePanel();
 		metaPanel   = new MetaPanel();
 		codeEditor  = new CodeEditor();
-		editTabs    = new JTabbedPane();
+		editTabs    = new JTabbedPane()
+		{
+			@Override
+			public void addTab(String title, Icon icon, java.awt.Component component)
+			{
+				this.add(component);
+				JLabel lbl = new JLabel(title);
+				lbl.setIcon(icon);
+				lbl.setIconTextGap(5);
+				lbl.setHorizontalTextPosition(JLabel.RIGHT);
+				this.setTabComponentAt(this.getTabCount() - 1, lbl);
+			}
+		};
 		kindList    = new KindList(tileset, 24);
 		menuBar     = new JMenuBar();
 		toolBar     = new ToolBar("Editor Tools");
@@ -168,11 +182,10 @@ public class MainWnd extends JFrame implements WindowListener
 		final Icon icoActors    = kindList.getGroupIcon("grp_actors");
 		final Icon icoStones    = kindList.getGroupIcon("grp_stones");
 		
-		final Icon icoLevelTab  = new ImageIcon(((AwtSprite)tileset.getKind("fl_lawn").getIcon().getSprite())
-				.getImage(16));
 		
-		final Icon icoCodeTab   = new ImageIcon(((AwtSprite)tileset.getKind("it_document").getIcon().getSprite())
-				.getImage(32).getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+		
+		final Icon icoLevelTab  = new ImageIcon(AwtSprite.create((AwtSpriteSet)tileset.getSpriteset(), tileset.getKind("fl_lawn").getIcon(), 16));
+		final Icon icoCodeTab   = new ImageIcon(AwtSprite.create((AwtSpriteSet)tileset.getSpriteset(), tileset.getKind("it_document").getIcon(), 16));
 		
 		// setup actions
 		controller = ctrl;

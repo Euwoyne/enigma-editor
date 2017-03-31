@@ -31,13 +31,9 @@ import com.github.euwoyne.enigma_edit.lua.CodeData;
 import com.github.euwoyne.enigma_edit.lua.data.Mode;
 import com.github.euwoyne.enigma_edit.lua.data.Mode2;
 import com.github.euwoyne.enigma_edit.lua.data.Resolver;
-import com.github.euwoyne.enigma_edit.lua.data.SimpleValue;
-import com.github.euwoyne.enigma_edit.lua.data.Table;
 import com.github.euwoyne.enigma_edit.lua.data.Tile;
 import com.github.euwoyne.enigma_edit.lua.data.TileDecl;
 import com.github.euwoyne.enigma_edit.lua.data.WoCall;
-import com.github.euwoyne.enigma_edit.model.Tileset.ClusterImage;
-import com.github.euwoyne.enigma_edit.model.Tileset.VariantImage;
 
 /**
  * A world as it is constructed from lua code.
@@ -146,70 +142,6 @@ public class World
 		return true;
 	}
 	
-	private boolean checkCluster(SimpleValue kind, SimpleValue cluster, Tile.Part neighbor, Mode2 mode)
-	{
-		if (!neighbor.has(mode)) return false;
-		final Table table = neighbor.get(mode).checkTable(mode);
-		if (!table.exist(1, mode) || !table.exist("cluster", mode)) return false;
-		final SimpleValue nkind    = table.get(1).checkSimple(mode);
-		final SimpleValue ncluster = table.get("cluster").checkSimple(mode);
-		return (nkind != null && ncluster != null && cluster.value.eq_b(ncluster.value) && kind.value.eq_b(nkind.value));
-	}
-	
-	private void resolveCluster(ImageTile.Part target, Tile.Part part, int x, int y, Tileset tileset, Mode2 mode) throws LevelLuaException
-	{
-		final Table table = part.get(mode).checkTable(mode);
-		final SimpleValue cluster = table.exist("cluster", mode) ? table.get("cluster").checkSimple(mode) : null;
-		final SimpleValue kind    = table.exist(1,         mode) ? table.get(1).checkSimple(mode)         : null;
-		for (VariantImage variant : target)
-		{
-			if (variant instanceof ClusterImage)
-			{
-				if (cluster != null)
-				{
-					final StringBuffer s = new StringBuffer(4);
-					if (y > 0                   && checkCluster(kind, cluster, world[x][y-1].tile.st(), mode))
-						s.append('n');
-					if (x < world.length - 1    && checkCluster(kind, cluster, world[x+1][y].tile.st(), mode))
-						s.append('e');
-					if (y < world[0].length - 1 && checkCluster(kind, cluster, world[x][y+1].tile.st(), mode))
-						s.append('s');
-					if (x > 0                   && checkCluster(kind, cluster, world[x-1][y].tile.st(), mode))
-						s.append('w');
-					target.indices.add(ClusterImage.getIndex(s.toString()));
-				}
-				else if (table.exist("connections"))
-				{
-					final SimpleValue conn = table.get("connections").checkSimple(mode);
-					target.indices.add(conn == null ? 0 : ClusterImage.getIndex(conn.toString_noquote()));
-				}
-				else if (target.hasAttribute("connections"))
-				{
-					target.indices.add(ClusterImage.getIndex(target.getAttribute("connections")));
-				}
-				else target.indices.add(0);
-			}
-		}
-	}
-	
-	private static boolean checkCluster(ImageTile.Part data)
-	{
-		for (VariantImage variant : data)
-		{
-			if (variant instanceof ClusterImage)
-				return true;
-		}
-		return false;
-	}
-	
-	private void resolveCluster(ImageTile.MMPart target, Tile.Part part, int x, int y, Tileset tileset) throws LevelLuaException
-	{
-		if (target.hasEasy() && checkCluster(target.easy))
-			resolveCluster(target.easy, part, x, y, tileset, Mode2.EASY);
-		if (target.hasDifficult() && checkCluster(target.difficult))
-			resolveCluster(target.difficult, part, x, y, tileset, Mode2.DIFFICULT);
-	}
-	
 	/**
 	 * Execute a code analysis.
 	 * The given code will be analysed by a {@link CodeAnalyser}.
@@ -273,10 +205,11 @@ public class World
 		{
 			for (int y = 0; y < height; ++y)
 			{
-				resolveCluster(world[x][y].floor, world[x][y].tile.fl(), x, y, tileset);
-				resolveCluster(world[x][y].item,  world[x][y].tile.it(), x, y, tileset);
-				resolveCluster(world[x][y].actor, world[x][y].tile.ac(), x, y, tileset);
-				resolveCluster(world[x][y].stone, world[x][y].tile.st(), x, y, tileset);
+				world[x][y].resolveCluster(
+					y > 0                   ? world[x][y-1] : null,
+					x < world.length    - 1 ? world[x+1][y] : null,
+					y < world[0].length - 1 ? world[x][y+1] : null,
+					x > 0                   ? world[x-1][y] : null);
 			}
 		}
 	}

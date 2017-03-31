@@ -14,14 +14,14 @@ public abstract class Action extends AbstractAction
 	private final int               id;
 	private HashSet<AbstractButton> sources;
 	
-	public Action(int id, String name)
+	Action(int id, String name)
 	{
 		super(name);
 		this.id = id;
 		this.sources = new HashSet<AbstractButton>();
 	}
 	
-	public Action(int id, String name, Icon icon)
+	Action(int id, String name, Icon icon)
 	{
 		super(name, icon);
 		this.id = id;
