@@ -152,6 +152,7 @@ public class LevelView extends JPanel implements MouseListener, Updateable
 	@Override
 	public void update()
 	{
+		dirty = true;
 		this.invalidate();
 		this.repaint();
 	}

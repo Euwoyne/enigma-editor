@@ -161,10 +161,10 @@ public class Controller implements CodeChangeListener, LevelClickListener, KindS
 			System.out.print("Setup UI...");
 			EnigmaSyntaxKit.initKit();
 			mainWnd = new MainWnd(this, tileset, options);
-			mainWnd.setWorld(level, 0);
 			mainWnd.addCodeChangeListener(this);
 			mainWnd.addLevelClickListener(this);
 			mainWnd.addKindSelectionListener(this);
+			mainWnd.setWorld(level, 0);
 			System.out.println("DONE");
 		}
 		catch (MissingAttributeException e)
@@ -264,6 +264,12 @@ public class Controller implements CodeChangeListener, LevelClickListener, KindS
 		}
 	}
 	
+	public void onExit()
+	{
+		updater.stop();
+		System.exit(0);
+	}
+	
 	@Override
 	public void codeChanged(String luacode)
 	{
@@ -274,6 +280,7 @@ public class Controller implements CodeChangeListener, LevelClickListener, KindS
 				// TODO: waiting animation in levelview
 				level.luamain = luacode;
 				analyseLevel();
+				mainWnd.redrawWorld();
 			}
 		}).start();
 	}
@@ -343,8 +350,7 @@ public class Controller implements CodeChangeListener, LevelClickListener, KindS
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				updater.stop();
-				mainWnd.dispose();
+				onExit();
 			}
 		};
 	}

@@ -4,9 +4,10 @@ import java.util.ArrayList;
 
 import com.github.euwoyne.enigma_edit.error.MissingImageException;
 
-@SuppressWarnings("serial")
 public class RenderableStack extends ArrayList<Renderable> implements Renderable
 {
+	private static final long serialVersionUID = 1L;
+	
 	@Override
 	public void draw(RenderingAgent renderer, int x, int y, int size) throws MissingImageException
 	{

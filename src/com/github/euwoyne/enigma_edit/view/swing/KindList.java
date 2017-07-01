@@ -45,13 +45,15 @@ import com.github.euwoyne.enigma_edit.error.MissingImageException;
 import com.github.euwoyne.enigma_edit.model.SpriteStack;
 import com.github.euwoyne.enigma_edit.model.Tileset;
 
-@SuppressWarnings("serial")
 public class KindList extends JPanel 
 {
-	private static final int ICONSIZE = 16;
+	private static final long serialVersionUID = 1L;
+	private static final int  ICONSIZE         = 16;
 	
 	private class KindAction extends AbstractAction
 	{
+		private static final long serialVersionUID = 1L;
+		
 		private final Tileset.Kind kind;
 		
 		KindAction(Tileset.Kind kind, String label, Icon icon)
@@ -70,6 +72,8 @@ public class KindList extends JPanel
 	
 	private class PageMenu extends JMenu
 	{
+		private static final long serialVersionUID = 1L;
+		
 		PageMenu(Tileset.Page page, String label)
 		{
 			super(label);
@@ -84,6 +88,8 @@ public class KindList extends JPanel
 	
 	private class GroupButton extends JButton
 	{
+		private static final long serialVersionUID = 1L;
+		
 		GroupButton(Tileset.Group group, String label, Icon icon)
 		{
 			super(label, icon);
@@ -125,7 +131,7 @@ public class KindList extends JPanel
 	{
 		try
 		{
-			final SpriteStack        images = kind.getImage();
+			final SpriteStack        images = kind.getIcon();
 			final AwtSprite.AwtImage sprite = (images.size() == 1) ?
 					((AwtSprite)images.get(0)).getImage(size) :
 					AwtSprite.create((AwtSpriteSet)tileset.getSpriteset(), images, size);

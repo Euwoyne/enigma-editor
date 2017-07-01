@@ -17,63 +17,207 @@
 
 <group i18n="grp_floors" icon="fl_samba">
     <attrgroup i18n="attrgrp_physics">
-        <attr name="adhesion"        type="float"    default="true"      i18n="attr_adhesion"/>
-        <attr name="fragility"       type="float"    min="0.0" max="1.0" i18n="attr_fragility"/>
-        <attr name="friction"        type="float"    default="true"      i18n="attr_friction"/>
-        <attr name="force_x"         type="float"    default="true"      i18n="attr_force_x"/>
-        <attr name="force_y"         type="float"    default="true"      i18n="attr_force_y"/>
-        <attr name="eternal"         type="boolean"  default="true"      i18n="attr_eternal"/>
-        <attr name="floodable"       type="boolean"  default="true"      i18n="attr_floodable"/>
-        <attr name="freeze_check"    type="boolean"                      i18n="attr_freeze"/>
-        <attr name="burnable"        type="boolean"  default="true"      i18n="attr_burnable"/>
+        <attr name="adhesion"        type="float"    default="0.0"    i18n="attr_adhesion"/>
+        <attr name="fragility"       type="float"    default="1.0"    i18n="attr_fragility" min="0.0" max="1.0"/>
+        <attr name="friction"        type="float"    default="0.0"    i18n="attr_friction"/>
+        <attr name="force_x"         type="float"    default="0.0"    i18n="attr_force_x"/>
+        <attr name="force_y"         type="float"    default="0.0"    i18n="attr_force_y"/>
+        <attr name="burnable"        type="boolean"  default="false"  i18n="attr_burnable"/>
+        <attr name="eternal"         type="boolean"  default="false"  i18n="attr_eternal"/>
+        <attr name="floodable"       type="boolean"  default="false"  i18n="attr_floodable"/>
+        <attr name="freeze_check"    type="boolean"  default="false"  i18n="attr_freeze"/>
+        <attr name="indestructible"  type="boolean"  default="false"  i18n="attr_indestructible" ui="readonly"/>
     </attrgroup>
     
     <attrgroup i18n="attrgrp_fire">
-        <attr name="fastfire"        type="boolean"  default="true" i18n="attr_fastfire"/>
-        <attr name="ignitable"       type="boolean"  default="true" i18n="attr_ignitable"/>
-        <attr name="initfire"        type="boolean"  default="true" i18n="attr_initfire"/>
-        <attr name="noash"           type="boolean"  default="true" i18n="attr_noash"/>
-        <attr name="secure"          type="boolean"  default="true" i18n="attr_secure"/>
+        <attr name="fastfire"        type="boolean"  default="false" i18n="attr_fastfire"/>
+        <attr name="ignitable"       type="boolean"  default="false" i18n="attr_ignitable"/>
+        <attr name="initfire"        type="boolean"  default="false" i18n="attr_initfire"/>
+        <attr name="noash"           type="boolean"  default="false" i18n="attr_noash"/>
+        <attr name="secure"          type="boolean"  default="false" i18n="attr_secure"/>
     </attrgroup>
     
     <page i18n="page_normal">
         
         <!-- Normal Floors -->
         <kind name="fl_dummy"        oldname="fl-dummy"       type="fl" access="hidden"><image file="fl-dummy"/></kind>
-        <kind name="fl_adhesionless" oldname="fl-nomouse"     type="fl"/>
-        <kind name="fl_aquamarine"   oldname="fl-bluegreenx"  type="fl" framed="true"><image count="2"/></kind>
-        <kind name="fl_bast"         oldname="fl-floor_001"   type="fl" framed="true"/>
-        <kind name="fl_bluegray"     oldname="fl-bluegray"    type="fl" framed="true"><image count="4"/></kind>
-        <kind name="fl_bluegreen"    oldname="fl-bluegreen"   type="fl" framed="true"/>
-        <kind name="fl_blueslab"     oldname="fl-rough-blue"  type="fl" framed="true"><image count="4"/></kind>
-        <kind name="fl_brick"        oldname="fl-brick"       type="fl" framed="true"><image count="3"/></kind>
-        <kind name="fl_bright"       oldname="fl-white"       type="fl" framed="true"/>
-        <kind name="fl_concrete"     oldname="fl-concrete"    type="fl" framed="true"/>
-        <kind name="fl_dark"         oldname="fl-black"       type="fl" framed="true"/>
-        <kind name="fl_darkgray"     oldname="fl-darkgray"    type="fl" framed="true"/>
-        <kind name="fl_dunes"        oldname="fl-dunes"       type="fl" framed="true"/>
-        <kind name="fl_gravel"       oldname="fl-gravel"      type="fl" framed="true"><image count="4"/></kind>
-        <kind name="fl_gray"         oldname="fl-gray"        type="fl" framed="true"><image count="5"/></kind>
-        <kind name="fl_himalaya"     oldname="fl-himalaya"    type="fl" framed="true"><image count="4"/></kind>
-        <kind name="fl_ivory"        oldname="fl-light"       type="fl" framed="true"/>
-        <kind name="fl_marble"       oldname="fl-marble"      type="fl" framed="true"><image count="4"/></kind>
-        <kind name="fl_mortar"       oldname="fl-mortar"      type="fl" framed="true"/>
-        <kind name="fl_pinkbumps"    oldname="fl-bumps"       type="fl" framed="true"/>
-        <kind name="fl_plank"        oldname="fl-plank"       type="fl" framed="true"><image count="4"/></kind>
-        <kind name="fl_platinum"     oldname="fl-lightgray"   type="fl" framed="true"/>
-        <kind name="fl_red"          oldname="fl-red"         type="fl" framed="true"><image count="4"/></kind>
-        <kind name="fl_redslab"      oldname="fl-rough-red"   type="fl" framed="true"><image count="4"/></kind>
-        <kind name="fl_rough"        oldname="fl-rough"       type="fl" framed="true"><image count="5"/></kind>
-        <kind name="fl_sahara"       oldname="fl-sahara"      type="fl" framed="true"><image count="4"/></kind>
-        <kind name="fl_sand"         oldname="fl-sand"        type="fl" framed="true"/>
-        <kind name="fl_space"        oldname="fl-space"       type="fl">              <image count="2"/></kind>
-        <kind name="fl_stone"        oldname="fl-stone"       type="fl" framed="true"/>
-        <kind name="fl_tigris"       oldname="fl-tigris"      type="fl" framed="true"><image count="4"/></kind>
-        <kind name="fl_white"        oldname="fl-springboard" type="fl" framed="true"/>
-        <kind name="fl_woven"        oldname="fl-woven"       type="fl" framed="true"/>
+        <kind name="fl_adhesionless" oldname="fl-nomouse"     type="fl">
+            <attr name="adhesion" type="float"   default="0.0"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="2.5"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_aquamarine"   oldname="fl-bluegreenx"  type="fl" framed="true">
+            <image count="2"/>
+            <attr name="adhesion" type="float"   default="1.0"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="0.4"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+            </kind>
+        <kind name="fl_bast"         oldname="fl-floor_001"   type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="2.5"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="1.5"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_bluegray"     oldname="fl-bluegray"    type="fl" framed="true">
+            <image count="4"/>
+            <attr name="adhesion" type="float"   default="1.5"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="4.5"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_bluegreen"    oldname="fl-bluegreen"   type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="2.0"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="6.0"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_blueslab"     oldname="fl-rough-blue"  type="fl" framed="true">
+            <image count="4"/>
+            <attr name="adhesion" type="float"   default="2.0"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="7.0"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_brick"        oldname="fl-brick"       type="fl" framed="true">
+            <image count="3"/>
+            <attr name="adhesion" type="float"   default="2.0"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="3.5"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_bright"       oldname="fl-white"       type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="1.5"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="3.0"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_concrete"     oldname="fl-concrete"    type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="1.3"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="4.5"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_dark"         oldname="fl-black"       type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="1.5"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="3.0"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_darkgray"     oldname="fl-darkgray"    type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="1.6"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="3.0"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_dunes"        oldname="fl-dunes"       type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="1.0"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="1.3"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_gravel"       oldname="fl-gravel"      type="fl" framed="true">
+            <image count="4"/>
+            <attr name="adhesion" type="float"   default="1.5"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="3.2"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_gray"         oldname="fl-gray"        type="fl" framed="true">
+            <image count="5"/>
+            <attr name="adhesion" type="float"   default="3.0"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="5.0"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_himalaya"     oldname="fl-himalaya"    type="fl" framed="true">
+            <image count="4"/>
+            <attr name="adhesion" type="float"   default="2.0"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="5.0"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_ivory"        oldname="fl-light"       type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="1.6"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="2.2"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_marble"       oldname="fl-marble"      type="fl" framed="true">
+            <image count="4"/>
+            <attr name="adhesion" type="float"   default="2.0"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="6.4"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_mortar"       oldname="fl-mortar"      type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="1.8"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="7.2"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_pinkbumps"    oldname="fl-bumps"       type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="1.2"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="5.0"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_plank"        oldname="fl-plank"       type="fl" framed="true">
+            <image count="4"/>
+            <attr name="adhesion" type="float"   default="2.0"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="5.5"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_platinum"     oldname="fl-lightgray"   type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="1.6"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="3.0"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_red"          oldname="fl-red"         type="fl" framed="true">
+            <image count="4"/>
+            <attr name="adhesion" type="float"   default="1.0"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="0.9"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_redslab"      oldname="fl-rough-red"   type="fl" framed="true">
+            <image count="4"/>
+            <attr name="adhesion" type="float"   default="2.0"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="7.0"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_rough"        oldname="fl-rough"       type="fl" framed="true">
+            <image count="5"/>
+            <attr name="adhesion" type="float"   default="2.0"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="7.0"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_sahara"       oldname="fl-sahara"      type="fl" framed="true">
+            <image count="4"/>
+            <attr name="adhesion" type="float"   default="2.0"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="6.4"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_sand"         oldname="fl-sand"        type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="2.0"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="6.0"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_space"        oldname="fl-space"       type="fl">
+            <image count="2"/>
+            <attr name="adhesion" type="float"   default="0.0"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="0.0"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_stone"        oldname="fl-stone"       type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="1.0"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="1.4"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_tigris"       oldname="fl-tigris"      type="fl" framed="true">
+            <image count="4"/>
+            <attr name="adhesion" type="float"   default="2.0"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="6.0"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_white"        oldname="fl-springboard" type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="2.0"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="4.0"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+        </kind>
+        <kind name="fl_woven"        oldname="fl-woven"       type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="3.0"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="6.5"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+        </kind>
         
         <!-- Lawn -->
         <kind name="fl_lawn" oldname="fl-leaves" type="fl">
+            <attr name="adhesion" type="float"   default="1.5"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="4.0"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+            
             <attr name="texture" type="string" enum="a,b,c1,c2,c3,c4,d1,d2,d3,d4,e1,e2,e3,e4" default="a" ui="visual"/>
             <alias name="fl_lawn_a"  oldname="fl-leaves">  <attr name="texture" val="a"/> </alias>
             <alias name="fl_lawn_b"  oldname="fl-leavesb"> <attr name="texture" val="b"/> </alias>
@@ -109,6 +253,10 @@
         
         <!-- Metal -->
         <kind name="fl_metal" oldname="fl-metal" type="fl">
+            <attr name="adhesion" type="float"   default="2.0"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="3.0"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+            
             <attr name="texture" type="integer" enum="1,2,3,4,5,6,7" default="*" ui="visual"/>
             <alias name="fl_metal_1"  oldname="fl-metal1">  <attr name="texture" val="1"/></alias>
             <alias name="fl_metal_2"  oldname="fl-metal2">  <attr name="texture" val="2"/></alias>
@@ -131,6 +279,10 @@
         
         <!-- Samba -->
         <kind name="fl_samba" oldname="fl-samba" type="fl" framed="true">
+            <attr name="adhesion" type="float"   default="2.0"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="6.0"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+            
             <attr name="texture" type="string" enum="h,v" default="*" ui="visual"/>
             <alias name="fl_samba_h"  oldname="fl-samba1"><attr name="texture" val="h"/></alias>
             <alias name="fl_samba_v"  oldname="fl-samba2"><attr name="texture" val="v"/></alias>
@@ -144,24 +296,22 @@
     <page i18n="page_special">
         
         <!-- Abyss -->
-        <kind name="fl_abyss" oldname="fl-abyss" type="fl"/>
-        
-        <!-- Hay -->
-        <kind name="fl_hay"   oldname="fl-hay"   type="fl" framed="true"><image count="4"/></kind>
-        
-        <!-- Ice -->
-        <kind name="fl_ice"   oldname="fl-ice"   type="fl"/>
-        
-        <!-- Rock -->
-        <kind name="fl_rock"  oldname="fl-rock"  type="fl" framed="true"><image count="2"/></kind>
-        
-        <!-- Swamp -->
-        <kind name="fl_swamp" oldname="fl-swamp" type="fl"><image count="4"/></kind>
+        <kind name="fl_abyss" oldname="fl-abyss" type="fl">
+            <attr name="adhesion"        type="float"    default="1.0"   i18n="attr_adhesion"/>
+            <attr name="friction"        type="float"    default="2.0"   i18n="attr_friction"/>
+            <attr name="burnable"        type="boolean"  default="false" i18n="attr_burnable"/>
+            <attr name="indestructible"  type="boolean"  default="true"  i18n="attr_indestructible"  ui="readonly"/>
+            <attr name="noash"           type="boolean"  default="true"  i18n="attr_noash"/>
+        </kind>
         
         <!-- Bridge -->
         <kind name="fl_bridge" oldname="fl-bridge" type="fl">
-            <attr name="state"  type="integer" enum="CLOSED,OPEN" default="OPEN" i18n="bridge_state"/>
-            <attr name="flavor" type="string" enum="gc,bw,bs,be,bn" default="gc" i18n="bridge_flavor"/>
+            <attr name="adhesion"  type="float"    default="1.0"  i18n="attr_adhesion"/>
+            <attr name="friction"  type="float"    default="5.0"  i18n="attr_friction"/>
+            <attr name="burnable"  type="boolean"  default="true" i18n="attr_burnable"/>
+            
+            <attr name="state"   type="integer" enum="CLOSED,OPEN"    default="OPEN" i18n="bridge_state"/>
+            <attr name="flavor"  type="string"  enum="gc,bw,bs,be,bn" default="gc"   i18n="bridge_flavor"/>
             <message name="open"/><message name="close"/><message name="signal"/><message name="toggle"/>
             <alias name="fl_bridge_gc"><attr name="flavor" val="gc"/></alias>
             <alias name="fl_bridge_bw"><attr name="flavor" val="bw"/></alias>
@@ -169,12 +319,12 @@
             <alias name="fl_bridge_be"><attr name="flavor" val="be"/></alias>
             <alias name="fl_bridge_bn"><attr name="flavor" val="bn"/></alias>
             <variants attrs="state,flavor">
-                <variant val="OPEN,gc">  <image file="fl_bridge_gc" pos="0,2"/></variant>
+                <variant val="OPEN,gc">  <image file="fl_bridge_gc" pos="0,2"/><attr name="burnable" val="false"/></variant>
                 <variant val="OPEN,bw">  <image file="fl_bridge_bw" pos="0,3"/></variant>
                 <variant val="OPEN,bs">  <image file="fl_bridge_bs" pos="0,3"/></variant>
                 <variant val="OPEN,be">  <image file="fl_bridge_be" pos="0,3"/></variant>
                 <variant val="OPEN,bn">  <image file="fl_bridge_bn" pos="0,3"/></variant>
-                <variant val="CLOSED,gc"><image file="fl_bridge_gc_closed"/>   </variant>
+                <variant val="CLOSED,gc"><image file="fl_bridge_gc_closed"/>   <attr name="burnable" val="false"/></variant>
                 <variant val="CLOSED,bw"><image file="fl_bridge_bw" pos="0,1"/></variant>
                 <variant val="CLOSED,bs"><image file="fl_bridge_bs" pos="0,1"/></variant>
                 <variant val="CLOSED,be"><image file="fl_bridge_be" pos="0,1"/></variant>
@@ -184,17 +334,42 @@
         
         <!-- Fake -->
         <kind name="fl_fake" type="fl" access="alias">
+            <attr name="adhesion" type="float"   default="2.0"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="3.0"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+            
             <attr name="flavor" type="string" enum="abyss,trigger" default="abyss" ui="visual" i18n="attr_fake"/>
             <alias name="fl_fake_abyss">  <attr name="flavor" val="abyss"/>  </alias>
             <alias name="fl_fake_trigger"><attr name="flavor" val="trigger"/></alias>
             <variants attrs="flavor">
                 <variant val="abyss">  <image file="fl_abyss"        text="fake"/></variant>
-                <variant val="trigger"><image file="fl_fake_trigger" text="fake"/></variant>
+                <variant val="trigger"><image file="fl_fake_trigger" text="fake"/><attr name="burnable" val="true"/></variant>
             </variants>
+        </kind>
+        
+        <!-- Hay -->
+        <kind name="fl_hay"   oldname="fl-hay"   type="fl" framed="true">
+            <image count="4"/>
+            <attr name="adhesion" type="float"   default="1.5"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="5.0"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="true" i18n="attr_burnable"/>
+            <attr name="state"    type="integer" default="IDLE" i18n="attr_flood" enum="IDLE,FLOODING" />
+            <attr name="interval" type="float"   default="0.2"  i18n="flood_interval"/>
+        </kind>
+        
+        <!-- Ice -->
+        <kind name="fl_ice"   oldname="fl-ice"   type="fl">
+            <attr name="adhesion" type="float"   default="0.1"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="0.1"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
         </kind>
         
         <!-- Inverse -->
         <kind name="fl_inverse" type="fl" access="alias">
+            <attr name="adhesion" type="float"   default="-2.0"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="3.0"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+            
             <attr name="flavor" type="string" enum="white,gray" default="white" ui="visual" i18n="attr_inverse"/>
             <alias name="fl_inverse_white" oldname="fl-inverse"> <attr name="flavor" val="white"/></alias>
             <alias name="fl_inverse_gray"  oldname="fl-inverse2"><attr name="flavor" val="gray"/> </alias>
@@ -204,10 +379,25 @@
             </variants>
         </kind>
         
+        <!-- Rock -->
+        <kind name="fl_rock"  oldname="fl-rock"  type="fl" framed="true">
+            <image count="2"/>
+            <attr name="adhesion" type="float"   default="2.2"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="6.5"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+            <attr name="state"    type="integer" default="IDLE"  i18n="attr_flood" enum="IDLE,FLOODING" />
+            <attr name="interval" type="float"   default="0.2"   i18n="flood_interval"/>
+        </kind>
+        
         <!-- Scales -->
         <kind name="fl_scales" type="fl">
+            <attr name="adhesion" type="float"   default="2.0"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="4.0"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+            
             <attr name="flavor" type="string" enum="brick,bridgewood,concrete,darkgray,gray,platinum" default="darkgray" ui="visual" i18n="attr_inverse"/>
             <attr name="min" type="float" default="1.8"/>
+            
             <alias name="fl_scales_brick">     <attr name="flavor" val="brick"/>     </alias>
             <alias name="fl_scales_bridgewood"><attr name="flavor" val="bridgewood"/></alias>
             <alias name="fl_scales_concrete">  <attr name="flavor" val="concrete"/>  </alias>
@@ -216,7 +406,7 @@
             <alias name="fl_scales_platinum">  <attr name="flavor" val="platinum"/>  </alias>
             <variants attrs="flavor">
                 <variant val="brick">     <image file="fl_brick"/>           <image/></variant>
-                <variant val="bridgewood"><image file="fl_bridge_bw_closed"/><image/></variant>
+                <variant val="bridgewood"><image file="fl_bridge_bw_closed"/><image/><attr name="burnable" val="true"/></variant>
                 <variant val="concrete">  <image file="fl_concrete"/>        <image/></variant>
                 <variant val="darkgray">  <image file="fl_darkgray"/>        <image/></variant>
                 <variant val="gray">      <image file="fl_gray"/>            <image/></variant>
@@ -226,6 +416,10 @@
         
         <!-- Slope -->
         <kind name="fl_slope" type="fl">
+            <attr name="adhesion" type="float"   default="2.0"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="4.0"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+            
             <attr name="slope"    type="direction8+nodir" default="NODIR" i18n="attr_slope"/>
             <attr name="strength" type="float"            default="25.0"  i18n="attr_strength"/>
             <attr name="shape"    type="string"           default=""      ui="visual"
@@ -284,16 +478,33 @@
             </variants>
         </kind>
         
+        <!-- Swamp -->
+        <kind name="fl_swamp" oldname="fl-swamp" type="fl">
+            <image count="4"/>
+            <attr name="adhesion" type="float"   default="1.0"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="13.0"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
+            <attr name="indestructible"  type="boolean"  default="true"  i18n="attr_indestructible"  ui="readonly"/>
+        </kind>
+        
         <!-- Thief -->
         <kind name="fl_thief" oldname="fl-thief" type="fl">
             <image file="fl_bluegray"/>
             <image file="thief_template" pos="0,6"/>
+            <attr name="adhesion" type="float"   default="1.5"   i18n="attr_adhesion"/>
+            <attr name="friction" type="float"   default="4.5"   i18n="attr_friction"/>
+            <attr name="burnable" type="boolean" default="false" i18n="attr_burnable"/>
         </kind>
         
         <!-- Water -->
         <kind name="fl_water" oldname="fl-water" type="fl">
-            <attr name="interval" type="float" min="0.0" default="0.2" i18n="water_interval"/>
-            <attr name="state" type="integer" enum="IDLE,FLOODING" default="IDLE" i18n="attr_water"/>
+            <attr name="adhesion"        type="float"    default="1.0"   i18n="attr_adhesion"/>
+            <attr name="friction"        type="float"    default="5.0"   i18n="attr_friction"/>
+            <attr name="burnable"        type="boolean"  default="false" i18n="attr_burnable"/>
+            <attr name="indestructible"  type="boolean"  default="true"  i18n="attr_indestructible"  ui="readonly"/>
+            <attr name="interval"        type="float"    default="0.2"   i18n="flood_interval"       min="0.0" />
+            <attr name="state"           type="integer"  default="IDLE"  i18n="attr_water"           enum="IDLE,FLOODING"/>
+            
             <alias name="fl_water" oldname="fl-water"><attr name="state" val="IDLE"/>    </alias>
             <alias name="fl_water_source">            <attr name="state" val="FLOODING"/></alias>
             <variants attrs="state">
@@ -304,7 +515,12 @@
         
         <!-- Wood -->
         <kind name="fl_wood" oldname="fl-wood" framed="true" framed_oldname="fl-stwood" type="fl">
-            <attr name="texture" type="string" enum="h,v" default="*" ui="visual"/>
+            <attr name="adhesion" type="float"    default="2.0"  i18n="attr_adhesion"/>
+            <attr name="friction" type="float"    default="6.4"  i18n="attr_friction"/>
+            <attr name="burnable" type="boolean"  default="true" i18n="attr_burnable"/>
+            <attr name="state"    type="integer"  default="IDLE" i18n="attr_water"     enum="IDLE,FLOODING"/>
+            <attr name="interval" type="float"    default="0.2"  i18n="flood_interval" min="0.0" />
+            <attr name="texture"  type="string"   default="*"    enum="h,v"  ui="visual"/>
             <alias name="fl_wood_h" oldname="fl-wood1" framed_name="fl_wood_framed_h" framed_oldname="fl-stwood1"><attr name="texture" val="h"/></alias>
             <alias name="fl_wood_v" oldname="fl-wood2" framed_name="fl_wood_framed_v" framed_oldname="fl-stwood2"><attr name="texture" val="v"/></alias>
             <variants attrs="texture">
@@ -315,8 +531,11 @@
         
         <!-- Yin-Yang -->
         <kind name="fl_yinyang" type="fl">
-            <attr name="state" type="integer" enum="YIN,YANG" default="YIN" ui="visual"/>
+            <attr name="state"     type="integer" default="YIN"   ui="visual" enum="YIN,YANG"/>
             <attr name="invisible" type="boolean" default="false" i18n="attr_invisible"/>
+            <attr name="adhesion"  type="float"   default="2.0"   i18n="attr_adhesion"/>
+            <attr name="friction"  type="float"   default="5.2"   i18n="attr_friction"/>
+            <attr name="burnable"  type="boolean" default="false" i18n="attr_burnable"/>
             <alias name="fl_yinyang_yin">                                <attr name="state" val="YIN"/> <attr name="invisible" val="false"/></alias>
             <alias name="fl_yinyang_yin_invisible"  oldname="fl-acblack"><attr name="state" val="YIN"/> <attr name="invisible" val="true"/> </alias>
             <alias name="fl_yinyang_yang">                               <attr name="state" val="YANG"/><attr name="invisible" val="false"/></alias>
@@ -850,70 +1069,70 @@
     <page i18n="page_normal">
         
         <!-- Normal Stones -->
-        <kind      name="st_ancient"            oldname="st-rock9"           type="st"/>
-        <kind      name="st_bluegray"                                        type="st">
+        <kind name="st_ancient"      oldname="st-rock9"           type="st"/>
+        <kind name="st_bluegray"                                  type="st">
             <variants>
             <variant name="st_bluegray"           oldname="st-bluegray"        i18n="var_normal"/>
             <variant name="st_bluegray_hollow"    oldname="st-bluegray_hole"   i18n="var_hollow"><image text="hole"/></variant>
             </variants>
         </kind>
-        <kind      name="st_brownie"            oldname="st-brownie"         type="st">
+        <kind name="st_brownie"      oldname="st-brownie"         type="st">
             <variants>
             <variant name="st_brownie"            oldname="st-brownie"        i18n="var_normal"/>
             <variant name="st_brownie_movable"    oldname="st-brownie_move"   i18n="var_movable"><image text="move"/></variant>
             </variants>
         </kind>
-        <kind      name="st_brownmarble"        oldname="st-rock10"          type="st"/>
-        <kind      name="st_camouflage"                                      type="st">
+        <kind name="st_brownmarble"  oldname="st-rock10"          type="st"/>
+        <kind name="st_camouflage"                                type="st">
             <variants>
             <variant name="st_camouflage"         oldname="st-camouflage"      i18n="var_normal"/>
             <variant name="st_camouflage_hollow"  oldname="st-camouflage_hole" i18n="var_hollow"> <image text="hole"/></variant>
             <variant name="st_camouflage_movable" oldname="st-camouflage_move" i18n="var_movable"><image text="move"/></variant>
             </variants>
         </kind>
-        <kind      name="st_concrete"           oldname="st-rock8"           type="st"/>
-        <kind      name="st_darkgray"                                        type="st">
+        <kind name="st_concrete"     oldname="st-rock8"           type="st"/>
+        <kind name="st_darkgray"                                  type="st">
             <variants>
             <variant name="st_darkgray"           oldname="st-rock2"           i18n="var_normal"/>
             <variant name="st_darkgray_hollow"    oldname="st-rock2_hole"      i18n="var_hollow"><image text="hole"/></variant>
             </variants>
         </kind>
-        <kind      name="st_granite"                                         type="st">
+        <kind name="st_granite"                                         type="st">
             <variants>
             <variant name="st_granite"            oldname="st-rock1"           i18n="var_normal"/>
             <variant name="st_granite_hollow"     oldname="st-rock1_hole"      i18n="var_hollow"> <image text="hole"/></variant>
             <variant name="st_granite_movable"    oldname="st-rock1_move"      i18n="var_movable"><image file="st_granite" text="move"/></variant>
             </variants>
         </kind>
-        <kind      name="st_greengray"          oldname="st-rock7"           type="st"/>
-        <kind      name="st_invisible"                                       type="st">
+        <kind name="st_greengray"    oldname="st-rock7"           type="st"/>
+        <kind name="st_invisible"                                 type="st">
             <variants>
             <variant name="st_invisible"          oldname="st-invisible"       i18n="var_normal"> <image file="invisible" text="inv"/> </variant>
             <variant name="st_invisible_hollow"   oldname="st-invisible_hole"  i18n="var_hollow"> <image file="invisible" text="hole"/></variant>
             <variant name="st_invisible_movable"  oldname="st-invisible_move"  i18n="var_movable"><image file="invisible" text="move"/></variant>
             </variants>
         </kind>
-        <kind      name="st_metal"                                           type="st">
+        <kind name="st_metal"                                     type="st">
             <variants>
             <variant name="st_metal"              oldname="st-metal"           i18n="var_normal"/>
             <variant name="st_metal_hollow"       oldname="st-metal_hole"      i18n="var_hollow"><image text="hole"/></variant>
             </variants>
         </kind>
-        <kind      name="st_pinkbumps"          oldname="st-bumps"           type="st"/>
-        <kind      name="st_purplegray"         oldname="st-rock6"           type="st"/>
-        <kind      name="st_purplemarble"       oldname="st-rock4"           type="st"/>
-        <kind      name="st_redbrown"                                        type="st">
+        <kind name="st_pinkbumps"    oldname="st-bumps"           type="st"/>
+        <kind name="st_purplegray"   oldname="st-rock6"           type="st"/>
+        <kind name="st_purplemarble" oldname="st-rock4"           type="st"/>
+        <kind name="st_redbrown"                                  type="st">
             <variants>
             <variant name="st_redbrown"           oldname="st-marble"          i18n="var_normal"/>
             <variant name="st_redbrown_hollow"    oldname="st-marble_hole"     i18n="var_hollow"> <image text="hole"/></variant>
             <variant name="st_redbrown_movable"   oldname="st-marble_move"     i18n="var_movable"><image text="move"/></variant>
             </variants>
         </kind>
-        <kind      name="st_redmarble"          oldname="st-stone2"          type="st"/>
-        <kind      name="st_redrock"            oldname="st-redrock"         type="st"/>
-        <kind      name="st_tigris"             oldname="st-rock5"           type="st"/>
-        <kind      name="st_woven"              oldname="st-woven"           type="st"/>
-        <kind      name="st_yellow"             oldname="st-yellow"          type="st"/>
+        <kind name="st_redmarble"    oldname="st-stone2"          type="st"/>
+        <kind name="st_redrock"      oldname="st-redrock"         type="st"/>
+        <kind name="st_tigris"       oldname="st-rock5"           type="st"/>
+        <kind name="st_woven"        oldname="st-woven"           type="st"/>
+        <kind name="st_yellow"       oldname="st-yellow"          type="st"/>
         
         <!-- Blue Sand -->
         <kind name="st_bluesand" oldname="st-blue-sand" type="st">
@@ -2040,7 +2259,7 @@
         
         <!-- Raw Glass -->
         <kind name="st_rawglass" oldname="st-glass" type="st">
-            <attr name="movable" type="boolean" default="false" ui="readonly"/>
+            <attr name="movable" type="boolean" default="false" i18n="attr_movable" ui="readonly"/>
             <variants>
                 <variant name="st_rawglass"/>
                 <variant name="st_rawglass_movable" oldname="st-glass_move"><image text="move"/><attr name="movable" val="true"/></variant>
@@ -2055,7 +2274,7 @@
         <kind name="st_rotator" type="st">
             <attr name="state"        type="integer" enum="CW,CCW" default="CW"    ui="switch"/>
             <attr name="counterclock" type="boolean"               default="false" i18n="rotator_ccw"/>
-            <attr name="movable"      type="boolean"               default="false" ui="visual"/>
+            <attr name="movable"      type="boolean"               default="false" i18n="attr_movable" ui="visual"/>
             <message name="toggle"/>
             <alias name="st_rotator_cw"          oldname="st-rotator-right">     <attr name="state" val="CW"/> <attr name="movable" val="false"/></alias>
             <alias name="st_rotator_ccw"         oldname="st-rotator-left">      <attr name="state" val="CCW"/><attr name="movable" val="false"/></alias>
@@ -2321,30 +2540,31 @@
     
     <!-- FLOORS -->
     <!--________-->
-    <string id="grp_floors">     <english>Floors</english>       </string>
+    <string id="grp_floors">         <english>Floors</english>       </string>
     
         <!-- global attributes -->
-    <string id="attrgrp_physics"><english>Physics</english>      </string>
-    <string id="attr_adhesion">  <english>adhesion</english>     </string>
-    <string id="attr_fragility"> <english>fragility</english>    </string>
-    <string id="attr_friction">  <english>friction</english>     </string>
-    <string id="attr_force_x">   <english>x-Force</english>      </string>
-    <string id="attr_force_y">   <english>y-Force</english>      </string>
-    <string id="attr_eternal">   <english>eternal</english>      </string>
-    <string id="attr_floodable"> <english>floodable</english>    </string>
-    <string id="attr_freeze">    <english>freeze check</english> </string>
-    <string id="attr_burnable">  <english>burnable</english>     </string>
+    <string id="attrgrp_physics">    <english>Physics</english>       </string>
+    <string id="attr_adhesion">      <english>adhesion</english>      </string>
+    <string id="attr_fragility">     <english>fragility</english>     </string>
+    <string id="attr_friction">      <english>friction</english>      </string>
+    <string id="attr_force_x">       <english>x-Force</english>       </string>
+    <string id="attr_force_y">       <english>y-Force</english>       </string>
+    <string id="attr_eternal">       <english>eternal</english>       </string>
+    <string id="attr_floodable">     <english>floodable</english>     </string>
+    <string id="attr_freeze">        <english>freezable</english>     </string>
+    <string id="attr_indestructible"><english>indestructible</english></string>
+    <string id="attr_burnable">      <english>burnable</english>      </string>
     
-    <string id="attrgrp_fire">   <english>Fire</english>             </string>
-    <string id="attr_fastfire">  <english>fast fire</english>        </string>
-    <string id="attr_ignitable"> <english>ignitable</english>        </string>
-    <string id="attr_initfire">  <english>initially on fire</english></string>
-    <string id="attr_noash">     <english>no ash</english>           </string>
-    <string id="attr_secure">    <english>secure</english>           </string>
+    <string id="attrgrp_fire">       <english>Fire</english>             </string>
+    <string id="attr_fastfire">      <english>fast fire</english>        </string>
+    <string id="attr_ignitable">     <english>ignitable</english>        </string>
+    <string id="attr_initfire">      <english>initially on fire</english></string>
+    <string id="attr_noash">         <english>no ash</english>           </string>
+    <string id="attr_secure">        <english>secure</english>           </string>
     
-    <string id="attr_slope">     <english>direction</english>    </string>
-    <string id="attr_strength">  <english>strength</english>     </string>
-    <string id="attr_range">     <english>range</english>        </string>
+    <string id="attr_slope">         <english>direction</english></string>
+    <string id="attr_strength">      <english>strength</english> </string>
+    <string id="attr_range">         <english>range</english>    </string>
     
         <!-- normal floors -->
     <string id="page_normal">    <english>normal</english>       </string>
@@ -2416,6 +2636,12 @@
     <string id="bridge_flavor_be">   <english>wood (e)</english>       </string>
     <string id="bridge_flavor_bn">   <english>wood (n)</english>       </string>
     
+    <string id="attr_flood">         <english>flood state</english>    </string>
+    <string id="attr_flood_IDLE">    <english>idle</english>           </string>
+    <string id="attr_flood_FLOODING"><english>flooding</english>       </string>
+    
+    <string id="flood_interval">     <english>flood interval</english> </string>
+    
     <string id="attr_inverse">       <english>flavor</english>         </string>
     <string id="attr_inverse_white"> <english>white</english>          </string>
     <string id="attr_inverse_gray">  <english>gray</english>           </string>
@@ -2423,7 +2649,6 @@
     <string id="attr_water">         <english>behaviour</english>      </string>
     <string id="attr_water_IDLE">    <english>idle</english>           </string>
     <string id="attr_water_FLOODING"><english>flooding</english>       </string>
-    <string id="water_interval">     <english>flood interval</english> </string>
     
     <!-- ITEMS -->
     <!--_______-->

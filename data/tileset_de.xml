@@ -40,6 +40,7 @@
     <string id="attr_eternal">         <translation lang="de">beständig</translation>         </string>
     <string id="attr_floodable">       <translation lang="de">überflutbar</translation>       </string>
     <string id="attr_freeze">          <translation lang="de">gefrierbar</translation>        </string>
+    <string id="attr_indestructible">  <translation lang="de">unzerstörbar</translation>      </string>
     <string id="attr_burnable">        <translation lang="de">brennbar</translation>          </string>
     
     <string id="attrgrp_fire">         <translation lang="de">Feuer</translation>             </string>
@@ -123,6 +124,12 @@
     <string id="bridge_flavor_be">     <translation lang="de">Holz (O)</translation>          </string>
     <string id="bridge_flavor_bn">     <translation lang="de">Holz (N)</translation>          </string>
     
+    <string id="attr_flood">           <translation lang="de">Flut Status</translation>       </string>
+    <string id="attr_flood_IDLE">      <translation lang="de">trocken</translation>           </string>
+    <string id="attr_flood_FLOODING">  <translation lang="de">geflutet</translation>          </string>
+    
+    <string id="flood_interval">       <translation lang="de">Flut Intervall</translation>    </string>
+    
     <string id="attr_inverse">         <translation lang="de">Farbe</translation>             </string>
     <string id="attr_inverse_white">   <translation lang="de">weiß</translation>              </string>
     <string id="attr_inverse_gray">    <translation lang="de">grau</translation>              </string>
@@ -130,7 +137,6 @@
     <string id="attr_water">           <translation lang="de">Verhalten</translation>         </string>
     <string id="attr_water_IDLE">      <translation lang="de">stehend</translation>           </string>
     <string id="attr_water_FLOODING">  <translation lang="de">fließend</translation>          </string>
-    <string id="water_interval">       <translation lang="de">Flut Intervall</translation>    </string>
     
     <!-- ITEMS -->
     <!--_______-->

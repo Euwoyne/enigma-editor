@@ -24,6 +24,9 @@
 package com.github.euwoyne.enigma_edit;
 
 import java.nio.file.Paths;
+
+import javax.swing.SwingUtilities;
+
 import com.github.euwoyne.enigma_edit.control.Controller;
 
 class EnigmaEditor
@@ -39,7 +42,10 @@ class EnigmaEditor
 		System.out.println("DONE");
 		
 		// start controller
-		new Controller(options);
-    }
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {new Controller(options);}
+		});
+	}
 }
 

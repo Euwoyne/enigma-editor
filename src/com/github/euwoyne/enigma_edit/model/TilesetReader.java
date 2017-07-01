@@ -228,6 +228,24 @@ public class TilesetReader
 			if ((temp = attrs.getValue("default")) != null) attr.defaultValue = temp;
 			if ((temp = attrs.getValue("i18n"))    != null) attr.i18n = temp;
 			
+			// min
+			if ((temp = attrs.getValue("min")) != null)
+			{
+				try {attr.min  = Double.parseDouble(temp);}
+				catch (NumberFormatException e) {
+					this.error(new TilesetXMLException(state.is(State.KIND) ? "UnexpectedValueKind" : "UnexpectedValueGroup", temp, attr.name, id, locator));
+				}
+			}
+			
+			// max
+			if ((temp = attrs.getValue("max")) != null)
+			{
+				try {attr.max  = Double.parseDouble(temp);}
+				catch (NumberFormatException e) {
+					this.error(new TilesetXMLException(state.is(State.KIND) ? "UnexpectedValueKind" : "UnexpectedValueGroup", temp, attr.name, id, locator));
+				}
+			}
+			
 			// ui
 			if ((temp = attrs.getValue("ui")) != null)
 			{
@@ -237,6 +255,14 @@ public class TilesetReader
 				else if (temp.equals("connections")) attr.ui = Tileset.Attribute.Ui.CONNECTIONS;
 				else if (temp.equals("cluster"))     attr.ui = Tileset.Attribute.Ui.CLUSTER;
 				else if (temp.equals("readonly"))    attr.ui = Tileset.Attribute.Ui.READONLY;
+				else if (attr.type == Tileset.Attribute.Type.BOOLEAN)
+				{
+					if      (temp.equals("onoff"))         attr.ui = Tileset.Attribute.Ui.ONOFF;
+					else if (temp.equals("yesno"))         attr.ui = Tileset.Attribute.Ui.YESNO;
+					else if (temp.equals("enabledisable")) attr.ui = Tileset.Attribute.Ui.ENABLEDISABLE;
+					else if (temp.equals("truefalse"))     attr.ui = Tileset.Attribute.Ui.ATTR;
+					else this.error(new TilesetXMLException(state.is(State.KIND) ? "IllegalAttrUITypeKind" : "IllegalAttrUITypeGroup", temp, attr.name, id, locator));
+				}
 				else this.error(new TilesetXMLException(state.is(State.KIND) ? "IllegalAttrUITypeKind" : "IllegalAttrUITypeGroup", temp, attr.name, id, locator));
 			}
 			
@@ -327,7 +353,7 @@ public class TilesetReader
 			case ATTRGROUP:
 				if (qName.equals("attr"))
 				{
-					parse_attr(attrs);
+					group.addAttribute(parse_attr(attrs));
 					state.to(State.GATTR);
 				}
 				else this.error(new TilesetXMLException("UnexpectedTagAttrGroup", qName, attrgroup.getI18n(), locator));

@@ -29,12 +29,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.github.euwoyne.enigma_edit.error.MissingImageException;
 import com.github.euwoyne.enigma_edit.error.MissingStringException;
-import com.github.euwoyne.enigma_edit.lua.ReverseIDProvider;
 import com.github.euwoyne.enigma_edit.lua.data.Mode2;
 import com.github.euwoyne.enigma_edit.lua.data.ObjectDecl;
 import com.github.euwoyne.enigma_edit.model.I18N.KeyString;
@@ -48,7 +48,7 @@ import com.github.euwoyne.enigma_edit.model.I18N.KeyString;
  * description file, that is parsed by an instance of
  * {@link TilesetReader}.
  */
-public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
+public class Tileset implements Iterable<Tileset.Group>
 {
 	/**
 	 * Interface for named entities, i.e. kinds, named variants and aliases.
@@ -130,13 +130,19 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		Kind getKind();
 		
 		/**
+		 * Get the gparent group.
+		 * @return  The group that this object's kind belongs to.
+		 */
+		Group getGroup();
+		
+		/**
 		 * Get the name of the object's kind.
 		 * @return  Name of the kind.
 		 */
 		String getKindName();
 		
-		List<Variant>   getVariant();
-		SpriteStack getImage();
+		List<Variant> getVariant();
+		SpriteStack   getImage();
 	}
 	
 	/**
@@ -335,11 +341,8 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		 */
 		public abstract boolean isNamed();
 		
-		@Override
-		public Kind getKind()
-		{
-			return kind;
-		}
+		@Override public Kind  getKind()  {return kind;}
+		@Override public Group getGroup() {return kind.getGroup();}
 		
 		@Override
 		public String getAttribute(String attrName)
@@ -722,11 +725,8 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 			this.attributes = new TreeMap<String, String>();
 		}
 		
-		@Override
-		public Kind getKind()
-		{
-			return kind;
-		}
+		@Override public Kind  getKind()  {return kind;}
+		@Override public Group getGroup() {return kind.getGroup();}
 		
 		@Override
 		public String getAttribute(String attrName)
@@ -813,12 +813,15 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		 */
 		public static enum Ui
 		{
-			/** Show on attribute page. */       ATTR,
-			/** Change by clicking the cell. */  SWITCH,
-			/** Choose by graphical menu. */     VISUAL,
-			/** Choose automatically by path. */ CONNECTIONS,
-			/** Choose by neighbors. */          CLUSTER,
-			/** Do not show at all. */           READONLY
+			/** Show on attribute page. */          ATTR,
+			/** Show as Yes/No switch. */           YESNO,
+			/** Show as On/Off switch. */           ONOFF,
+			/** Show as Enabled/Disabled switch. */ ENABLEDISABLE,
+			/** Change by clicking the cell. */     SWITCH,
+			/** Choose by graphical menu. */        VISUAL,
+			/** Choose automatically by path. */    CONNECTIONS,
+			/** Choose by neighbors. */             CLUSTER,
+			/** Do not show at all. */              READONLY
 		}
 		
 		String            name;
@@ -842,8 +845,8 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 			this.type         = type;
 			this.enums        = new ArrayList<String>(); 
 			this.defaultValue = null;
-			this.min          = null;
-			this.max          = null;
+			this.min          = -Double.MAX_VALUE;
+			this.max          = Double.MAX_VALUE;
 			this.i18n         = name;
 			this.ui           = ui;
 		}
@@ -855,13 +858,16 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		 */
 		Attribute(String name) {this(name, Type.INTEGER, Ui.ATTR);}
 		
-		public String  getName()       {return name;}
-		public Type    getType()       {return type;}
-		public int     enumSize()      {return enums.size();}
-		public String  getEnum(int i)  {return enums.get(i);}
-		public String  getDefault()    {return defaultValue;}
-		public String  getI18n()       {return i18n;}
-		public Ui      getUi()         {return ui;}
+		public String       getName()       {return name;}
+		public Type         getType()       {return type;}
+		public int          enumSize()      {return enums.size();}
+		public String       getEnum(int i)  {return enums.get(i);}
+		public List<String> getEnums()      {return Collections.unmodifiableList(enums);}
+		public String       getDefault()    {return defaultValue;}
+		public Double       getMin()        {return min;}
+		public Double       getMax()        {return max;}
+		public String       getI18n()       {return i18n;}
+		public Ui           getUi()         {return ui;}
 	}
 	
 	/**
@@ -929,6 +935,7 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		public boolean      showAliases() {return access == Access.ALIAS;}
 		public boolean      hasIcon()     {return icon != null;}
 		
+		@Override public Group  getGroup()    {return group;}
 		@Override public Kind   getKind()     {return this;}
 		@Override public String getKindName() {return name;}
 		
@@ -951,6 +958,11 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 			if (attr != null && attr.defaultValue != null)
 				return true;
 			return (group != null && group.hasAttribute(attrName));
+		}
+		
+		public Map<String, Attribute> getAttributes()
+		{
+			return Collections.unmodifiableMap(attributes);
 		}
 		
 		@Override
@@ -1074,9 +1086,19 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 		public String getI18n() {return i18n;}
 		public String getIcon() {return icon;}
 		
-		Iterator<AttrGroup> getAttrGroups()
+		public Iterable<AttrGroup> getAttrGroups()
 		{
-			return attributeGroups.iterator();
+			return attributeGroups;
+		}
+		
+		public AttrGroup getAttrGroup(int index)
+		{
+			return attributeGroups.get(index);
+		}
+		
+		public int getAttrGroupCount()
+		{
+			return attributeGroups.size();
 		}
 		
 		AttrGroup addAttributeGroup(String i18n)
@@ -1434,18 +1456,9 @@ public class Tileset implements ReverseIDProvider, Iterable<Tileset.Group>
 	public TilePart resolve(ObjectDecl decl, Mode2 mode)
 	{
 		final TilePart part = new TilePart(decl.checkTable(mode), this, mode);
-		if (part.objdef == null)
-			System.err.println("Error: unable to resolve kind '" + part.kindName + "'");
+		if (!part.isResolved())
+			System.err.println("Error: unable to resolve kind '" + part.getKindName() + "'");
 		return part;
-	}
-	
-	@Override
-	public String getReverseID(ObjectDecl decl, Mode2 mode)
-	{
-		final TilePart part = new TilePart(decl.checkTable(mode), this, mode);
-		if (part.objdef == null)
-			return part.table.toString(mode.mode());
-		return part.canonical();
 	}
 	
 	/**

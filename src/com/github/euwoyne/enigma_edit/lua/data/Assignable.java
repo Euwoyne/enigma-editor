@@ -24,9 +24,9 @@
 package com.github.euwoyne.enigma_edit.lua.data;
 
 /**
- * A reference that can be redirected by assigning a different value. 
+ * A reference that can be redirected by assigning a different value.
  * This interface provides an additional method for the assignment.
- * Any {@link Dereferencable} value, that can also be assigned to should implement this interface instead.
+ * Any {@link Dereferencable} value, that can also be assigned to, should implement this interface instead.
  */
 public interface Assignable extends Dereferencable
 {

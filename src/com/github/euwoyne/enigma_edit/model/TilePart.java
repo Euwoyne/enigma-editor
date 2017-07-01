@@ -32,16 +32,28 @@ import com.github.euwoyne.enigma_edit.lua.data.SimpleValue;
 import com.github.euwoyne.enigma_edit.lua.data.Table;
 import com.github.euwoyne.enigma_edit.lua.data.Variable;
 import com.github.euwoyne.enigma_edit.model.Tileset.Alias;
+import com.github.euwoyne.enigma_edit.model.Tileset.Group;
 import com.github.euwoyne.enigma_edit.model.Tileset.Kind;
 import com.github.euwoyne.enigma_edit.model.Tileset.ObjectProvider;
 import com.github.euwoyne.enigma_edit.model.Tileset.Variant;
 
+/**
+ * Graphical representation of an object described by a LUA {@link ObjectDecl}.
+ * Instances of this class are created by resoving a LUA {@link ObjectDecl}
+ * against an Enigma {@link Tileset}. It references the LUA code snippet it
+ * originates from as well as the tile's graphical information as described
+ * by the {@link Tileset}.
+ * 
+ * This class is the basic building block of an {@link ImageTile}.
+ * 
+ * @see Tileset.resolve
+ */
 public class TilePart implements ObjectProvider
 {
-	final Mode2          mode;
-	final Table          table;
-	final String         kindName;
-	final ObjectProvider objdef;
+	private final Mode2          mode;
+	private final Table          table;
+	private final String         kindName;
+	private final ObjectProvider objdef;
 	
 	TilePart(Table table, Tileset tileset, Mode2 mode)
 	{
@@ -55,6 +67,8 @@ public class TilePart implements ObjectProvider
 		this.kindName = (objdef instanceof Alias) ? objdef.getKind().name : kind;
 	}
 	
+	boolean isResolved() {return objdef != null;}
+	
 	@Override
 	public ArrayList<Variant> getVariant()
 	{
@@ -67,6 +81,7 @@ public class TilePart implements ObjectProvider
 		return objdef != null ? objdef.getKind().getImage(this) : new SpriteStack();
 	}
 	
+	@Override public Group  getGroup()    {return objdef.getGroup();}
 	@Override public Kind   getKind()     {return objdef.getKind();}
 	@Override public String getKindName() {return kindName;}
 	
@@ -103,6 +118,16 @@ public class TilePart implements ObjectProvider
 		return objdef.getAttribute(attrName).equals(attrval.toString_noquote());
 	}
 	
+	/**
+	 * Canonical string representation of the object.
+	 * The canonical representation is a piece of LUA code, that uniquely
+	 * identifies the object. It is used as an identifier for the {@link
+	 * com.github.euwoyne.enigma_edit.lua.data.Resolver#reverse
+	 * reverse-resolving algorithm}.
+	 * 
+	 * @return A string of LUA code representing this tile-part.
+	 * @see com.github.euwoyne.enigma_edit.lua.RevId RevId
+	 */
 	public String canonical()
 	{
 		StringBuilder out = new StringBuilder();

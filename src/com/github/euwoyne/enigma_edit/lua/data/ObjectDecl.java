@@ -123,20 +123,20 @@ public class ObjectDecl extends SourceData implements TileDeclPart
 		this.type = type;
 	}
 	
-	          public String          getKind(Mode2 mode)            {return mode == Mode2.EASY ? easyKind : diffKind;}
-	@Override public ObjectDecl      getObject(int idx, Mode2 mode) {return this;}
-	@Override public MMObjectDecl getObject(int idx)                {return new MMObjectDecl(this);}
-	@Override public int             objectCount(Mode2 mode)        {return 1;}
-	@Override public String          typename()                     {return "<tile-constructor>";}
-	@Override public String          toString()                     {return source.toString();}
-	          public String          toString(Mode mode)            {return table.toString(mode);}
-	@Override public Table           checkTable(Mode2 mode)         {return mode == Mode2.EASY ? table.easy : table.difficult;}
-	@Override public MMTable         checkTable()                   {return table;}
-	@Override public TileDeclPart    checkTilePart(Mode2 mode)      {return this;}
-	@Override public MMTilePart      checkTilePart()                {return new MMTilePart(this);}
-	@Override public ObjectDecl      snapshot()                     {return new ObjectDecl(source.snapshot());}
-	@Override public int             objtype(Mode2 mode)            {return mode == Mode2.EASY ? type & T_MASK : type >> T_SIZE;}
-	@Override public int             typeMask()                     {return type;}
+	          public String       getKind(Mode2 mode)            {return mode == Mode2.EASY ? easyKind : diffKind;}
+	@Override public ObjectDecl   getObject(int idx, Mode2 mode) {return this;}
+	@Override public MMObjectDecl getObject(int idx)             {return new MMObjectDecl(this);}
+	@Override public int          objectCount(Mode2 mode)        {return 1;}
+	@Override public String       typename()                     {return "<tile-constructor>";}
+	@Override public String       toString()                     {return source.toString();}
+	          public String       toString(Mode mode)            {return table.toString(mode);}
+	@Override public Table        checkTable(Mode2 mode)         {return mode == Mode2.EASY ? table.easy : table.difficult;}
+	@Override public MMTable      checkTable()                   {return table;}
+	@Override public TileDeclPart checkTilePart(Mode2 mode)      {return this;}
+	@Override public MMTilePart   checkTilePart()                {return new MMTilePart(this);}
+	@Override public ObjectDecl   snapshot()                     {return new ObjectDecl(source.snapshot());}
+	@Override public int          objtype(Mode2 mode)            {return mode == Mode2.EASY ? type & T_MASK : type >> T_SIZE;}
+	@Override public int          typeMask()                     {return type;}
 	
 	@Override public int typeMask(Mode mode)
 	{

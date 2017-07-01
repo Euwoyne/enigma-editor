@@ -44,6 +44,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
@@ -135,13 +136,13 @@ public class MainWnd extends JFrame implements WindowListener
 		return new ImageIcon(scaled);
 	}
 	
-	@SuppressWarnings("serial")
 	public MainWnd(Controller ctrl, Tileset tileset, Options options) throws MissingAttributeException, MissingImageException
 	{
 		// setup window
 		super(Resources.uiText.getString("MainWnd.title.long"));
 		this.getContentPane().setLayout(new java.awt.BorderLayout());
-		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(this);
 		this.setSize(1024, 786);
 		this.setMinimumSize(new Dimension(640, 480));
 		
@@ -155,6 +156,8 @@ public class MainWnd extends JFrame implements WindowListener
 		codeEditor  = new CodeEditor();
 		editTabs    = new JTabbedPane()
 		{
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void addTab(String title, Icon icon, java.awt.Component component)
 			{
@@ -270,23 +273,31 @@ public class MainWnd extends JFrame implements WindowListener
 	
 	public void setWorld(Level level, int worldIndex)
 	{
-		this.setTitle(strTitleLong + " \u2012 " + level.info.identity.title);
-		levelView.load(level.worlds.get(worldIndex));
-		codeEditor.setText(level.luamain);
-		metaPanel.fromLevelInfo(level.info);
-		if (editTabs.getSelectedIndex() != LEVELTAB)
-			editTabs.setSelectedIndex(LEVELTAB);
-		else
-			controller.scheduleUpdate(levelView);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override public void run() {
+				MainWnd.this.setTitle(strTitleLong + " \u2012 " + level.info.identity.title);
+				levelView.load(level.worlds.get(worldIndex));
+				codeEditor.setText(level.luamain);
+				metaPanel.fromLevelInfo(level.info);
+				if (editTabs.getSelectedIndex() != LEVELTAB)
+					editTabs.setSelectedIndex(LEVELTAB);
+				else
+					controller.scheduleUpdate(levelView);
+			}
+		});
 	}
 	
 	public void setCode(Level level, int worldIndex)
 	{
-		levelView.load(level.worlds.get(worldIndex));
-		codeEditor.setText(level.luamain);
-		metaPanel.fromLevelInfo(level.info);
-		editTabs.setSelectedIndex(CODETAB);
-		codeEditor.requestFocus();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override public void run() {
+				levelView.load(level.worlds.get(worldIndex));
+				codeEditor.setText(level.luamain);
+				metaPanel.fromLevelInfo(level.info);
+				editTabs.setSelectedIndex(CODETAB);
+				codeEditor.requestFocus();
+			}
+		});
 	}
 	
 	public void setVisibility(Tileset.Kind.Type type, boolean visible)
@@ -309,8 +320,7 @@ public class MainWnd extends JFrame implements WindowListener
 	
 	public void redrawWorld()
 	{
-		levelView.revalidate();
-		levelView.repaint();
+		controller.scheduleUpdate(levelView);
 	}
 	
 	public void moveCursorToSnippet(CodeSnippet code)
@@ -350,46 +360,12 @@ public class MainWnd extends JFrame implements WindowListener
 		kindList.addKindSelectionListener(l);
 	}
 	
-	@Override
-	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	@Override public void windowOpened     (WindowEvent e) {}
+	@Override public void windowClosing    (WindowEvent e) {controller.onExit();}
+	@Override public void windowClosed     (WindowEvent e) {}
+	@Override public void windowIconified  (WindowEvent e) {}
+	@Override public void windowDeiconified(WindowEvent e) {}
+	@Override public void windowActivated  (WindowEvent e) {}
+	@Override public void windowDeactivated(WindowEvent e) {}
 }
 
